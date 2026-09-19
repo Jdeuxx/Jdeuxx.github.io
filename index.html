@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon classeur numérique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="bandeau">
+    <div class="bandeau-contenu">
+      <h1>Mon classeur numérique</h1>
+      <p>Systèmes d'information et numérique — baccalauréat STI2D</p>
+      <nav class="menu">
+        <a href="index.html" aria-current="page">Accueil</a>
+        <a href="cours.html">Cours</a>
+        <a href="tp.html">TP</a>
+        <a href="projets.html">Projets</a>
+        <a href="documents.html">Documents</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="accroche">
+      <h2>Bienvenue</h2>
+      <p>
+        Ce site rassemble et organise mes ressources de SIN : les cours, les comptes rendus
+        de TP et les projets de l'année. Il sert d'interface unique : chaque rubrique mène
+        soit à une page du site, soit à un document hébergé ailleurs.
+      </p>
+      <p>
+        Le site lui-même est public. Les documents personnels, eux, resteront sur un
+        hébergement protégé, accessible par lien mais pas stocké ici.
+      </p>
+    </div>
+
+    <h2>Comment ce site arrive jusqu'à vous</h2>
+    <figure class="schema">
+      <pre>
+NAVIGATEUR (client)
+       |
+       |  requête HTTPS
+       v
+GITHUB PAGES (serveur web)
+       |
+       |  fournit les fichiers publiés
+       v
+DÉPÔT GITHUB
+   index.html
+   style.css
+   cours.html / tp.html / projets.html / documents.html
+      </pre>
+      <figcaption>
+        Le navigateur demande la page, GitHub Pages renvoie les fichiers du dépôt,
+        puis le navigateur interprète le HTML et applique le CSS pour l'affichage.
+      </figcaption>
+    </figure>
+
+    <h2>Les rubriques</h2>
+    <ul class="rubriques">
+      <li>
+        <h3><a href="cours.html">Cours</a></h3>
+        <p>Les séquences de SIN, leurs notions clés et leurs supports.</p>
+      </li>
+      <li>
+        <h3><a href="tp.html">TP</a></h3>
+        <p>Les travaux pratiques réalisés en classe et leurs comptes rendus.</p>
+      </li>
+      <li>
+        <h3><a href="projets.html">Projets</a></h3>
+        <p>Les projets menés en équipe, du cahier des charges à la présentation.</p>
+      </li>
+      <li>
+        <h3><a href="documents.html">Documents</a></h3>
+        <p>Les liens vers les fichiers hébergés sur l'espace protégé.</p>
+      </li>
+    </ul>
+  </main>
+
+  <footer class="pied">
+    <div>
+      <p>Classeur numérique de SIN — site public publié avec GitHub Pages.</p>
+      <p>Aucun document nominatif n'est déposé dans ce dépôt.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
