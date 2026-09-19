@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documents — Mon classeur numérique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="bandeau">
+    <div class="bandeau-contenu">
+      <h1>Mon classeur numérique</h1>
+      <p>Systèmes d'information et numérique — baccalauréat STI2D</p>
+      <nav class="menu">
+        <a href="index.html">Accueil</a>
+        <a href="cours.html">Cours</a>
+        <a href="tp.html">TP</a>
+        <a href="projets.html">Projets</a>
+        <a href="documents.html" aria-current="page">Documents</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h2>Documents</h2>
+    <p>
+      Cette rubrique servira de point d'entrée vers mes documents de travail. Les fichiers
+      ne seront pas stockés ici : ce site public ne fera que pointer vers eux.
+    </p>
+
+    <div class="rappel">
+      <h3>Pourquoi les fichiers ne sont pas dans ce dépôt</h3>
+      <p>
+        Tout ce qui est déposé sur GitHub Pages est lisible par n'importe qui. Les documents
+        nominatifs seront donc hébergés sur un serveur protégé, qui vérifie l'identité et les
+        droits du visiteur avant d'envoyer le fichier. Le lien ne protège rien par lui-même :
+        c'est le serveur qui décide.
+      </p>
+    </div>
+
+    <h3>Liens prévus</h3>
+    <p>
+      Les liens ci-dessous sont des exemples. Ils seront remplacés par les adresses réelles
+      dès que l'espace protégé sera disponible.
+    </p>
+    <ul>
+      <li>
+        <a href="https://mon-espace-protege.example/cours/sequence1.pdf">
+          Cours — séquence 1 (espace protégé)
+        </a>
+      </li>
+      <li>
+        <a href="https://mon-espace-protege.example/tp/tp1-compte-rendu.pdf">
+          TP 1 — compte rendu (espace protégé)
+        </a>
+      </li>
+    </ul>
+
+    <figure class="schema">
+      <pre>
+SITE PUBLIC (GitHub Pages)
+   documents.html
+        |
+        |  lien HTTPS
+        v
+HÉBERGEMENT PROTÉGÉ
+   sequence1.pdf   (accès vérifié par le serveur)
+      </pre>
+      <figcaption>
+        Un lien peut désigner une ressource située sur un autre serveur que celui du site.
+      </figcaption>
+    </figure>
+
+    <p><a href="index.html">Revenir à l'accueil</a></p>
+  </main>
+
+  <footer class="pied">
+    <div>
+      <p>Classeur numérique de SIN — site public publié avec GitHub Pages.</p>
+      <p>Aucun document nominatif n'est déposé dans ce dépôt.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
