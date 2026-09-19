@@ -29,35 +29,18 @@
     <div class="accroche">
       <h2>Bienvenue</h2>
       <p>
-        Ce site rassemble et organise mes ressources de SIN : les cours, les comptes rendus
-        de TP et les projets de l'année. Il sert d'interface unique : chaque rubrique mène
-        soit à une page du site, soit à un document hébergé ailleurs.
-      </p>
-      <p>
-        Le site lui-même est public. Les documents personnels, eux, resteront sur un
-        hébergement protégé, accessible par lien mais pas stocké ici.
+        Ce site regroupe mes ressources de SIN : cours, TP et projets. Le site est public ;
+        les documents personnels resteront sur un espace protégé, accessible par lien.
       </p>
     </div>
 
     <h2>Comment ce site arrive jusqu'à vous</h2>
     <figure class="schema">
       <pre>
-NAVIGATEUR (client)
-       |
-       |  requête HTTPS
-       v
-GITHUB PAGES (serveur web)
-       |
-       |  fournit les fichiers publiés
-       v
-DÉPÔT GITHUB
-   index.html
-   style.css
-   cours.html / tp.html / projets.html / documents.html
+NAVIGATEUR --requête HTTPS--> GITHUB PAGES --fichiers--> DÉPÔT GITHUB
       </pre>
       <figcaption>
-        Le navigateur demande la page, GitHub Pages renvoie les fichiers du dépôt,
-        puis le navigateur interprète le HTML et applique le CSS pour l'affichage.
+        Le navigateur demande la page, GitHub Pages la renvoie, le navigateur l'affiche.
       </figcaption>
     </figure>
 
@@ -65,29 +48,29 @@ DÉPÔT GITHUB
     <ul class="rubriques">
       <li>
         <h3><a href="cours.html">Cours</a></h3>
-        <p>Les séquences de SIN, leurs notions clés et leurs supports.</p>
+        <p>Les séquences de SIN.</p>
       </li>
       <li>
         <h3><a href="tp.html">TP</a></h3>
-        <p>Les travaux pratiques réalisés en classe et leurs comptes rendus.</p>
+        <p>Les travaux pratiques.</p>
       </li>
       <li>
         <h3><a href="projets.html">Projets</a></h3>
-        <p>Les projets menés en équipe, du cahier des charges à la présentation.</p>
+        <p>Les projets de l'année.</p>
       </li>
       <li>
         <h3><a href="documents.html">Documents</a></h3>
-        <p>Les liens vers les fichiers hébergés sur l'espace protégé.</p>
+        <p>Liens vers l'espace protégé.</p>
       </li>
     </ul>
   </main>
 
   <footer class="pied">
     <div>
-      <p>Classeur numérique de SIN — site public publié avec GitHub Pages.</p>
-      <p>Aucun document nominatif n'est déposé dans ce dépôt.</p>
+      <p>Classeur numérique de SIN — site public.</p>
     </div>
   </footer>
 
 </body>
+</html>
 </html>
