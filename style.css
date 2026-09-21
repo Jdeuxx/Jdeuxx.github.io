@@ -310,3 +310,90 @@ h3 {
   margin: 6px 0;
   font-size: 0.95rem;
 }
+.sequences {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  margin: 1.5rem 0 2rem;
+}
+
+.sequence-carte {
+  background: var(--blanc);
+  border: 1px solid var(--trait);
+  border-radius: 10px;
+  padding: 1.3rem 1.4rem;
+}
+
+.sequence-avenir {
+  opacity: .7;
+}
+
+.sequence-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .6rem;
+}
+
+.sequence-numero {
+  font-weight: 600;
+  color: var(--signal);
+  font-size: .9rem;
+}
+
+.badge {
+  font-size: .75rem;
+  font-weight: 600;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+}
+
+.badge-disponible {
+  background: #e3f6ea;
+  color: #1a7a44;
+}
+
+.badge-avenir {
+  background: var(--papier);
+  color: var(--gris);
+}
+
+.sequence-carte h3 {
+  margin: .2rem 0 .4rem;
+  font-size: 1.05rem;
+}
+
+.sequence-carte p {
+  color: var(--gris);
+  font-size: .92rem;
+  margin: 0 0 .8rem;
+}
+
+.sequence-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  padding: .15rem .5rem;
+  font-size: .78rem;
+  color: var(--gris);
+}
+
+.sequence-lien {
+  display: inline-block;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--signal);
+  font-size: .9rem;
+}
+
+.sequence-lien-desactive {
+  color: var(--gris);
+  font-weight: 400;
+}
