@@ -6,12 +6,24 @@
 
     <title><?= htmlspecialchars($titre) ?> - Mon classeur numérique</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="page-<?= htmlspecialchars($page) ?>">
 
 <header class="bandeau">
+
+    <!-- Éclairs décoratifs ⚡ -->
+    <div class="eclairs">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 
     <div class="bandeau-contenu">
 
@@ -21,7 +33,7 @@
 
         <nav class="menu">
 
-            <a href="index.html"
+            <a href="index.php"
                <?= $page === 'accueil' ? 'aria-current="page"' : '' ?>>
                 Accueil
             </a>
