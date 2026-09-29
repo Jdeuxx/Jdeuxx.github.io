@@ -680,3 +680,117 @@ main h2::before {
   .reveal { opacity: 1; transform: none; }
   .eclairs { display: none; }
 }
+/* =========================================================
+   COULEUR PAR RUBRIQUE
+   ========================================================= */
+
+/* ACCUEIL = BLEU */
+.page-accueil {
+    --couleur-page: #38bdf8;
+    --couleur-claire: #bae6fd;
+}
+
+/* COURS = VERT */
+.page-cours {
+    --couleur-page: #22c55e;
+    --couleur-claire: #bbf7d0;
+}
+
+/* TP = ORANGE */
+.page-tp {
+    --couleur-page: #f97316;
+    --couleur-claire: #fed7aa;
+}
+
+/* PROJETS = VIOLET */
+.page-projets {
+    --couleur-page: #a855f7;
+    --couleur-claire: #e9d5ff;
+}
+
+/* RÉVISIONS = ROUGE */
+.page-revisions {
+    --couleur-page: #ef4444;
+    --couleur-claire: #fecaca;
+}
+
+
+/* Couleur de la rubrique active */
+.page-accueil .menu a[aria-current="page"],
+.page-cours .menu a[aria-current="page"],
+.page-tp .menu a[aria-current="page"],
+.page-projets .menu a[aria-current="page"],
+.page-revisions .menu a[aria-current="page"] {
+    color: white;
+    border-bottom-color: var(--couleur-page);
+
+    text-shadow:
+        0 0 8px var(--couleur-page);
+}
+
+
+/* Éclair de la rubrique */
+.page-accueil .menu a[aria-current="page"]::before,
+.page-cours .menu a[aria-current="page"]::before,
+.page-tp .menu a[aria-current="page"]::before,
+.page-projets .menu a[aria-current="page"]::before,
+.page-revisions .menu a[aria-current="page"]::before {
+    color: var(--couleur-page);
+
+    filter:
+        drop-shadow(0 0 5px var(--couleur-page));
+}
+
+
+/* Ligne lumineuse sous le bandeau */
+.page-accueil .bandeau::after,
+.page-cours .bandeau::after,
+.page-tp .bandeau::after,
+.page-projets .bandeau::after,
+.page-revisions .bandeau::after {
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--couleur-page),
+            var(--couleur-claire),
+            var(--couleur-page),
+            transparent
+        );
+
+    box-shadow:
+        0 0 8px var(--couleur-page),
+        0 0 20px var(--couleur-page);
+}
+
+
+/* Éclairs des titres */
+.page-accueil main h2::before,
+.page-cours main h2::before,
+.page-tp main h2::before,
+.page-projets main h2::before,
+.page-revisions main h2::before {
+    color: var(--couleur-page);
+
+    filter:
+        drop-shadow(0 0 6px var(--couleur-page));
+}
+
+
+/* Cartes au survol */
+.page-accueil .fiche:hover,
+.page-accueil .rubriques li:hover,
+.page-cours .fiche:hover,
+.page-cours .rubriques li:hover,
+.page-tp .fiche:hover,
+.page-tp .rubriques li:hover,
+.page-projets .fiche:hover,
+.page-projets .rubriques li:hover,
+.page-revisions .fiche:hover,
+.page-revisions .rubriques li:hover {
+    border-color: var(--couleur-page);
+
+    box-shadow:
+        0 10px 26px rgba(16,35,58,.15),
+        0 0 20px var(--couleur-page);
+}
