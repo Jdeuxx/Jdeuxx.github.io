@@ -812,3 +812,188 @@ main h2::before {
 .bandeau.eclair {
   animation: eclair 2s infinite;
 }
+/* =========================================================
+   ÉCLAIRS ⚡ BIEN VISIBLES + COULEURS PAR PAGE
+   ========================================================= */
+
+:root {
+  --accent: #38bdf8;
+  --accent-clair: #bae6fd;
+  --accent-rgb: 56, 189, 248;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%2338bdf8' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+body.page-accueil {
+  --accent: #38bdf8;
+  --accent-clair: #bae6fd;
+  --accent-rgb: 56, 189, 248;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%2338bdf8' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+body.page-cours {
+  --accent: #22d3ee;
+  --accent-clair: #a5f3fc;
+  --accent-rgb: 34, 211, 238;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%2322d3ee' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+body.page-tp {
+  --accent: #4ade80;
+  --accent-clair: #bbf7d0;
+  --accent-rgb: 74, 222, 128;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%234ade80' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+body.page-projets {
+  --accent: #e879f9;
+  --accent-clair: #f5d0fe;
+  --accent-rgb: 232, 121, 249;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%23e879f9' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+/* Révisions = page-documents (pas page-revisions) */
+body.page-documents {
+  --accent: #fbbf24;
+  --accent-clair: #fde68a;
+  --accent-rgb: 251, 191, 36;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%23fbbf24' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+body.page-404 {
+  --accent: #ff4d4d;
+  --accent-clair: #fecaca;
+  --accent-rgb: 255, 77, 77;
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%23ff4d4d' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+/* Bandeau */
+.bandeau {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.bandeau::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 0; right: 0; bottom: 0;
+  height: 4px !important;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-clair), var(--accent), transparent) !important;
+  background-size: 220% 100% !important;
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), .9), 0 0 28px rgba(var(--accent-rgb), .5);
+  animation: courant-fort 2.2s linear infinite !important;
+  z-index: 3;
+}
+
+@keyframes courant-fort {
+  to { background-position: -220% 0; }
+}
+
+.bandeau-contenu {
+  position: relative;
+  z-index: 2;
+}
+
+/* Conteneur des éclairs — OBLIGATOIRE */
+.eclairs {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  overflow: hidden !important;
+}
+
+/* Les ⚡ eux-mêmes */
+.eclairs span {
+  position: absolute !important;
+  display: block !important;
+  width: 48px !important;
+  height: 64px !important;
+  opacity: 0;
+  background: var(--bolt) center / contain no-repeat !important;
+  filter:
+    drop-shadow(0 0 8px rgba(var(--accent-rgb), 1))
+    drop-shadow(0 0 22px rgba(var(--accent-rgb), 1))
+    drop-shadow(0 0 40px rgba(var(--accent-rgb), .8)) !important;
+  animation: flash-eclair 3.8s ease-out infinite !important;
+}
+
+.eclairs span:nth-child(1) { left: 4%;  top: 12%; transform: rotate(-12deg); animation-delay: 0s !important; }
+.eclairs span:nth-child(2) { left: 26%; top: 48%; width: 34px !important; height: 46px !important; transform: rotate(10deg); animation-delay: .7s !important; }
+.eclairs span:nth-child(3) { left: 50%; top: 16%; width: 40px !important; height: 54px !important; transform: rotate(-6deg); animation-delay: 1.4s !important; }
+.eclairs span:nth-child(4) { left: 70%; top: 42%; width: 32px !important; height: 44px !important; transform: rotate(14deg); animation-delay: 2.1s !important; }
+.eclairs span:nth-child(5) { right: 5%; left: auto !important; top: 14%; width: 46px !important; height: 62px !important; transform: rotate(8deg); animation-delay: 2.8s !important; }
+
+@keyframes flash-eclair {
+  0%, 72% {
+    opacity: 0;
+    transform: scale(.75) translateY(-8px);
+  }
+  78% {
+    opacity: 1;
+    transform: scale(1.2) translateY(0);
+  }
+  86% {
+    opacity: .55;
+    transform: scale(1) translateY(4px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(.85) translateY(10px);
+  }
+}
+
+/* Petit ⚡ devant le titre */
+.bandeau h1::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: .75em !important;
+  height: 1em !important;
+  margin-right: .35em !important;
+  background: var(--bolt) center / contain no-repeat !important;
+  vertical-align: -.08em;
+  filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 1)) !important;
+}
+
+/* Menu actif coloré */
+.menu a[aria-current="page"] {
+  border-bottom-color: var(--accent) !important;
+  text-shadow: 0 0 8px rgba(var(--accent-rgb), .8);
+}
+
+.menu a[aria-current="page"]::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: .55em !important;
+  height: .85em !important;
+  margin-right: .35em !important;
+  background: var(--bolt) center / contain no-repeat !important;
+  vertical-align: -.05em;
+  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 1));
+}
+
+/* Titres */
+main h2::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: .6em !important;
+  height: .9em !important;
+  margin-right: .4em !important;
+  background: var(--bolt) center / contain no-repeat !important;
+  vertical-align: -.06em;
+  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 1));
+}
+
+/* Si animations réduites système : on force quand même un éclair fixe */
+@media (prefers-reduced-motion: reduce) {
+  .eclairs span {
+    animation: none !important;
+    opacity: .55 !important;
+  }
+  .eclairs span:nth-child(1),
+  .eclairs span:nth-child(3),
+  .eclairs span:nth-child(5) {
+    opacity: .7 !important;
+  }
+}
