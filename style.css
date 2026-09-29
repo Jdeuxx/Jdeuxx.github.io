@@ -439,3 +439,244 @@ h3 {
   margin: .5rem 0 0;
   font-size: .92rem;
 }
+
+/* =========================================================
+   12. Effets ⚡ en bleu clair
+   (à laisser tout en bas pour l'emporter sur les règles
+   précédentes ; nécessite effets.js pour la barre et
+   l'apparition des cartes)
+   ========================================================= */
+:root {
+  --eclair: #38bdf8;         /* bleu clair principal */
+  --eclair-clair: #bae6fd;   /* bleu très clair (reflets) */
+  --eclair-glow: 0 0 8px rgba(56, 189, 248, .55), 0 0 22px rgba(125, 211, 252, .4);
+  --bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cpath fill='%2338bdf8' d='M14 0 2 18h8l-3 14 15-20h-9z'/%3E%3C/svg%3E");
+}
+
+html { scroll-behavior: smooth; }
+::selection { background: var(--eclair-clair); color: var(--nuit); }
+
+/* Barre de progression */
+.barre-eclair {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, var(--eclair), var(--eclair-clair));
+  box-shadow: var(--eclair-glow);
+  transition: width .1s linear;
+}
+
+/* Bandeau : courant qui circule sur le bord bas */
+.bandeau {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--nuit) 0%, #16395c 100%);
+}
+
+.bandeau::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--eclair), var(--eclair-clair), var(--eclair), transparent);
+  background-size: 200% 100%;
+  animation: courant 3s linear infinite;
+}
+
+@keyframes courant { to { background-position: -200% 0; } }
+
+.bandeau-contenu { position: relative; z-index: 1; }
+
+/* Titre principal */
+.bandeau h1 {
+  background: linear-gradient(90deg, #bae6fd, #ffffff 50%, #7dd3fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: scintille 5s ease-in-out infinite;
+}
+
+.bandeau h1::before {
+  content: "";
+  display: inline-block;
+  width: .6em;
+  height: .85em;
+  margin-right: .35em;
+  background: var(--bolt) center/contain no-repeat;
+  vertical-align: -.05em;
+  filter: drop-shadow(0 0 6px var(--eclair));
+}
+
+@keyframes scintille {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(125, 211, 252, .3)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(186, 230, 253, .6)); }
+}
+
+/* Éclairs décoratifs dans le bandeau */
+.eclairs span {
+  position: absolute;
+  top: 8%;
+  width: 30px;
+  height: 40px;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--bolt) center/contain no-repeat;
+  filter: drop-shadow(0 0 10px var(--eclair-clair));
+  animation: eclair 7s ease-out infinite;
+}
+.eclairs span:nth-child(1) { left: 5%;  transform: rotate(-10deg); animation-delay: 0s; }
+.eclairs span:nth-child(2) { left: 38%; top: 55%; width: 22px; height: 30px; transform: rotate(8deg); animation-delay: 2.3s; }
+.eclairs span:nth-child(3) { right: 8%; transform: rotate(12deg); animation-delay: 4.6s; }
+
+@keyframes eclair {
+  0%, 80% { opacity: 0; }
+  84%     { opacity: .9; }
+  100%    { opacity: 0; }
+}
+
+/* Menu */
+.menu a { transition: color .2s, border-color .2s; }
+.menu a:hover { border-bottom-color: var(--eclair-clair); }
+.menu a[aria-current="page"] { border-bottom-color: var(--eclair); }
+.menu a[aria-current="page"]::before {
+  content: "";
+  display: inline-block;
+  width: .5em;
+  height: .8em;
+  margin-right: .4em;
+  background: var(--bolt) center/contain no-repeat;
+  vertical-align: -.05em;
+}
+
+/* Titres de section */
+main h2::before {
+  content: "";
+  display: inline-block;
+  width: .55em;
+  height: .8em;
+  margin-right: .4em;
+  background: var(--bolt) center/contain no-repeat;
+  vertical-align: -.05em;
+}
+
+/* Cartes : survol lumineux + reflet */
+.sequence-carte,
+.tp-carte,
+.fiche,
+.rubriques li {
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.sequence-carte::before,
+.tp-carte::before,
+.fiche::before,
+.rubriques li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(186, 230, 253, .55), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+
+.sequence-carte:hover,
+.tp-carte:hover,
+.fiche:hover,
+.rubriques li:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 26px rgba(16, 35, 58, .15), var(--eclair-glow);
+}
+
+.sequence-carte:hover::before,
+.tp-carte:hover::before,
+.fiche:hover::before,
+.rubriques li:hover::before {
+  left: 140%;
+  transition: left .7s ease;
+}
+
+.sequence-carte:hover { border-color: var(--eclair); }
+
+/* Badges et liens */
+.badge-disponible { animation: pulse 2.4s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(26, 122, 68, .35); }
+  50%      { box-shadow: 0 0 0 8px rgba(26, 122, 68, 0); }
+}
+
+.sequence-lien:not(.sequence-lien-desactive)::before {
+  content: "";
+  display: inline-block;
+  width: .55em;
+  height: .8em;
+  margin-right: .35em;
+  background: var(--bolt) center/contain no-repeat;
+  vertical-align: -.05em;
+}
+
+.sequence-lien:not(.sequence-lien-desactive) {
+  transition: transform .2s, text-shadow .2s;
+}
+
+.sequence-lien:not(.sequence-lien-desactive):hover {
+  transform: translateY(-1px);
+  text-shadow: 0 0 10px rgba(56, 189, 248, .6);
+}
+
+/* Carte profil sombre */
+.carte-profil {
+  box-shadow: 0 0 0 1px rgba(125, 211, 252, .25), 0 0 24px rgba(56, 189, 248, .15);
+}
+
+/* Pied de page */
+.pied {
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--eclair), var(--eclair-clair), transparent) 1;
+}
+
+.pied p:first-child::before {
+  content: "";
+  display: inline-block;
+  width: .55em;
+  height: .8em;
+  margin-right: .4em;
+  background: var(--bolt) center/contain no-repeat;
+  vertical-align: -.05em;
+}
+
+/* Apparition au défilement (classes ajoutées par effets.js) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* Barre de défilement */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--papier); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--eclair), var(--eclair-clair));
+  border-radius: 6px;
+}
+
+/* Animations coupées si l'appareil le demande */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .eclairs { display: none; }
+}
