@@ -794,3 +794,21 @@ main h2::before {
         0 10px 26px rgba(16,35,58,.15),
         0 0 20px var(--couleur-page);
 }
+@keyframes eclair {
+  0%, 100% {
+    background-color: var(--nuit);
+    box-shadow: none;
+  }
+  45%, 55% {
+    background-color: var(--jaune);
+    box-shadow: 0 0 20px 10px var(--jaune);
+  }
+  50% {
+    background-color: var(--blanc);
+    box-shadow: 0 0 30px 15px var(--blanc);
+  }
+}
+
+.bandeau.eclair {
+  animation: eclair 2s infinite;
+}
