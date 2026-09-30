@@ -1,13 +1,41 @@
 <?php
-$page  = 'projets';
+$page = 'projets';
 $titre = 'Projets';
-include 'includes/entete.php';
 ?>
 
-  <main>
-    <h2>Projets</h2>
-    <!-- À compléter avec le contenu de ton ancienne page projets.html -->
-    <p><a href="index.php">Revenir à l'accueil</a></p>
-  </main>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projets - Mon classeur numérique</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-<?php include 'includes/pied.php'; ?>
+<body class="page-projets">
+
+<header>
+    <h1>Mon classeur numérique</h1>
+    <p>Mes ressources de SIN</p>
+
+    <nav>
+        <a href="index.php">Accueil</a>
+        <a href="cours.php">Cours</a>
+        <a href="tp.php">TP</a>
+        <a href="projets.php">Projets</a>
+        <a href="documents.php">Révisions</a>
+    </nav>
+</header>
+
+<main>
+    <h2>📁 Projets</h2>
+
+    <p>Aucun projet pour le moment.</p>
+</main>
+
+<footer>
+    <p>Mon classeur numérique — Ressources de SIN</p>
+</footer>
+
+</body>
+</html>
