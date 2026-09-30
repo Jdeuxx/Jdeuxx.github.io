@@ -1,60 +1,126 @@
 <?php
-$page  = 'tp';
+$page = 'tp';
 $titre = 'TP';
-
-// Pour ajouter un TP : copier un bloc et modifier les valeurs.
-// 'termine' et 'note' peuvent être laissés à null tant que le TP n'est pas fini.
-$tps = [
-  [
-    'titre'   => 'TP Test',
-    'ouvert'  => '07/09/2026',
-    'termine' => '08/09/2026',
-    'note'    => 6,
-    'pdf'     => 'documents/tp/tp-S01-aide-stationnement-corrige.pdf',
-  ],
-];
-
-include 'includes/entete.php';
 ?>
 
-  <main>
-    <h2>Mes travaux pratiques</h2>
-    <p>Je conserve ici mes sujets, résultats et comptes rendus.</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP - Mon classeur numérique</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    <div class="tp-liste">
-      <?php foreach ($tps as $tp):
-        $fini = !empty($tp['termine']); ?>
-        <article class="tp-carte">
-          <div class="tp-entete">
-            <h3><?= htmlspecialchars($tp['titre']) ?></h3>
-            <?php if ($fini): ?>
-              <span class="badge badge-disponible">Terminé</span>
-            <?php else: ?>
-              <span class="badge badge-avenir">En cours</span>
-            <?php endif; ?>
-          </div>
+<body class="page-tp">
 
-          <p class="tp-dates">
-            Ouvert le <?= htmlspecialchars($tp['ouvert']) ?>
-            <?php if ($fini): ?> · terminé le <?= htmlspecialchars($tp['termine']) ?><?php endif; ?>
-          </p>
+<header>
+    <h1>Mon classeur numérique</h1>
+    <p>Mes ressources de SIN</p>
 
-          <?php if ($tp['note'] !== null): ?>
-            <p class="tp-note">Note : <strong><?= htmlspecialchars($tp['note']) ?> / 20</strong></p>
-          <?php endif; ?>
+    <nav>
+        <a href="index.php">Accueil</a>
+        <a href="cours.php">Cours</a>
+        <a href="tp.php">TP</a>
+        <a href="projets.php">Projets</a>
+        <a href="documents.php">Révisions</a>
+    </nav>
+</header>
 
-          <?php if (is_file(__DIR__ . '/' . $tp['pdf'])): ?>
-            <a class="sequence-lien" href="<?= htmlspecialchars($tp['pdf']) ?>" target="_blank" rel="noopener">
-              <?= $fini ? 'Ouvrir le TP corrigé' : 'Ouvrir le sujet' ?>
-            </a>
-          <?php else: ?>
-            <span class="sequence-lien sequence-lien-desactive">Document non disponible</span>
-          <?php endif; ?>
-        </article>
-      <?php endforeach; ?>
-    </div>
+<main>
+    <h2>🧪 TP — Aide au stationnement Grove</h2>
 
-    <p><a href="index.php">Revenir à l'accueil</a></p>
-  </main>
+    <h3>A1 — Les éléments du système</h3>
 
-<?php include 'includes/pied.php'; ?>
+    <ul>
+        <li><strong>Acquisition :</strong> capteur de distance Grove</li>
+        <li><strong>Traitement :</strong> Arduino Uno R3</li>
+        <li><strong>Communication :</strong> LED Grove et buzzer Grove</li>
+        <li><strong>Action du conducteur :</strong> bouton Grove</li>
+    </ul>
+
+    <h3>A2 — Chaîne d'information</h3>
+
+    <p>
+        <strong>ACQUÉRIR :</strong> capteur de distance Grove + bouton Grove
+    </p>
+
+    <p>
+        <strong>TRAITER :</strong> Arduino Uno R3
+    </p>
+
+    <p>
+        <strong>COMMUNIQUER :</strong> LED Grove + buzzer Grove
+    </p>
+
+    <h3>A3 — Nature des informations</h3>
+
+    <ul>
+        <li>Capteur de distance : valeur numérique de distance.</li>
+        <li>Bouton : état logique / TOR.</li>
+    </ul>
+
+    <h3>B2 / B3 — Mesures</h3>
+
+    <table>
+        <tr>
+            <th>Distance de référence</th>
+            <th>Distance mesurée</th>
+        </tr>
+        <tr><td>50 cm</td><td>0</td></tr>
+        <tr><td>40 cm</td><td>0</td></tr>
+        <tr><td>30 cm</td><td>0</td></tr>
+        <tr><td>20 cm</td><td>0</td></tr>
+        <tr><td>15 cm</td><td>0</td></tr>
+        <tr><td>10 cm</td><td>0</td></tr>
+    </table>
+
+    <p>
+        Le capteur affichait 0 pour toutes les mesures. Il fallait vérifier
+        le câblage, le port D7, la bibliothèque et le moniteur série.
+    </p>
+
+    <h3>C1 — Programme</h3>
+
+    <pre><code>distance = ultrasonic.MeasureInCentimeters();
+
+Serial.println(distance);
+
+digitalWrite(LED, HIGH);</code></pre>
+
+    <h3>C2 — Condition</h3>
+
+    <pre><code>if (distance &lt;= 30)</code></pre>
+
+    <p>
+        Cela signifie : si la distance est inférieure ou égale à 30 cm,
+        le bloc suivant est exécuté.
+    </p>
+
+    <h3>C3 — Exemples</h3>
+
+    <ul>
+        <li>45 cm → LED éteinte</li>
+        <li>25 cm → LED allumée</li>
+        <li>10 cm → LED allumée</li>
+    </ul>
+
+    <h3>D1 — Fonctionnement</h3>
+
+    <ul>
+        <li><strong>Distance ≤ 15 cm :</strong> LED ON + buzzer ON</li>
+        <li><strong>Distance ≤ 30 cm :</strong> LED ON + buzzer OFF</li>
+        <li><strong>Sinon :</strong> LED OFF + buzzer OFF</li>
+    </ul>
+
+    <p>
+        <a href="index.php">← Retour à l'accueil</a>
+    </p>
+</main>
+
+<footer>
+    <p>Mon classeur numérique — Ressources de SIN</p>
+</footer>
+
+</body>
+</html>
