@@ -1,62 +1,113 @@
 <?php
-$page  = 'cours';
+$page = 'cours';
 $titre = 'Cours';
-
-// Pour ajouter une séquence : copier un bloc et modifier les valeurs.
-// La carte passe en "Disponible" dès que le PDF existe dans documents/cours/.
-$sequences = [
-  [
-    'numero' => 'S01',
-    'titre'  => 'De la grandeur physique à la donnée numérique',
-    'texte'  => 'Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.',
-    'tags'   => ['Capteurs', 'Arduino', 'Acquisition'],
-    'pdf'    => 'documents/cours/cours-S01-acquerir-traiter-commander.pdf',
-  ],
-  [
-    'numero' => 'S02',
-    'titre'  => 'Communication et échange de données',
-    'texte'  => "Cette séquence apparaîtra ici lorsqu'elle aura été commencée.",
-    'tags'   => ['Réseau', 'Protocoles'],
-    'pdf'    => 'documents/cours/cours-S02.pdf',
-  ],
-];
-
-include 'includes/entete.php';
 ?>
 
-  <main>
-    <h2>Mes séquences</h2>
-    <p>Les documents de cours sont classés par séquence.</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours - Mon classeur numérique</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    <div class="sequences">
-      <?php foreach ($sequences as $s):
-        $dispo = is_file(__DIR__ . '/' . $s['pdf']); ?>
-        <article class="sequence-carte<?= $dispo ? '' : ' sequence-avenir' ?>">
-          <div class="sequence-entete">
-            <span class="sequence-numero"><?= htmlspecialchars($s['numero']) ?></span>
-            <?php if ($dispo): ?>
-              <span class="badge badge-disponible">Disponible</span>
-            <?php else: ?>
-              <span class="badge badge-avenir">À venir</span>
-            <?php endif; ?>
-          </div>
-          <h3><?= htmlspecialchars($s['titre']) ?></h3>
-          <p><?= htmlspecialchars($s['texte']) ?></p>
-          <div class="sequence-tags">
-            <?php foreach ($s['tags'] as $tag): ?>
-              <span class="tag"><?= htmlspecialchars($tag) ?></span>
-            <?php endforeach; ?>
-          </div>
-          <?php if ($dispo): ?>
-            <a class="sequence-lien" href="<?= htmlspecialchars($s['pdf']) ?>" target="_blank" rel="noopener">Ouvrir le cours</a>
-          <?php else: ?>
-            <span class="sequence-lien sequence-lien-desactive">Pas encore disponible</span>
-          <?php endif; ?>
-        </article>
-      <?php endforeach; ?>
-    </div>
+<body class="page-cours">
 
-    <p><a href="index.php">Revenir à l'accueil</a></p>
-  </main>
+<header>
+    <h1>Mon classeur numérique</h1>
+    <p>Mes ressources de SIN</p>
 
-<?php include 'includes/pied.php'; ?>
+    <nav>
+        <a href="index.php">Accueil</a>
+        <a href="cours.php">Cours</a>
+        <a href="tp.php">TP</a>
+        <a href="projets.php">Projets</a>
+        <a href="documents.php">Révisions</a>
+    </nav>
+</header>
+
+<main>
+    <h2>📘 Cours SIN</h2>
+
+    <h3>Acquérir → Traiter → Communiquer / Commander</h3>
+
+    <p>
+        La chaîne d'information est la partie du système qui capte les données,
+        les analyse et donne des ordres.
+    </p>
+
+    <h3>1. La chaîne d'information</h3>
+
+    <ul>
+        <li><strong>Acquérir :</strong> recevoir une information avec un capteur ou un bouton.</li>
+        <li><strong>Traiter :</strong> analyser l'information avec un microcontrôleur.</li>
+        <li><strong>Communiquer / Commander :</strong> transmettre une information ou commander un actionneur.</li>
+    </ul>
+
+    <p><strong>Exemple :</strong></p>
+
+    <ul>
+        <li>Capteur de distance → Acquérir</li>
+        <li>Arduino Uno R3 → Traiter</li>
+        <li>LED / buzzer → Communiquer</li>
+    </ul>
+
+    <h3>2. Les informations</h3>
+
+    <ul>
+        <li><strong>Valeur numérique :</strong> 27 cm, 21,4 °C, 612 lux...</li>
+        <li><strong>État logique / TOR :</strong> appuyé / relâché, ouvert / fermé.</li>
+    </ul>
+
+    <p>
+        TOR signifie <strong>Tout Ou Rien</strong>.
+    </p>
+
+    <h3>3. La condition IF</h3>
+
+    <pre><code>if (distance &lt;= 30)
+{
+    digitalWrite(LED, HIGH);
+}</code></pre>
+
+    <p>
+        <strong>if</strong> signifie « si ». Le programme exécute le bloc
+        uniquement si la condition est vraie.
+    </p>
+
+    <h3>4. Plusieurs conditions</h3>
+
+    <pre><code>if (distance &lt;= 15)
+{
+    // Danger
+}
+else if (distance &lt;= 30)
+{
+    // Zone intermédiaire
+}
+else
+{
+    // Zone éloignée
+}</code></pre>
+
+    <h3>5. Commander une sortie</h3>
+
+    <ul>
+        <li><code>digitalWrite(LED, HIGH);</code> → allumer la LED</li>
+        <li><code>digitalWrite(LED, LOW);</code> → éteindre la LED</li>
+        <li><code>tone(BUZZER, 1000);</code> → faire sonner le buzzer</li>
+        <li><code>noTone(BUZZER);</code> → arrêter le buzzer</li>
+    </ul>
+
+    <p>
+        <a href="index.php">← Retour à l'accueil</a>
+    </p>
+</main>
+
+<footer>
+    <p>Mon classeur numérique — Ressources de SIN</p>
+</footer>
+
+</body>
+</html>
