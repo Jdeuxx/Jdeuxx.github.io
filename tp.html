@@ -1,131 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP 01 — Aide au stationnement Grove</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon classeur - TP</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <h1>Mes Travaux Pratiques</h1>
+  </header>
 
-    <div class="container">
-        <header class="page-header">
-            <a href="index.html" class="back-link">&larr; Retour à l'accueil</a>
-            <span class="badge-year">TRAVAUX PRATIQUES</span>
-            <h1>TP 01 — Aide au stationnement Grove</h1>
-            <p class="subtitle">Élève : Jean-Daniel AZOWA | Rendu le 08/09/2026 à 07:55</p>
-        </header>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="tp.html" class="active">TP</a>
+    <a href="projets.html">Projets</a>
+    <a href="revisions.html">Révisions</a>
+  </nav>
 
-        <div class="score-card">
-            <div class="score-header">
-                <h2>Copie Corrigée</h2>
-                <span class="score-badge">Note : 6 / 20</span>
-            </div>
-            <p><strong>Appréciation :</strong> Les bases de l'analyse du système sont bien comprises, mais plusieurs réponses restent incomplètes. Attention à la nature des informations et à bien distinguer une condition d'une instruction de commande. La partie expérimentale n'a pas pu être menée correctement car le capteur affichait 0 : il fallait alors signaler le dysfonctionnement puis chercher sa cause.</p>
-        </div>
-
-        <main class="content-block">
-            <section class="doc-section">
-                <h2>Analyse du système & Chaîne d'information</h2>
-                
-                <div class="qa-block">
-                    <h3>A1. Fonctions des éléments du système</h3>
-                    <p class="student-ans"><strong>Ma réponse :</strong><br>
-                    • Acquérir la distance : capteur de distance Grove.<br>
-                    • Traiter les informations : Arduino Uno R3.<br>
-                    • Communiquer au conducteur : LED Grove et buzzer Grove.<br>
-                    • Agir sur le système : bouton Grove.</p>
-                    <div class="teacher-corr">
-                        <span class="status-ok">✔ Correct</span>
-                    </div>
-                </div>
-
-                <div class="qa-block">
-                    <h3>A2. Classification dans la chaîne d'information</h3>
-                    <p class="student-ans"><strong>Ma réponse :</strong> ACQUÉRIR: Capteur Grove | TRAITER: Arduino Uno R3 | COMMUNIQUER: LED Grove et buzzer Grove.</p>
-                    <div class="teacher-corr">
-                        <span class="status-warning">⚠️ À compléter</span><br>
-                        <strong>Correction :</strong> ACQUÉRIR : Capteur de distance Grove + Bouton Grove. TRAITER : Arduino Uno R3. COMMUNIQUER : LED Grove + Buzzer Grove.<br>
-                        <em>Remarque : Le bouton est aussi une entrée du système : il permet d'acquérir une information provenant de l'utilisateur.</em>
-                    </div>
-                </div>
-
-                <div class="qa-block">
-                    <h3>A3. Nature des informations</h3>
-                    <p class="student-ans"><strong>Ma réponse :</strong> Capteur de distance = analogique | Bouton poussoir = numérique.</p>
-                    <div class="teacher-corr">
-                        <span class="status-err">❌ À corriger</span><br>
-                        <strong>Correction :</strong> Le capteur de distance fournit une valeur numérique de distance mesurée. Le bouton fournit un état logique / TOR (0 ou 1). Il ne faut pas confondre « analogique / numérique » avec le rôle d'une entrée.
-                    </div>
-                </div>
-            </section>
-
-            <section class="doc-section">
-                <h2>Relevé de mesures (B2 / B3)</h2>
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Distance de référence</th>
-                            <th>Distance mesurée</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>50 cm</td><td>0</td></tr>
-                        <tr><td>40 cm</td><td>0</td></tr>
-                        <tr><td>30 cm</td><td>0</td></tr>
-                        <tr><td>20 cm</td><td>0</td></tr>
-                        <tr><td>15 cm</td><td>0</td></tr>
-                        <tr><td>10 cm</td><td>0</td></tr>
-                    </tbody>
-                </table>
-                <div class="teacher-corr">
-                    <strong>Remarque correcteur (B2/B3) :</strong> Le relevé montre 0 pour toutes les mesures. Tu as correctement signalé le problème, mais l'écart ne pouvait pas être exploité avec ces valeurs. Dans cette situation, il fallait vérifier le câblage, le port D7, la bibliothèque et le moniteur série avant de poursuivre.
-                </div>
-            </section>
-
-            <section class="doc-section">
-                <h2>Analyse du programme (C1 - C3)</h2>
-                
-                <div class="qa-block">
-                    <h3>C1. Instructions de commande</h3>
-                    <div class="teacher-corr">
-                        <span class="status-warning">⚠️ Partiellement correct</span><br>
-                        • <strong>Acquisition :</strong> <code>distance = ultrasonic.MeasureInCentimeters();</code><br>
-                        • <strong>Affichage :</strong> <code>Serial.println(distance);</code><br>
-                        • <strong>Allumage de la LED :</strong> <code>digitalWrite(LED, HIGH);</code><br>
-                        <em>La condition <code>if (distance &lt;= 30)</code> ne commande pas directement la LED : elle décide si les instructions du bloc doivent être exécutées.</em>
-                    </div>
-                </div>
-
-                <div class="qa-block">
-                    <h3>C2. Rôle de la condition if</h3>
-                    <div class="teacher-corr">
-                        <span class="status-ok">✔ Correct dans l'idée</span><br>
-                        <code>if (distance &lt;= 30)</code> signifie : si la distance est inférieure ou égale à 30 cm, le bloc suivant est exécuté.
-                    </div>
-                </div>
-
-                <div class="qa-block">
-                    <h3>C3. Tests d'états</h3>
-                    <div class="teacher-corr">
-                        • 45 cm : LED éteinte.<br>
-                        • 25 cm : LED allumée.<br>
-                        • 10 cm : LED allumée.
-                    </div>
-                </div>
-
-                <div class="qa-block">
-                    <h3>D1. Structure multi-conditions</h3>
-                    <div class="teacher-corr">
-                        <span class="status-ok">✔ Correct</span><br>
-                        • Si distance &le; 15 cm : LED ON, buzzer ON.<br>
-                        • Sinon si distance &le; 30 cm : LED ON, buzzer OFF.<br>
-                        • Sinon : LED OFF, buzzer OFF.
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
+  <main>
+    <h2>Liste des TP de l'année</h2>
+    <p>Les comptes-rendus de TP seront bientôt disponibles via l'accès sécurisé Alwaysdata.</p>
+    <ul class="liste-docs">
+      <li>En attente des premiers documents... 🔒</li>
+    </ul>
+  </main>
 </body>
 </html>
