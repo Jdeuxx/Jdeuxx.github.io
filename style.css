@@ -1,3 +1,13 @@
+/* 1. Animation de la pluie qui tombe sans cesse à toute vitesse */
+@keyframes chutePluie {
+  0% {
+    background-position: 0px 0px, center top, top left;
+  }
+  100% {
+    background-position: 40px 400px, center top, top left;
+  }
+}
+
 /* Style global et fond d'orage électrique total */
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
@@ -9,19 +19,21 @@ body {
   min-height: 100vh;
   box-sizing: border-box;
 
-  /* FOND COMPOSÉ : Pluie diagonale + Éclair principal centré + Éclairs secondaires + Dégradé de couleur */
+  /* FOND COMPOSÉ : Pluie en boucle + Éclair principal centré + Dégradé avec horizon rose fuchsia */
   background-color: #050515;
   background-image: 
-    /* 1. Effet de pluie fine et dense */
-    linear-gradient(105deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-    /* 2. Éclair principal ramifié (Inspiré de votre première image) */
+    /* 1. Effet de pluie fine, dense et plus visible */
+    linear-gradient(105deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    /* 2. Éclair principal ramifié blanc/cyan au centre */
     url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 800 800' opacity='0.7'><path d='M400,0 L420,150 L380,220 L450,350 L390,430 L430,550 L400,620 L410,700 M420,150 L480,230 L520,310 M380,220 L310,290 L290,380 M450,350 L510,420 L490,530 M390,430 L340,510 L350,600 M430,550 L480,630' fill='none' stroke='white' stroke-width='4' filter='drop-shadow(0 0 8px %2300bfff) drop-shadow(0 0 25px %237f00ff)'/><path d='M400,0 L420,150 L380,220 L450,350 L390,430 L430,550 L400,620 L410,700 M420,150 L480,230 M380,220 L310,290 M450,350 L510,420 M390,430 L340,510' fill='none' stroke='%2300ffff' stroke-width='1.5'/></svg>"),
-    /* 3. Dégradé simulant le ciel noir/bleu violet et l'horizon rose flash (Inspiré des images 2 et 3) */
+    /* 3. Dégradé simulant le ciel noir/bleu violet et l'horizon rose flash */
     linear-gradient(to bottom, #030208 0%, #0d0b26 40%, #1c093a 75%, #ff3b93 90%, #05040a 93%, #020105 100%);
   
   background-repeat: repeat, no-repeat, no-repeat;
-  background-size: 35px 130px, 100% 90%, cover;
-  background-position: top left, center top, top left;
+  background-size: 40px 140px, 100% 90%, cover;
+  
+  /* Lancement de l'animation infinie et fluide pour la pluie */
+  animation: chutePluie 0.4s linear infinite;
 }
 
 /* En-tête */
@@ -174,7 +186,7 @@ body {
 
 .rubriques-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Aligné sur 4 colonnes pour la grille épurée */
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -220,6 +232,11 @@ body {
   color: #475569;
 }
 
+/* Cache le document au chargement de la page */
+.hidden-doc {
+  display: none !important;
+}
+
 /* Règle adaptative */
 @media (max-width: 900px) {
   .dashboard-top { flex-direction: column; }
@@ -229,8 +246,3 @@ body {
 @media (max-width: 500px) {
   .rubriques-grid { grid-template-columns: 1fr; }
 }
-/* Cache le document au chargement de la page */
-.hidden-doc {
-  display: none !important;
-}
-
