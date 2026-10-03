@@ -36,6 +36,7 @@
         </div>
         <h4>TP 01 — Diagnostic d'une chaîne d'acquisition</h4>
         <p>Analyse d'un système, mesures, comparaison aux résultats attendus et conclusion.</p>
+        <!-- Bouton d'ouverture du lecteur PDF -->
         <a href="#tp1-correction" class="tp-link" onclick="ouvrirDocument('tp1-correction')">Voir le TP et le compte rendu →</a>
       </div>
 
@@ -52,31 +53,17 @@
     </div>
   </section>
 
-  <!-- L'essentiel de la copie corrigée (Caché au départ, s'ouvre au clic) -->
+  <!-- ZONE DE LECTURE DU PDF (Cachée au départ, s'affiche au clic) -->
   <div id="tp1-correction" class="welcome-card content-page-card hidden-doc">
     <div class="tp-score-header">
-      <h2>📊 Correction Essentielle — TP 01 Aide au Stationnement</h2>
+      <h2>📊 Copie Corrigée — TP 01</h2>
       <span class="score-badge">Note : 6 / 20</span>
     </div>
-    <p class="teacher-feedback">⚠️ <em>Erreur clé relevée :</em> Capteur bloqué à 0 = dysfonctionnement à signaler et analyser (vérifier câblage D7 et moniteur série).</p>
-    
     <hr class="card-separator">
-
-    <h4>Corrections incontournables :</h4>
-    <ul>
-      <li><strong>Chaîne d'information :</strong> L'acquisition se fait par le capteur de distance ET le bouton poussoir (qui est aussi une entrée utilisateur).</li>
-      <li><strong>Nature des signaux :</strong> Le capteur de distance renvoie un signal <strong>numérique</strong>, le bouton fournit un <strong>état logique / TOR</strong>.</li>
-      <li><strong>Instructions Arduino :</strong> 
-        <br><code>distance = ultrasonic.MeasureInCentimeters();</code> (Acquérir)
-        <br><code>digitalWrite(LED, HIGH);</code> (Instruction de commande d'allumage)
-      </li>
-    </ul>
-
-    <h4>Logique Radar de Recul attendue :</h4>
-    <pre>
-if (distance &lt;= 15) { // Zone 1 : Danger (LED ON, buzzer ON) }
-else if (distance &lt;= 30) { // Zone 2 : Intermédiaire (LED ON, buzzer OFF) }
-else { // Zone 3 : Sécurité (LED OFF, buzzer OFF) }</pre>
+    
+    <!-- LECTEUR PDF INTÉGRÉ -->
+    <!-- Remplacer "moncompte.alwaysdata.net" par ton adresse Alwaysdata réelle -->
+    <iframe src="https://alwaysdata.net" width="100%" height="700px" style="border: 1px solid rgba(255, 0, 127, 0.3); border-radius: 8px;"></iframe>
   </div>
 
   <footer class="main-footer">
