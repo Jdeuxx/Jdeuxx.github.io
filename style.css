@@ -229,3 +229,8 @@ body {
 @media (max-width: 500px) {
   .rubriques-grid { grid-template-columns: 1fr; }
 }
+/* Cache le document au chargement de la page */
+.hidden-doc {
+  display: none !important;
+}
+
