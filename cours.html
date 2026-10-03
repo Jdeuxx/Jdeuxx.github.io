@@ -1,117 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cours - S01 Acquérir, Traiter, Communiquer</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon classeur - Cours</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <h1>Mes Cours de SIN</h1>
+  </header>
 
-    <div class="container">
-        <header class="page-header">
-            <a href="index.html" class="back-link">&larr; Retour à l'accueil</a>
-            <span class="badge-year">SÉQUENCE S01</span>
-            <h1>Cours & Synthèse SIN</h1>
-            <p class="subtitle">Acquérir, Traiter, Communiquer — Aide au stationnement Grove</p>
-        </header>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html" class="active">Cours</a>
+    <a href="tp.html">TP</a>
+    <a href="projets.html">Projets</a>
+    <a href="revisions.html">Révisions</a>
+  </nav>
 
-        <main class="content-block">
-            <section class="doc-section">
-                <h2>1. La chaîne d'information</h2>
-                <p>La chaîne d'information est la partie du système qui capte les données, les analyse et donne des ordres. Elle se compose de trois fonctions principales :</p>
-                <ul>
-                    <li><strong>ACQUÉRIR :</strong> Recevoir une information provenant de l'environnement ou de l'utilisateur. <em>Exemples : capteur de distance ultrasons, bouton-poussoir.</em></li>
-                    <li><strong>TRAITER :</strong> Exécuter un programme pour décider de l'action à réaliser. <em>Exemple : microcontrôleur (Arduino Uno R3).</em></li>
-                    <li><strong>COMMUNIQUER / COMMANDER :</strong> Restituer une information à l'utilisateur ou envoyer un ordre à un actionneur. <em>Exemples : LED, buzzer piézoélectrique.</em></li>
-                </ul>
-                <div class="info-box">
-                    <strong>À retenir :</strong> Un bouton est bien une entrée (IN) : il transmet au système l'état choisi par l'utilisateur. Une LED ou un buzzer sont des sorties (OUT).
-                </div>
-            </section>
-
-            <section class="doc-section">
-                <h2>2. Deux formes d'informations utiles</h2>
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Type de signal</th>
-                            <th>Exemples</th>
-                            <th>Usage dans le programme</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Valeur numérique</strong></td>
-                            <td>27 cm, 21.4 °C, 612 lux</td>
-                            <td>Comparer à un seuil, faire un calcul, afficher.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>État logique / TOR</strong></td>
-                            <td>Appuyé / Relâché, Ouvert / Fermé</td>
-                            <td>Déclencher ou interdire instantanément une action.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p><strong>TOR</strong> signifie <em>Tout Ou Rien</em> (signal binaire). Dans un programme Arduino, un état logique prend la valeur <code>HIGH</code> (5V / Vrai) ou <code>LOW</code> (0V / Faux).</p>
-            </section>
-
-            <section class="doc-section">
-                <h2>3. Lire une condition (structure conditionnelle)</h2>
-                <pre><code>if (distance &lt;= 30)
-{
-    digitalWrite(LED, HIGH); // Allume la LED si distance &lt;= 30 cm
-}</code></pre>
-                <p><code>if</code> signifie « si ». Le programme évalue la condition entre parenthèses. Il exécute le bloc entre accolades <code>{ }</code> uniquement si cette condition est vraie.</p>
-                
-                <h3>Les opérateurs de comparaison indispensables :</h3>
-                <ul>
-                    <li><code>&lt;</code> : inférieur à</li>
-                    <li><code>&lt;=</code> : inférieur ou égal à</li>
-                    <li><code>&gt;</code> : supérieur à</li>
-                    <li><code>&gt;=</code> : supérieur ou égal à</li>
-                    <li><code>==</code> : égal à (attention : double == pour comparer)</li>
-                    <li><code>!=</code> : différent de</li>
-                </ul>
-            </section>
-
-            <section class="doc-section">
-                <h2>4. Gérer plusieurs zones avec if / else if / else</h2>
-                <p>Lorsqu'un système possède plusieurs zones de fonctionnement (comme les bips d'un radar de recul), il faut tester les conditions dans un ordre cohérent (souvent du plus restrictif au plus général).</p>
-                <pre><code>if (distance &lt;= 15)
-{
-    // Zone 1 : Danger immédiat (ex : bip continu, LED rouge)
-}
-else if (distance &lt;= 30)
-{
-    // Zone 2 : Zone intermédiaire (ex : bip lent, LED orange)
-}
-else
-{
-    // Zone 3 : Zone éloignée / Sécurité (ex : pas de son, LED verte)
-}</code></pre>
-                <div class="warning-box">
-                    <strong>Règle de syntaxe stricte :</strong> Dans cette structure, dès qu'une condition est vraie, les blocs suivants sont ignorés.<br>
-                    <strong>Interdiction mathématique :</strong> En C/C++, on n'écrit jamais <code>15 &lt; distance &lt;= 30</code>. On utilise des opérateurs logiques si nécessaire, ou l'imbrication <code>else if</code> ci-dessus.
-                </div>
-            </section>
-
-            <section class="doc-section">
-                <h2>5. Commander une sortie (actionneurs)</h2>
-                <p>Pour modifier l'état des composants de sortie (LED et buzzer Grove), on utilise des fonctions spécifiques :</p>
-                <h3>Gérer une LED :</h3>
-                <ul>
-                    <li><code>digitalWrite(LED, HIGH);</code> &rarr; Allumer la LED (envoie du 5V)</li>
-                    <li><code>digitalWrite(LED, LOW);</code> &rarr; Éteindre la LED (envoie du 0V)</li>
-                </ul>
-                <h3>Gérer un buzzer :</h3>
-                <ul>
-                    <li><code>tone(BUZZER, 1000);</code> &rarr; Produire un son (ici à une fréquence de 1000 Hz)</li>
-                    <li><code>noTone(BUZZER);</code> &rarr; Arrêter immédiatement le son du buzzer</li>
-                </ul>
-            </section>
-        </main>
-    </div>
-
+  <main>
+    <h2>Espace documentaire protégé</h2>
+    <p>Les cours ci-dessous sont stockés sur mon serveur sécurisé Alwaysdata. Un mot de passe sera requis pour les ouvrir.</p>
+    
+    <ul class="liste-docs">
+      <li>
+        <!-- Remplacez plus tard par votre vrai lien URL Alwaysdata -->
+        <a href="https://alwaysdata.net" target="_blank">
+          📄 Séquence 1 : Introduction aux architectures réseaux
+        </a>
+        <span class="badge-lock">🔒 Sécurisé</span>
+      </li>
+    </ul>
+  </main>
 </body>
 </html>
