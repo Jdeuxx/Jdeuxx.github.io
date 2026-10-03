@@ -1,498 +1,67 @@
-/* RESET & BASE */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+/* L'arrière-plan global imitant votre photo */
 body {
-    background-color: #0b1120;
-    color: #94a3b8;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    padding: 40px 20px;
-}
-
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-/* HERO SECTION */
-.hero {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 40px;
-    margin-bottom: 50px;
-}
-
-.hero-text {
-    flex: 1;
-}
-
-.badge-year {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #60a5fa;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.hero-text h1 {
-    font-size: 3rem;
-    color: #ffffff;
-    line-height: 1.1;
-    margin: 15px 0;
-}
-
-.accent-text {
-    color: #818cf8;
-}
-
-.subtitle {
-    font-size: 1rem;
-    max-width: 500px;
-    margin-bottom: 25px;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 15px;
-}
-
-.btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: 0.2s;
-    display: inline-block;
-}
-
-.btn-primary {
-    background-color: #3b82f6;
-    color: #ffffff;
-}
-
-.btn-primary:hover {
-    background-color: #2563eb;
-}
-
-.btn-secondary {
-    background-color: #1e293b;
-    color: #ffffff;
-    border: 1px solid #334155;
-}
-
-.btn-secondary:hover {
-    background-color: #334155;
-}
-
-/* PROFILE CARD */
-.profile-card {
-    width: 320px;
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 24px;
-}
-
-.profile-badge {
-    background-color: #2563eb;
-    color: #fff;
-    font-weight: 800;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    display: inline-block;
-    margin-bottom: 20px;
-}
-
-.label {
-    font-size: 0.7rem;
-    color: #64748b;
-    letter-spacing: 1px;
-}
-
-.profile-card h3 {
-    color: #ffffff;
-    font-size: 1.3rem;
-    margin-top: 2px;
-}
-
-.sub-info {
-    font-size: 0.85rem;
-    margin-bottom: 15px;
-}
-
-.profile-card hr {
-    border: 0;
-    border-top: 1px solid #1f2937;
-    margin: 15px 0;
-}
-
-.profile-card p {
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-}
-
-.profile-card strong {
-    color: #e2e8f0;
-}
-
-.update-date {
-    margin-top: 15px;
-    font-size: 0.8rem !important;
-}
-
-/* MAIN NAVIGATION (4 BLOCKS) */
-.main-nav {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    margin-bottom: 60px;
-}
-
-.nav-card {
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    padding: 20px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    transition: 0.2s;
-}
-
-.nav-card:hover {
-    border-color: #3b82f6;
-    background-color: #1f2937;
-}
-
-.nav-card .num {
-    background-color: #1e293b;
-    color: #60a5fa;
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-}
-
-.nav-card strong {
-    color: #ffffff;
-    display: block;
-    font-size: 0.95rem;
-}
-
-.nav-card p {
-    font-size: 0.75rem;
-}
-
-/* SECTIONS */
-.section {
-    margin-bottom: 60px;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 25px;
-}
-
-.section-tag {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #38bdf8;
-    letter-spacing: 1px;
-}
-
-.section h2 {
-    color: #ffffff;
-    font-size: 1.8rem;
-}
-
-.section-desc {
-    font-size: 0.85rem;
-}
-
-/* CARDS GRID */
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.card {
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.seq-tag {
-    color: #38bdf8;
-    font-weight: bold;
-}
-
-.status-badge {
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 600;
-}
-
-.status-badge.available {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: #34d399;
-}
-
-.status-badge.coming-soon {
-    background-color: rgba(100, 116, 139, 0.2);
-    color: #94a3b8;
-}
-
-.status-badge.finished {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-}
-
-.card h3 {
-    color: #ffffff;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-.card-desc {
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-.tags {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.tags span {
-    background-color: #1e293b;
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 6px;
-}
-
-.card-link {
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-top: auto;
-}
-
-.card-link:hover {
-    color: #60a5fa;
-}
-
-.card-link.disabled {
-    color: #475569;
-}
-
-.card-disabled {
-    opacity: 0.7;
-}
-
-.card-full {
-    width: 100%;
-}
-
-.card-full hr {
-    border: 0;
-    border-top: 1px solid #1f2937;
-    margin: 15px 0;
-}
-
-/* PAGE DETAIL STYLES */
-.page-header {
-    margin-bottom: 40px;
-}
-
-.back-link {
-    display: inline-block;
-    color: #38bdf8;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.back-link:hover {
-    text-decoration: underline;
-}
-
-.content-block {
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 35px;
-}
-
-.doc-section {
-    margin-bottom: 35px;
-}
-
-.doc-section h2 {
-    color: #ffffff;
-    font-size: 1.4rem;
-    border-bottom: 1px solid #1f2937;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.doc-section h3 {
-    color: #e2e8f0;
-    font-size: 1.1rem;
-    margin: 20px 0 10px 0;
-}
-
-.doc-section ul {
-    margin-left: 20px;
-    margin-bottom: 15px;
-}
-
-.doc-section li {
-    margin-bottom: 8px;
-}
-
-.info-box, .warning-box, .score-card {
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-    font-size: 0.9rem;
-}
-
-.info-box {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-left: 4px solid #3b82f6;
-    color: #93c5fd;
-}
-
-.warning-box {
-    background-color: rgba(245, 158, 11, 0.1);
-    border-left: 4px solid #f59e0b;
-    color: #fcd34d;
-}
-
-.score-card {
-    background-color: #1e1b4b;
-    border: 1px solid #3730a3;
-    margin-bottom: 30px;
-}
-
-.score-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.score-header h2 {
-    color: #ffffff;
-    font-size: 1.3rem;
-}
-
-.score-badge {
-    background-color: #ef4444;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-}
-
-.custom-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-.custom-table th, .custom-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #1f2937;
-}
-
-.custom-table th {
-    background-color: #1e293b;
-    color: #ffffff;
-}
-
-pre {
-    background-color: #030712;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #1f2937;
-    overflow-x: auto;
-    margin: 15px 0;
-}
-
-code {
-    font-family: Consolas, Monaco, 'Andale Mono', monospace;
-    color: #38bdf8;
-}
-
-.qa-block {
-    background-color: #0b1120;
-    padding: 18px;
-    border-radius: 10px;
-    border: 1px solid #1f2937;
-    margin-bottom: 20px;
-}
-
-.qa-block h3 {
-    margin-top: 0;
-    color: #60a5fa;
-}
-
-.student-ans {
-    margin-bottom: 10px;
-    color: #cbd5e1;
-}
-
-.teacher-corr {
-    background-color: #111827;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-}
-
-.status-ok { color: #34d399; font-weight: bold; }
-.status-warning { color: #fbbf24; font-weight: bold; }
-.status-err { color: #f87171; font-weight: bold; }
-
-/* ADAPTATION MOBILE */
-@media (max-width: 768px) {
-    .hero {
-        flex-direction: column;
-    }
-    .profile-card {
-        width: 100%;
-    }
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+  font-family: 'Segoe UI', Arial, sans-serif;
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+  color: #ffffff;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  /* 1. Le ciel bleu électrique de la photo (Dégradé du bleu nuit vers le bleu lumineux) */
+  background-color: #2b52ff;
+  background-image: 
+    /* Effet de pluie fine */
+    linear-gradient(105deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    /* Un éclair vectoriel blanc et brillant placé en haut à gauche, comme sur l'image */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 800 600' opacity='0.85'><path d='M150,0 L300,200 L200,250 L350,380 L280,410 L330,500 L300,480 L310,450 L250,390 L300,360 L180,230 L250,190 Z' fill='white' filter='drop-shadow(0 0 15px rgba(255,255,255,0.9)) drop-shadow(0 0 30px %2300f0ff)'/></svg>"),
+    /* Le dégradé du ciel */
+    linear-gradient(to bottom, #111a3a 0%, #2b52ff 60%, #15224e 100%);
+  
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size: 40px 140px, cover, cover;
+  background-position: top left, top left, top left;
+}
+
+/* Le titre principal (Blanc pur avec un puissant halo bleu/cyan) */
+h1 {
+  text-align: center;
+  color: #ffffff;
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-top: 60px;
+  /* Éclat électrique intense autour du texte */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+               0 0 20px #2b52ff,
+               0 0 40px #00ffff;
+}
+
+/* Le bloc de contenu (Inspiré de la silhouette sombre de la forêt en bas de l'image) */
+main {
+  background: rgba(11, 16, 38, 0.85); /* Fond très sombre et semi-transparent */
+  backdrop-filter: blur(5px); /* Effet de verre givré moderne */
+  padding: 40px;
+  border-radius: 16px;
+  margin-top: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Ombre douce qui détache le bloc du fond */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 
+              0 0 20px rgba(43, 82, 255, 0.2);
+}
+
+/* Les sous-titres à l'intérieur du bloc */
+h2 {
+  color: #00ffff; /* Couleur cyan électrique pour les sections */
+  font-size: 1.5rem;
+  border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+  padding-bottom: 8px;
+  margin-top: 0;
+}
+
+/* Les paragraphes */
+p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #e2e8f0;
 }
