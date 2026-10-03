@@ -3,15 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mon classeur - Cours</title>
+  <title>Mon classeur numérique - Cours</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Mes Cours de SIN</h1>
+
+  <header class="main-header">
+    <h1>Mes Cours <span class="accent-title">STI2D SIN</span></h1>
+    <p class="subtitle">Systèmes d'information et numérique</p>
   </header>
 
-  <nav>
+  <nav class="nav-bar">
     <a href="index.html">Accueil</a>
     <a href="cours.html" class="active">Cours</a>
     <a href="tp.html">TP</a>
@@ -19,19 +21,77 @@
     <a href="revisions.html">Révisions</a>
   </nav>
 
-  <main>
-    <h2>Espace documentaire protégé</h2>
-    <p>Les cours ci-dessous sont stockés sur mon serveur sécurisé Alwaysdata. Un mot de passe sera requis pour les ouvrir.</p>
+  <section class="section-container">
+    <div class="section-header-flex">
+      <h2 class="section-title-dash">Mes séquences</h2>
+      <p class="section-desc">Les documents de cours sont classés par séquence.</p>
+    </div>
     
-    <ul class="liste-docs">
-      <li>
-        <!-- Remplacez plus tard par votre vrai lien URL Alwaysdata -->
-        <a href="https://alwaysdata.net" target="_blank">
-          📄 Séquence 1 : Introduction aux architectures réseaux
-        </a>
-        <span class="badge-lock">🔒 Sécurisé</span>
-      </li>
+    <div class="cards-container">
+      <!-- Carte Séquence 01 -->
+      <div class="content-card">
+        <div class="card-header">
+          <span class="seq-num">S01</span>
+          <span class="badge status-dispo">Disponible</span>
+        </div>
+        <h3>De la grandeur physique à la donnée numérique</h3>
+        <p>Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.</p>
+        <div class="tech-tags">
+          <span>Capteurs</span><span>Arduino</span><span>Acquisition</span>
+        </div>
+        <!-- Ce lien cible directement l'ID du document en bas -->
+        <a href="#sequence1-doc" class="card-link" onclick="ouvrirDocument('sequence1-doc')">Ouvrir le cours →</a>
+      </div>
+
+      <!-- Séquence 02 -->
+      <div class="content-card locked">
+        <div class="card-header">
+          <span class="seq-num">S02</span>
+          <span class="badge status-avenir">À venir</span>
+        </div>
+        <h3>Communication et échange de données</h3>
+        <p>Cette séquence apparaîtra ici lorsqu'elle aura été commencée.</p>
+        <div class="tech-tags">
+          <span>Réseau</span><span>Protocoles</span>
+        </div>
+        <span class="card-link-disabled">Pas encore disponible</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- L'essentiel du cours (Caché au départ, s'ouvre au clic) -->
+  <div id="sequence1-doc" class="welcome-card content-page-card hidden-doc">
+    <h2>⚡ Synthèse Essentielle — Séquence 01</h2>
+    <hr class="card-separator">
+    
+    <h3>1 — La chaîne d'information</h3>
+    <p><strong>ACQUÉRIR</strong> (Capteurs) → <strong>TRAITER</strong> (Arduino Uno R3) → <strong>COMMUNIQUER</strong> (LED, Buzzer).</p>
+    <p>💡 <em>À retenir :</em> Un bouton est une entrée (IN). Une LED ou un buzzer sont des sorties (OUT).</p>
+
+    <h3>2 — Formes d'informations</h3>
+    <ul>
+      <li><strong>Valeur numérique :</strong> 27 cm, 21.4 °C (Seuils, calculs, affichage).</li>
+      <li><strong>État logique / TOR (Tout Ou Rien) :</strong> Signal binaire (<code>HIGH</code> = 5V / <code>LOW</code> = 0V).</li>
     </ul>
-  </main>
+
+    <h3>3 — Lecture d'une condition (Arduino)</h3>
+    <pre>
+if (distance &lt;= 30) {
+  digitalWrite(LED, HIGH); // Allume la LED si la condition est vraie
+}</pre>
+    <p>💡 <em>Opérateurs :</em> <code>&lt;=</code> (inférieur ou égal), <code>==</code> (égal à), <code>!=</code> (différent de).</p>
+  </div>
+
+  <footer class="main-footer">
+    <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
+  </footer>
+
+  <!-- Petit script pour gérer l'ouverture fluide -->
+  <script>
+    function ouvrirDocument(id) {
+      document.getElementById(id).classList.remove('hidden-doc');
+    }
+  </script>
+
 </body>
 </html>
