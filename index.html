@@ -1,73 +1,145 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mon classeur numérique STI2D SIN</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon espace de travail STI2D • SIN</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-accueil">
-  <header class="bandeau">
-    <div class="bandeau-contenu">
-      <h1>Mon classeur numérique STI2D SIN</h1>
-      <p>Systèmes d'information et numérique</p>
-      <nav class="menu">
-        <a href="index.html" aria-current="page">Accueil</a>
-        <a href="cours.html">Cours</a>
-        <a href="tp.html">TP</a>
-        <a href="projets.html">Projets</a>
-        <a href="documents.html">Révisions</a>
-      </nav>
+<body>
+
+    <div class="container">
+
+        <!-- SECTION HERO (HAUT DE PAGE) -->
+        <section class="hero">
+            <div class="hero-text">
+                <span class="badge-year">ANNÉE 2026–2027</span>
+                <h1>Mon espace de travail <br><span class="accent-text">STI2D • SIN</span></h1>
+                <p class="subtitle">
+                    Je retrouve ici mes cours, mes travaux pratiques, mes projets et mes fiches de révision. 
+                    Ce site constitue la partie visible de mon classeur numérique.
+                </p>
+                <div class="hero-buttons">
+                    <a href="cours.html" class="btn btn-primary">Voir mes cours</a>
+                    <a href="projets.html" class="btn btn-secondary">Mes projets</a>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-header">
+                    <span class="profile-badge">SIN</span>
+                </div>
+                <div class="profile-body">
+                    <span class="label">ÉLÈVE</span>
+                    <h3>Jean-Daniel AZOWA</h3>
+                    <p class="sub-info">Terminale STI2D</p>
+                    <hr>
+                    <p><strong>Spécialité</strong> Systèmes d'Information et Numérique</p>
+                    <p><strong>Établissement</strong> Lycée ...</p>
+                    <p class="update-date"><strong>Dernière mise à jour</strong> 15 septembre 2026</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION PRINCIPALE (4 CARTES) -->
+        <nav class="main-nav">
+            <a href="cours.html" class="nav-card">
+                <span class="num">01</span>
+                <div>
+                    <strong>Cours</strong>
+                    <p>Notions et synthèses</p>
+                </div>
+            </a>
+            <a href="tp.html" class="nav-card">
+                <span class="num">02</span>
+                <div>
+                    <strong>Travaux pratiques</strong>
+                    <p>Manipulations et comptes rendus</p>
+                </div>
+            </a>
+            <a href="projets.html" class="nav-card">
+                <span class="num">03</span>
+                <div>
+                    <strong>Projets</strong>
+                    <p>Dossiers et productions</p>
+                </div>
+            </a>
+            <a href="documents.html" class="nav-card">
+                <span class="num">04</span>
+                <div>
+                    <strong>Révisions</strong>
+                    <p>Fiches et méthodes</p>
+                </div>
+            </a>
+        </nav>
+
+        <!-- SECTION COURS -->
+        <section id="cours" class="section">
+            <div class="section-header">
+                <div>
+                    <span class="section-tag">COURS</span>
+                    <h2>Mes séquences</h2>
+                </div>
+                <p class="section-desc">Les documents de cours sont classés par séquence.</p>
+            </div>
+
+            <div class="cards-grid">
+                <!-- Carte S01 -->
+                <div class="card card-active">
+                    <div class="card-top">
+                        <span class="seq-tag">S01</span>
+                        <span class="status-badge available">Disponible</span>
+                    </div>
+                    <h3>Acquérir, Traiter, Communiquer / Commander</h3>
+                    <p class="card-desc">Notions indispensables mises en jeu dans le TP Aide au stationnement Grove.</p>
+                    <div class="tags">
+                        <span>Capteurs</span>
+                        <span>Arduino</span>
+                        <span>Acquisition</span>
+                    </div>
+                    <a href="cours.html" class="card-link">Ouvrir le cours &rarr;</a>
+                </div>
+
+                <!-- Carte S02 -->
+                <div class="card card-disabled">
+                    <div class="card-top">
+                        <span class="seq-tag">S02</span>
+                        <span class="status-badge coming-soon">À venir</span>
+                    </div>
+                    <h3>Communication et échange de données</h3>
+                    <p class="card-desc">Cette séquence apparaîtra ici lorsqu'elle aura été commencée.</p>
+                    <div class="tags">
+                        <span>Réseau</span>
+                        <span>Protocoles</span>
+                    </div>
+                    <span class="card-link disabled">Pas encore disponible</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION TRAVAUX PRATIQUES -->
+        <section id="tp" class="section">
+            <div class="section-header">
+                <div>
+                    <span class="section-tag">TRAVAUX PRATIQUES</span>
+                    <h2>Mes expérimentations</h2>
+                </div>
+                <p class="section-desc">Je conserve ici mes sujets, résultats et comptes rendus.</p>
+            </div>
+
+            <div class="card card-full card-active">
+                <div class="card-top">
+                    <span class="status-badge finished">• Corrigé (Note : 6/20)</span>
+                    <span class="date">08/09/2026</span>
+                </div>
+                <h3>TP 01 — Aide au stationnement Grove</h3>
+                <p class="card-desc">Diagnostic d'une chaîne d'acquisition, relevés de mesures et analyse du système.</p>
+                <hr>
+                <a href="tp.html" class="card-link">Voir le TP et le compte rendu &rarr;</a>
+            </div>
+        </section>
+
     </div>
-  </header>
-
-  <main>
-    <section class="carte-profil">
-      <div class="badge-sin">SIN</div>
-      <p class="eleve-label">Élève</p>
-      <h2 class="eleve-nom">Jean-Daniel AZOWA</h2>
-      <p class="eleve-classe">Terminale STI2D</p>
-      <hr>
-      <p><strong>Spécialité :</strong> Systèmes d'Information et Numérique</p>
-      <p><strong>Dernière mise à jour :</strong> septembre 2026</p>
-    </section>
-
-    <div class="accroche">
-      <h2>Bienvenue</h2>
-      <p>
-        Ce site regroupe mes cours, mes travaux pratiques, mes projets et mes fiches de révision.
-      </p>
-    </div>
-
-    <h2>Les rubriques</h2>
-    <ul class="rubriques">
-      <li>
-        <h3><a href="cours.html">Cours</a></h3>
-        <p>Les notions et synthèses.</p>
-      </li>
-      <li>
-        <h3><a href="tp.html">TP</a></h3>
-        <p>Les travaux pratiques.</p>
-      </li>
-      <li>
-        <h3><a href="projets.html">Projets</a></h3>
-        <p>Les projets de l'année.</p>
-      </li>
-      <li>
-        <h3><a href="documents.html">Révisions</a></h3>
-        <p>Les fiches et méthodes.</p>
-      </li>
-    </ul>
-  </main>
-
-  <footer class="pied">
-    <div>
-      <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
-    </div>
-  </footer>
 
 </body>
 </html>
