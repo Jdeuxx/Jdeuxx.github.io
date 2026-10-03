@@ -3,15 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mon classeur - TP</title>
+  <title>Mon classeur numérique - TP</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Mes Travaux Pratiques</h1>
+
+  <header class="main-header">
+    <h1>Mes Travaux Pratiques <span class="accent-title">STI2D SIN</span></h1>
+    <p class="subtitle">Systèmes d'information et numérique</p>
   </header>
 
-  <nav>
+  <nav class="nav-bar">
     <a href="index.html">Accueil</a>
     <a href="cours.html">Cours</a>
     <a href="tp.html" class="active">TP</a>
@@ -19,12 +21,73 @@
     <a href="revisions.html">Révisions</a>
   </nav>
 
-  <main>
-    <h2>Liste des TP de l'année</h2>
-    <p>Les comptes-rendus de TP seront bientôt disponibles via l'accès sécurisé Alwaysdata.</p>
-    <ul class="liste-docs">
-      <li>En attente des premiers documents... 🔒</li>
+  <section class="section-container">
+    <div class="section-header-flex">
+      <h2 class="section-title-dash">Mes expérimentations</h2>
+      <p class="section-desc">Je conserve ici mes sujets, résultats et comptes rendus.</p>
+    </div>
+    
+    <div class="tp-timeline-container">
+      <!-- TP 01 -->
+      <div class="tp-item">
+        <div class="tp-meta">
+          <span class="badge status-termine">Terminé</span>
+          <span class="tp-date">Septembre 2026</span>
+        </div>
+        <h4>TP 01 — Diagnostic d'une chaîne d'acquisition</h4>
+        <p>Analyse d'un système, mesures, comparaison aux résultats attendus et conclusion.</p>
+        <a href="#tp1-correction" class="tp-link" onclick="ouvrirDocument('tp1-correction')">Voir le TP et le compte rendu →</a>
+      </div>
+
+      <!-- TP 02 -->
+      <div class="tp-item">
+        <div class="tp-meta">
+          <span class="badge status-encours">En cours</span>
+          <span class="tp-date">Septembre 2026</span>
+        </div>
+        <h4>TP 02 — Mesurer avec un capteur Grove</h4>
+        <p>Acquisition d'une grandeur physique et interprétation de la valeur numérique.</p>
+        <span class="tp-link-disabled">Compte rendu en préparation</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- L'essentiel de la copie corrigée (Caché au départ, s'ouvre au clic) -->
+  <div id="tp1-correction" class="welcome-card content-page-card hidden-doc">
+    <div class="tp-score-header">
+      <h2>📊 Correction Essentielle — TP 01 Aide au Stationnement</h2>
+      <span class="score-badge">Note : 6 / 20</span>
+    </div>
+    <p class="teacher-feedback">⚠️ <em>Erreur clé relevée :</em> Capteur bloqué à 0 = dysfonctionnement à signaler et analyser (vérifier câblage D7 et moniteur série).</p>
+    
+    <hr class="card-separator">
+
+    <h4>Corrections incontournables :</h4>
+    <ul>
+      <li><strong>Chaîne d'information :</strong> L'acquisition se fait par le capteur de distance ET le bouton poussoir (qui est aussi une entrée utilisateur).</li>
+      <li><strong>Nature des signaux :</strong> Le capteur de distance renvoie un signal <strong>numérique</strong>, le bouton fournit un <strong>état logique / TOR</strong>.</li>
+      <li><strong>Instructions Arduino :</strong> 
+        <br><code>distance = ultrasonic.MeasureInCentimeters();</code> (Acquérir)
+        <br><code>digitalWrite(LED, HIGH);</code> (Instruction de commande d'allumage)
+      </li>
     </ul>
-  </main>
+
+    <h4>Logique Radar de Recul attendue :</h4>
+    <pre>
+if (distance &lt;= 15) { // Zone 1 : Danger (LED ON, buzzer ON) }
+else if (distance &lt;= 30) { // Zone 2 : Intermédiaire (LED ON, buzzer OFF) }
+else { // Zone 3 : Sécurité (LED OFF, buzzer OFF) }</pre>
+  </div>
+
+  <footer class="main-footer">
+    <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
+  </footer>
+
+  <script>
+    function ouvrirDocument(id) {
+      document.getElementById(id).classList.remove('hidden-doc');
+    }
+  </script>
+
 </body>
 </html>
