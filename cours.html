@@ -28,7 +28,7 @@
     </div>
     
     <div class="cards-container">
-      <!-- Carte Séquence 01 -->
+      <!-- Séquence 01 -->
       <div class="content-card">
         <div class="card-header">
           <span class="seq-num">S01</span>
@@ -39,7 +39,7 @@
         <div class="tech-tags">
           <span>Capteurs</span><span>Arduino</span><span>Acquisition</span>
         </div>
-        <!-- Ce lien cible directement l'ID du document en bas -->
+        <!-- Bouton d'ouverture du lecteur PDF -->
         <a href="#sequence1-doc" class="card-link" onclick="ouvrirDocument('sequence1-doc')">Ouvrir le cours →</a>
       </div>
 
@@ -59,34 +59,20 @@
     </div>
   </section>
 
-  <!-- L'essentiel du cours (Caché au départ, s'ouvre au clic) -->
+  <!-- ZONE DE LECTURE DU PDF (Cachée au départ, s'affiche au clic) -->
   <div id="sequence1-doc" class="welcome-card content-page-card hidden-doc">
-    <h2>⚡ Synthèse Essentielle — Séquence 01</h2>
+    <h2>📄 Visualisation du document — Séquence 01</h2>
     <hr class="card-separator">
     
-    <h3>1 — La chaîne d'information</h3>
-    <p><strong>ACQUÉRIR</strong> (Capteurs) → <strong>TRAITER</strong> (Arduino Uno R3) → <strong>COMMUNIQUER</strong> (LED, Buzzer).</p>
-    <p>💡 <em>À retenir :</em> Un bouton est une entrée (IN). Une LED ou un buzzer sont des sorties (OUT).</p>
-
-    <h3>2 — Formes d'informations</h3>
-    <ul>
-      <li><strong>Valeur numérique :</strong> 27 cm, 21.4 °C (Seuils, calculs, affichage).</li>
-      <li><strong>État logique / TOR (Tout Ou Rien) :</strong> Signal binaire (<code>HIGH</code> = 5V / <code>LOW</code> = 0V).</li>
-    </ul>
-
-    <h3>3 — Lecture d'une condition (Arduino)</h3>
-    <pre>
-if (distance &lt;= 30) {
-  digitalWrite(LED, HIGH); // Allume la LED si la condition est vraie
-}</pre>
-    <p>💡 <em>Opérateurs :</em> <code>&lt;=</code> (inférieur ou égal), <code>==</code> (égal à), <code>!=</code> (différent de).</p>
+    <!-- LECTEUR PDF INTÉGRÉ -->
+    <!-- Remplacer "moncompte.alwaysdata.net" par ton adresse Alwaysdata réelle -->
+    <iframe src="https://alwaysdata.net" width="100%" height="700px" style="border: 1px solid rgba(0, 255, 255, 0.3); border-radius: 8px;"></iframe>
   </div>
 
   <footer class="main-footer">
     <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
   </footer>
 
-  <!-- Petit script pour gérer l'ouverture fluide -->
   <script>
     function ouvrirDocument(id) {
       document.getElementById(id).classList.remove('hidden-doc');
