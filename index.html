@@ -8,6 +8,36 @@
 </head>
 <body>
 
+  <!-- Fenêtre Pop-up de Connexion fusionnée -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="login-card">
+      <button class="close-modal" onclick="closeModal()">×</button>
+      
+      <div class="icon-header">🎓</div>
+      <div class="brand-title">Mon Classeur</div>
+
+      <h2>Connexion</h2>
+      <div class="subtitle">Identifiez-vous pour accéder au site.</div>
+
+      <!-- Formulaire de connexion -->
+      <form onsubmit="event.preventDefault(); closeModal();">
+        <div class="form-group">
+          <label for="username">Identifiant</label>
+          <input type="text" id="username" required placeholder="Votre identifiant">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn-submit">Se connecter</button>
+      </form>
+      
+      <a href="#" class="guest-link" onclick="closeModal()">Continuer sans se connecter (Mode invité)</a>
+    </div>
+  </div>
+
   <!-- En-tête du site -->
   <header class="main-header">
     <h1>Mon classeur numérique <span class="accent-title">STI2D SIN</span></h1>
@@ -77,6 +107,13 @@
   <footer class="main-footer">
     <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
   </footer>
+
+  <!-- Script pour fermer la Pop-up -->
+  <script>
+    function closeModal() {
+      document.getElementById('loginModal').style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
