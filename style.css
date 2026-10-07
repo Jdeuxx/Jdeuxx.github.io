@@ -1,4 +1,8 @@
-/* 1. Animation de la pluie qui tombe sans cesse à toute vitesse */
+/* ==========================================================================
+   1. ANIMATIONS & DESIGN GLOBAL DU CLASSEUR (ORAGE ÉLECTRIQUE D'ORIGINE)
+   ========================================================================== */
+
+/* Animation de la pluie qui tombe sans cesse à toute vitesse */
 @keyframes chutePluie {
   0% {
     background-position: 0px 0px, center top, top left;
@@ -246,7 +250,10 @@ body {
 @media (max-width: 500px) {
   .rubriques-grid { grid-template-columns: 1fr; }
 }
-/* --- Pop-up de connexion (Mélange des deux styles par JD) --- */
+
+/* ==========================================================================
+   2. POP-UP DE CONNEXION (FIN DU SCRIPT TERMINÉE PAR JD)
+   ========================================================================== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -271,6 +278,7 @@ body {
   padding: 35px;
   position: relative;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .close-modal {
@@ -343,6 +351,7 @@ body {
   color: white;
   font-size: 0.95rem;
   box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
 .form-group input:focus {
@@ -365,8 +374,8 @@ body {
   transition: background-color 0.2s;
 }
 
-.btn-submit:hover { 
-  background-color: #1d4ed8; 
+.btn-submit:hover {
+  background-color: #1d4ed8;
 }
 
 .guest-link {
@@ -377,7 +386,7 @@ body {
   font-size: 0.85rem;
 }
 
-.guest-link:hover { 
-  color: #ff3b93; 
-  text-decoration: underline; 
+.guest-link:hover {
+  color: #ff3b93;
+  text-decoration: underline;
 }
