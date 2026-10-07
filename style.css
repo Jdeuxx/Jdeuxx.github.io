@@ -246,3 +246,138 @@ body {
 @media (max-width: 500px) {
   .rubriques-grid { grid-template-columns: 1fr; }
 }
+/* --- Pop-up de connexion (Mélange des deux styles par JD) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 2, 8, 0.85); /* Assorti au noir de ton ciel */
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.login-card {
+  background: #0b1422; /* Bleu sombre de la carte de connexion */
+  border: 2px solid #00ffff; /* Lueur cyan assortie à ton éclair */
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.4), 0 0 50px rgba(127, 0, 255, 0.2);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 380px;
+  padding: 35px;
+  position: relative;
+  text-align: center;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #a5b4fc;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-modal:hover { 
+  color: #ff3b93; /* Rappel de ton horizon rose flash au survol */
+}
+
+.icon-header {
+  background-color: #2563eb;
+  width: 55px;
+  height: 55px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 15px auto;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #f8fafc;
+}
+
+.login-card h2 {
+  font-size: 1.6rem;
+  margin: 0 0 6px 0;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.login-card .subtitle {
+  color: #a5b4fc;
+  font-size: 0.9rem;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  color: #a5b4fc;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  background-color: #152238;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover { 
+  background-color: #1d4ed8; 
+}
+
+.guest-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: #a5b4fc;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.guest-link:hover { 
+  color: #ff3b93; 
+  text-decoration: underline; 
+}
