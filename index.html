@@ -5,13 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mon classeur numérique STI2D SIN</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Message d'erreur dynamique pour la connexion */
+    .error-message {
+      color: #ff3b93;
+      font-size: 0.85rem;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      display: none;
+      text-align: left;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
   <!-- Fenêtre Pop-up de Connexion fusionnée -->
   <div class="modal-overlay" id="loginModal">
     <div class="login-card">
-      <button class="close-modal" onclick="closeModal()">×</button>
+      <button class="close-modal" aria-label="Fermer" onclick="closeModal()">×</button>
       
       <div class="icon-header">🎓</div>
       <div class="brand-title">Mon Classeur</div>
@@ -19,8 +31,8 @@
       <h2>Connexion</h2>
       <div class="subtitle">Identifiez-vous pour accéder au site.</div>
 
-      <!-- Formulaire de connexion -->
-      <form onsubmit="event.preventDefault(); closeModal();">
+      <!-- Formulaire de connexion avec gestion JavaScript -->
+      <form id="loginForm" onsubmit="checkLogin(event)">
         <div class="form-group">
           <label for="username">Identifiant</label>
           <input type="text" id="username" required placeholder="Votre identifiant">
@@ -30,6 +42,9 @@
           <label for="password">Mot de passe</label>
           <input type="password" id="password" required placeholder="••••••••">
         </div>
+
+        <!-- Zone d'affichage de l'erreur -->
+        <div id="loginError" class="error-message">Identifiant incorrect. Veuillez réessayer.</div>
 
         <button type="submit" class="btn-submit">Se connecter</button>
       </form>
@@ -108,10 +123,24 @@
     <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
   </footer>
 
-  <!-- Script pour fermer la Pop-up -->
+  <!-- Scripts d'authentification et d'affichage -->
   <script>
     function closeModal() {
       document.getElementById('loginModal').style.display = 'none';
+    }
+
+    function checkLogin(event) {
+      event.preventDefault();
+      const userField = document.getElementById('username').value.trim().toLowerCase();
+      const errorDiv = document.getElementById('loginError');
+
+      // Autorise les identifiants 'clement' ou 'jd'
+      if (userField === 'clement' || userField === 'jd') {
+        errorDiv.style.display = 'none';
+        closeModal();
+      } else {
+        errorDiv.style.display = 'block';
+      }
     }
   </script>
 
