@@ -6,7 +6,6 @@
   <title>Mon classeur numérique STI2D SIN</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Message d'erreur dynamique pour la connexion */
     .error-message {
       color: #ff3b93;
       font-size: 0.85rem;
@@ -19,59 +18,44 @@
   </style>
 </head>
 <body>
-
-  <!-- Fenêtre Pop-up de Connexion fusionnée -->
   <div class="modal-overlay" id="loginModal">
     <div class="login-card">
       <button class="close-modal" aria-label="Fermer" onclick="closeModal()">×</button>
-      
-      <div class="icon-header">🎓</div>
+      <div class="icon-header">Education</div>
       <div class="brand-title">Mon Classeur</div>
-
       <h2>Connexion</h2>
       <div class="subtitle">Identifiez-vous pour accéder au site.</div>
-
-      <!-- Formulaire de connexion avec gestion JavaScript -->
       <form id="loginForm" onsubmit="checkLogin(event)">
         <div class="form-group">
           <label for="username">Identifiant</label>
           <input type="text" id="username" required placeholder="Votre identifiant">
         </div>
-
         <div class="form-group">
           <label for="password">Mot de passe</label>
           <input type="password" id="password" required placeholder="••••••••">
         </div>
-
-        <!-- Zone d'affichage de l'erreur -->
         <div id="loginError" class="error-message">Identifiant incorrect. Veuillez réessayer.</div>
-
         <button type="submit" class="btn-submit">Se connecter</button>
       </form>
-      
       <a href="#" class="guest-link" onclick="closeModal()">Continuer sans se connecter (Mode invité)</a>
     </div>
   </div>
 
-  <!-- En-tête du site -->
   <header class="main-header">
     <h1>Mon classeur numérique <span class="accent-title">STI2D SIN</span></h1>
     <p class="subtitle">Systèmes d'information et numérique</p>
   </header>
 
-  <!-- Menu de navigation -->
   <nav class="nav-bar">
     <a href="index.html" class="active">Accueil</a>
     <a href="cours.html">Cours</a>
     <a href="tp.html">TP</a>
+    <a href="évaluations.html">Évaluations</a>
     <a href="projets.html">Projets</a>
-    <a href="revisions.html">Révisions</a>
+    <a href="révisions.html">Révisions</a>
   </nav>
 
-  <!-- Zone principale : Profil + Bienvenue -->
   <div class="dashboard-top">
-    
-    <!-- Carte Élève -->
     <div class="profile-card">
       <div class="badge-sin">SIN</div>
       <p class="label-eleve">ÉLÈVE</p>
@@ -79,70 +63,7 @@
       <p class="classe">Terminale STI2D</p>
       <div class="profile-details">
         <p><strong>Spécialité :</strong> Systèmes d'Information et Numérique</p>
-        <p><strong>Dernière mise à jour :</strong> Septembre 2026</p>
+        <p><strong>Dernière mise à jour :</strong> Octobre 2026</p>
       </div>
     </div>
-
-    <!-- Message de Bienvenue -->
     <div class="welcome-card">
-      <h2>Bienvenue</h2>
-      <p>Ce site regroupe mes cours, mes travaux pratiques, mes projets et mes fiches de révision.</p>
-    </div>
-
-  </div>
-
-  <!-- Section des Rubriques -->
-  <section class="rubriques-section">
-    <h3>Les rubriques</h3>
-    
-    <div class="rubriques-grid">
-      <a href="cours.html" class="rubrique-card">
-        <h4>Cours</h4>
-        <p>Les notions et synthèses.</p>
-      </a>
-      
-      <a href="tp.html" class="rubrique-card">
-        <h4>TP</h4>
-        <p>Les travaux pratiques.</p>
-      </a>
-      
-      <a href="projets.html" class="rubrique-card">
-        <h4>Projets</h4>
-        <p>Les projets de l'année.</p>
-      </a>
-      
-      <a href="revisions.html" class="rubrique-card">
-        <h4>Révisions</h4>
-        <p>Les fiches et méthodes.</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- Pied de page -->
-  <footer class="main-footer">
-    <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
-  </footer>
-
-  <!-- Scripts d'authentification et d'affichage -->
-  <script>
-    function closeModal() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
-
-    function checkLogin(event) {
-      event.preventDefault();
-      const userField = document.getElementById('username').value.trim().toLowerCase();
-      const errorDiv = document.getElementById('loginError');
-
-      // Autorise les identifiants 'clement' ou 'jd'
-      if (userField === 'clement' || userField === 'jd') {
-        errorDiv.style.display = 'none';
-        closeModal();
-      } else {
-        errorDiv.style.display = 'block';
-      }
-    }
-  </script>
-
-</body>
-</html>
