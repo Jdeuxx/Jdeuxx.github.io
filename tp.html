@@ -7,48 +7,33 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="main-header">
-    <h1>Mes Travaux Pratiques <span class="accent-title">STI2D SIN</span></h1>
-    <p class="subtitle">Systèmes d'information et numérique</p>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="logo">JD</span> Mon classeur numérique</a>
+    <nav class="top-nav">
+      <a href="tp.html">Documents</a>
+      <a href="cours.html">Cours</a>
+      <a href="evaluations.html">Évaluations</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
   </header>
-  <nav class="nav-bar">
-    <a href="index.html">Accueil</a>
-    <a href="cours.html">Cours</a>
-    <a href="tp.html" class="active">TP</a>
-    <a href="projets.html">Projets</a>
-    <a href="revisions.html">Révisions</a>
-  </nav>
-  <section class="section-container">
-    <div class="section-header-flex">
-      <h2 class="section-title-dash">Mes expérimentations</h2>
-      <p class="section-desc">Je conserve ici mes sujets, résultats et comptes rendus.</p>
+
+  <main>
+    <h2 class="sti">TP</h2>
+    <div class="cards">
+      <a class="card" href="documents/tp/tp-S01-aide-stationnement-corrige.pdf" target="_blank">
+        <h3>TP 01 — Diagnostic d'une chaîne d'acquisition</h3>
+        <p>Terminé · Septembre 2026</p>
+      </a>
+      <article class="card">
+        <h3>TP 02 — Mesurer avec un capteur Grove</h3>
+        <p>En cours · Septembre 2026</p>
+        <p>Compte rendu en préparation</p>
+      </article>
     </div>
-    
-    <div class="tp-timeline-container">
-      <!-- TP 01 -->
-      <div class="tp-item">
-        <div class="tp-meta">
-          <span class="badge status-termine">Terminé</span>
-          <span class="tp-date">Septembre 2026</span>
-        </div>
-        <h4>TP 01 — Diagnostic d'une chaîne d'acquisition</h4>
-        <p>Analyse d'un système, mesures, comparaison aux résultats attendus et conclusion.</p>
-        <a href="documents/tp/tp-S01-aide-stationnement-corrige.pdf" class="tp-link" target="_blank">Voir le TP et le compte rendu →</a>
-      </div>
-      <!-- TP 02 -->
-      <div class="tp-item">
-        <div class="tp-meta">
-          <span class="badge status-termine">Terminé</span>
-          <span class="tp-date">Octobre 2026</span>
-        </div>
-        <h4>TP 02 — Mesurer avec un capteur Grove</h4>
-        <p>Acquisition d'une grandeur physique et interprétation de la valeur numérique.</p>
-        <a href="documents/tp/tp-S02-grandeur-physique-donnee-numerique.pdf" class="tp-link" target="_blank">Voir le TP et le compte rendu →</a>
-      </div>
-    </div>
-  </section>
-  <footer class="main-footer">
-    <p>Mon classeur numérique STI2D SIN — dernière mise à jour : octobre 2026</p>
+  </main>
+
+  <footer>
+    <p>Mon classeur numérique — dernière mise à jour : octobre 2026</p>
   </footer>
 </body>
 </html>
