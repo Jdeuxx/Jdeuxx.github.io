@@ -3,11 +3,111 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon classeur numérique</title>
+  <title>Mon classeur numérique - Connexion</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Message d'erreur pour la connexion */
-    .error-message {
+    /* Écran de verrouillage global sécurisé (Style Capture de gauche) */
+    .secure-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0b1322; /* Même couleur de fond que ta capture */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .secure-card {
+      width: 100%;
+      max-width: 380px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .secure-icon {
+      background-color: #2563eb;
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 15px auto;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .secure-brand {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 25px;
+    }
+
+    .secure-card h2 {
+      font-size: 1.7rem;
+      margin: 0 0 8px 0;
+      color: #ffffff;
+    }
+
+    .secure-subtitle {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+    }
+
+    /* Formulaire d'authentification */
+    .secure-field {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .secure-field label {
+      display: block;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .secure-field input {
+      width: 100%;
+      padding: 14px;
+      background-color: #152238;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    .secure-field input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .secure-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .secure-btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .secure-error {
       color: #ff2a85;
       font-size: 0.85rem;
       margin-top: -10px;
@@ -16,111 +116,122 @@
       text-align: left;
       font-weight: 600;
     }
+
+    .secure-guest {
+      display: inline-block;
+      margin-top: 20px;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    .secure-guest:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Fenêtre Pop-up de Connexion (Mélange JD) -->
-  <div class="modal-overlay" id="loginModal" style="display: none;">
-    <div class="login-card">
-      <button class="close-modal" onclick="closeModal()">×</button>
-      
-      <div class="icon-header">🎓</div>
-      <div class="brand-title">Mon Classeur</div>
+  <!-- ÉCRAN DE SÉCURITÉ MAXIMUM (Bloque l'accès tant qu'on n'est pas identifié) -->
+  <div class="secure-screen" id="lockScreen">
+    <div class="secure-card">
+      <div class="secure-icon">🎓</div>
+      <div class="secure-brand">Mon Classeur</div>
 
       <h2>Connexion</h2>
-      <div class="subtitle">Identifiez-vous pour accéder au site.</div>
+      <div class="secure-subtitle">Identifiez-vous pour accéder au site.</div>
 
-      <!-- Formulaire de connexion -->
-      <form onsubmit="checkLogin(event)">
-        <div class="form-group">
+      <form onsubmit="verifyCredentials(event)">
+        <div class="secure-field">
           <label for="username">Identifiant</label>
-          <input type="text" id="username" required placeholder="Votre identifiant (ex: jd, clement)">
+          <input type="text" id="username" required placeholder="Pseudo ou email">
         </div>
 
-        <div class="form-group">
+        <div class="secure-field">
           <label for="password">Mot de passe</label>
-          <input type="password" id="password" required placeholder="••••••••">
+          <input type="password" id="password" required placeholder="Mot de passe">
         </div>
 
-        <div id="loginError" class="error-message">Identifiant incorrect. Veuillez réessayer.</div>
+        <div id="loginError" class="secure-error">Identifiant ou mot de passe incorrect.</div>
 
-        <button type="submit" class="btn-submit">Se connecter</button>
+        <button type="submit" class="secure-btn">Se connecter</button>
       </form>
       
-      <a href="#" class="guest-link" onclick="closeModal()">Continuer sans se connecter (Mode invité)</a>
+      <a href="#" class="secure-guest" onclick="unlockAsGuest()">Continuer sans se connecter (Mode invité)</a>
     </div>
   </div>
 
-  <!-- Barre de navigation du site principal -->
-  <nav class="navbar">
-    <div class="nav-logo" onclick="setCreatorMode()" style="cursor: pointer;" title="Activer le mode créateur"><span>R</span> Mon classeur numérique</div>
-    <div class="nav-links">
-      <a href="documents.html">Documents</a>
-      <a href="cours.html">Cours</a>
-      <a href="tp.html">Évaluations</a>
-      <a href="contact.html">Contact</a>
-    </div>
-  </nav>
+  <!-- INTERFACE DU SITE PRINCIPAL (S'affiche après déverrouillage) -->
+  <div id="mainContent">
+    <nav class="navbar">
+      <div class="nav-logo" onclick="bypassForMe()" style="cursor: pointer;" title="Accès créateur permanent"><span>R</span> Mon classeur numérique</div>
+      <div class="nav-links">
+        <a href="documents.html">Documents</a>
+        <a href="cours.html">Cours</a>
+        <a href="tp.html">Évaluations</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </nav>
 
-  <!-- En-tête -->
-  <header class="hero">
-    <h1>Bienvenue</h1>
-    <p>Systèmes d'information et numérique</p>
-    <div class="badge-sti2d">STI2D</div>
-  </header>
+    <header class="hero">
+      <h1>Bienvenue</h1>
+      <p>Systèmes d'information et numérique</p>
+      <div class="badge-sti2d">STI2D</div>
+    </header>
 
-  <!-- Grille de raccourcis -->
-  <main class="grid-container">
-    <a href="documents.html" class="card">
-      <h3>Documents</h3>
-      <p>Consulter mes documents.</p>
-    </a>
-    <a href="cours.html" class="card">
-      <h3>Cours</h3>
-      <p>Consulter mes cours.</p>
-    </a>
-    <a href="tp.html" class="card">
-      <h3>Évaluations</h3>
-      <p>Consulter mes évaluations.</p>
-    </a>
-  </main>
+    <main class="grid-container">
+      <a href="documents.html" class="card">
+        <h3>Documents</h3>
+        <p>Consulter mes documents.</p>
+      </a>
+      <a href="cours.html" class="card">
+        <h3>Cours</h3>
+        <p>Consulter mes cours.</p>
+      </a>
+      <a href="tp.html" class="card">
+        <h3>Évaluations</h3>
+        <p>Consulter mes évaluations.</p>
+      </a>
+    </main>
+  </div>
 
-  <!-- Script d'automatisation intelligent -->
+  <!-- SCRIPT DE VALIDATION ET PROTECTION -->
   <script>
-    // Étape 1 : Vérifie au chargement si c'est toi (le créateur)
+    // Étape 1 : Vérification automatique au chargement
     window.onload = function() {
-      const isCreator = localStorage.getItem('role') === 'createur';
-      if (!isCreator) {
-        // Si ce n'est pas toi, on affiche la pop-up de connexion pour l'invité
-        document.getElementById('loginModal').style.display = 'flex';
+      // Si la session indique que tu es le créateur (JD), on saute l'écran directement
+      if (localStorage.getItem('user_session') === 'verified_creator') {
+        document.getElementById('lockScreen').style.display = 'none';
       }
     };
 
-    function closeModal() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
-
-    // Étape 2 : Permet aux invités de se connecter avec 'jd' ou 'clement'
-    function checkLogin(event) {
+    // Étape 2 : Gestion de la connexion pour les invités/profs
+    function verifyCredentials(event) {
       event.preventDefault();
-      const userField = document.getElementById('username').value.trim().toLowerCase();
+      const user = document.getElementById('username').value.trim().toLowerCase();
       const errorDiv = document.getElementById('loginError');
 
-      if (userField === 'jd' || userField === 'clement') {
+      // Autorise les accès rapides avec les pseudos valides
+      if (user === 'jd' || user === 'clement') {
         errorDiv.style.display = 'none';
-        closeModal();
+        document.getElementById('lockScreen').style.display = 'none';
       } else {
         errorDiv.style.display = 'block';
       }
     }
 
-    // Étape 3 : Astuce magique pour toi. Clique sur le logo [R] en haut à gauche
-    // pour dire au site de ne plus jamais te demander la pop-up sur ton PC !
-    function setCreatorMode() {
-      localStorage.setItem('role', 'createur');
-      alert("Mode Créateur activé ! La pop-up ne s'affichera plus sur cet ordinateur. 🎓");
-      closeModal();
+    // Étape 3 : Mode invité sans connexion
+    function unlockAsGuest() {
+      document.getElementById('lockScreen').style.display = 'none';
+    }
+
+    // Étape 4 : Ton accès privé à vie sur ton PC
+    // Clique sur le logo bleu [R] de la barre de navigation une fois connecté,
+    // et le site ne te demandera plus JAMAIS de te connecter sur cet appareil !
+    function bypassForMe() {
+      localStorage.setItem('user_session', 'verified_creator');
+      alert("Accès créateur mémorisé ! Sécurité configurée avec succès pour JD. 🎓");
     }
   </script>
 
