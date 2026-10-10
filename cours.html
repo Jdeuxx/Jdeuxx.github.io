@@ -1,146 +1,129 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon classeur numérique - Cours</title>
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="Retrouve les cours de Systèmes d'Information et Numérique STI2D.">
+  <title>Cours | Mon Classeur Numérique</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+  <header class="navbar">
+    <a class="nav-logo" href="index.html">
+      <span class="logo-box">R</span>
+      <span>Mon classeur numérique</span>
+    </a>
 
-  <!-- ÉCRAN DE VERROUILLAGE SÉCURISÉ INITIAL -->
-  <div class="secure-screen" id="lockScreen">
-    <div class="secure-card">
-      <div class="secure-icon">🎓</div>
-      <div class="secure-brand">Mon Classeur</div>
-      <h2>Connexion</h2>
-      <div class="secure-subtitle">Identifiez-vous pour accéder à l'espace STI2D.</div>
-      <form onsubmit="verifyCredentials(event)">
-        <div class="secure-field">
-          <label for="username">Identifiant</label>
-          <input type="text" id="username" required placeholder="Pseudo ou email">
-        </div>
-        <div class="secure-field">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" required placeholder="Mot de passe">
-        </div>
-        <div id="loginError" class="secure-error">Identifiant ou mot de passe incorrect.</div>
-        <button type="submit" class="secure-btn">Se connecter</button>
-      </form>
-      <a href="#" class="secure-guest" onclick="unlockAsGuest()">Continuer sans se connecter (Mode invité)</a>
-    </div>
-  </div>
-
-  <!-- INTERFACE DU SITE UNIQUE -->
-  <div id="mainContent">
-    
-    <!-- Bandeau d'en-tête panoramique (Orage & Pluie) -->
-    <header class="hero-banner">
-      <h1>Mes Cours</h1>
-      <p>Systèmes d'information et numérique — STI2D SIN</p>
-    </header>
-
-    <!-- Barre de navigation -->
-    <nav class="navbar">
-      <div class="nav-logo" onclick="bypassForMe()" style="cursor: pointer;" title="Accès créateur permanent">
-        <span class="logo-box">R</span> Mon classeur numérique
-      </div>
-      <div class="nav-links">
-        <a href="index.html">Documents</a>
-        <a href="cours.html" class="active">Cours</a>
-        <a href="tp.html">Évaluations</a>
-        <a href="contact.html">Contact</a>
-      </div>
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="index.html">Accueil</a>
+      <a href="documents.html">Documents</a>
+      <a href="cours.html" class="active" aria-current="page">Cours</a>
+      <a href="tp.html">Évaluations</a>
+      <a href="contact.html">Contact</a>
     </nav>
+  </header>
 
-    <!-- Section Principale Centrale -->
-    <main class="main-content">
-      <div class="section-tag" style="text-align: left; width: 100%; max-width: 1100px; font-size: 1.8rem; margin-bottom: 10px;">Mes séquences</div>
-      <p style="color: #48566e; text-align: left; width: 100%; max-width: 1100px; margin: 0 0 40px 0; font-size: 0.95rem;">Les documents de cours sont classés par séquence.</p>
+  <main>
+    <section class="courses-hero">
+      <div class="eyebrow">
+        <span class="status-dot"></span>
+        ESPACE PÉDAGOGIQUE · STI2D
+      </div>
 
-      <!-- Grille des séquences d'origine -->
-      <div class="grid-container" style="justify-content: flex-start;">
-        
-        <!-- Séquence 01 -->
-        <div class="card" style="text-align: left; width: 320px; box-sizing: border-box;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span class="logo-box" style="font-size: 0.8rem; padding: 2px 6px;">S01</span>
-            <span style="color: #00ffcc; font-size: 0.85rem; font-weight: 600;">• Disponible</span>
-          </div>
-          <h3>De la grandeur physique à la donnée numérique</h3>
-          <p style="margin-bottom: 20px;">Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.</p>
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
-            <span style="background: rgba(6, 12, 28, 0.6); color: #94a3b8; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Capteurs</span>
-            <span style="background: rgba(6, 12, 28, 0.6); color: #94a3b8; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Arduino</span>
-            <span style="background: rgba(6, 12, 28, 0.6); color: #94a3b8; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Acquisition</span>
-          </div>
-          <a href="documents/s01-acquerir.html" style="color: #00a2ff; text-decoration: none; font-weight: 600;">Ouvrir le cours →</a>
+      <h1>Apprends.<br><span>Comprends.</span> Réussis.</h1>
+
+      <p>
+        Tous tes cours de Systèmes d'Information et Numérique,
+        organisés pour retrouver rapidement les notions essentielles.
+      </p>
+
+      <a class="primary-button" href="#liste-cours">
+        Explorer les cours <span aria-hidden="true">↓</span>
+      </a>
+
+      <div class="hero-decoration" aria-hidden="true">SIN</div>
+    </section>
+
+    <section class="courses-section" id="liste-cours">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">TA BIBLIOTHÈQUE</span>
+          <h2>Les cours disponibles</h2>
+          <p>Choisis une catégorie pour commencer à réviser.</p>
         </div>
+        <span class="course-count">STI2D / SIN</span>
+      </div>
 
-        <!-- Séquence 02 -->
-        <div class="card" style="text-align: left; width: 320px; box-sizing: border-box; opacity: 0.4;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span style="border: 1px solid #48566e; color: #48566e; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">S02</span>
-            <span style="color: #48566e; font-size: 0.85rem; font-weight: 600;">• À venir</span>
-          </div>
-          <h3>Communication et échange de données</h3>
-          <p style="margin-bottom: 20px;">Cette séquence apparaîtra ici lorsqu'elle aura été commençée.</p>
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
-            <span style="background: rgba(6, 12, 28, 0.6); color: #48566e; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Réseau</span>
-            <span style="background: rgba(6, 12, 28, 0.6); color: #48566e; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Protocoles</span>
-          </div>
-          <span style="color: #48566e; font-size: 0.9rem; font-weight: 600;">Pas encore disponible</span>
+      <div class="courses-grid">
+        <a class="course-card" href="#reseaux">
+          <div class="course-icon blue">⌘</div>
+          <span class="course-number">MODULE 01</span>
+          <h3>Réseaux informatiques</h3>
+          <p>Adressage IP, communication, protocoles et architecture réseau.</p>
+          <span class="course-link">Découvrir le module <span>↗</span></span>
+        </a>
+
+        <a class="course-card" href="#programmation">
+          <div class="course-icon purple">&lt;/&gt;</div>
+          <span class="course-number">MODULE 02</span>
+          <h3>Programmation</h3>
+          <p>Algorithmes, logique, code et développement informatique.</p>
+          <span class="course-link">Découvrir le module <span>↗</span></span>
+        </a>
+
+        <a class="course-card" href="#systemes">
+          <div class="course-icon green">◈</div>
+          <span class="course-number">MODULE 03</span>
+          <h3>Systèmes numériques</h3>
+          <p>Composants, acquisition, traitement et transmission des données.</p>
+          <span class="course-link">Découvrir le module <span>↗</span></span>
+        </a>
+
+        <a class="course-card" href="#donnees">
+          <div class="course-icon orange">▤</div>
+          <span class="course-number">MODULE 04</span>
+          <h3>Données et bases de données</h3>
+          <p>Organisation des informations, tables et requêtes SQL.</p>
+          <span class="course-link">Découvrir le module <span>↗</span></span>
+        </a>
+
+        <a class="course-card" href="#web">
+          <div class="course-icon pink">◎</div>
+          <span class="course-number">MODULE 05</span>
+          <h3>Développement web</h3>
+          <p>HTML, CSS et création d'interfaces web modernes.</p>
+          <span class="course-link">Découvrir le module <span>↗</span></span>
+        </a>
+
+        <a class="course-card" href="#revisions">
+          <div class="course-icon cyan">✦</div>
+          <span class="course-number">MODULE 06</span>
+          <h3>Fiches de révision</h3>
+          <p>Les définitions, méthodes et notions importantes à retenir.</p>
+          <span class="course-link">Découvrir le module <span>↗</span></span>
+        </a>
+      </div>
+
+      <div class="notice">
+        <span class="notice-icon">i</span>
+        <div>
+          <h3>Un espace à compléter</h3>
+          <p>
+            Les catégories ci-dessus sont des exemples. Ajoute tes vrais
+            cours et remplace les liens par les fichiers PDF ou les pages
+            que tu souhaites partager.
+          </p>
         </div>
-
       </div>
-    </main>
+    </section>
+  </main>
 
-    <!-- Pied de page -->
-    <footer class="footer-bar">
-      <div class="footer-left">
-        <a href="https://github.com" target="_blank">GitHub</a>
-        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
-      </div>
-      <div class="footer-right">
-        <a href="#">Mentions légales</a>
-      </div>
-    </footer>
-
-  </div>
-
-  <!-- SCRIPT D'AUTHENTIFICATION ET ACCÈS CRÉATEUR -->
-  <script>
-    window.onload = function() {
-      if (localStorage.getItem('user_session') === 'verified_creator') {
-        document.getElementById('lockScreen').style.display = 'none';
-      } else {
-        document.getElementById('lockScreen').style.display = 'flex';
-      }
-    };
-
-    function verifyCredentials(event) {
-      event.preventDefault();
-      const user = document.getElementById('username').value.trim().toLowerCase();
-      const errorDiv = document.getElementById('loginError');
-
-      if (user === 'jd' || user === 'clement') {
-        errorDiv.style.display = 'none';
-        document.getElementById('lockScreen').style.display = 'none';
-      } else {
-        errorDiv.style.display = 'block';
-      }
-    }
-
-    function unlockAsGuest() {
-      document.getElementById('lockScreen').style.display = 'none';
-    }
-
-    function bypassForMe() {
-      localStorage.setItem('user_session', 'verified_creator');
-      alert("Accès créateur mémorisé ! Bienvenue sur ton espace Cours, JD. 🎓");
-      document.getElementById('lockScreen').style.display = 'none';
-    }
-  </script>
-
+  <footer class="site-footer">
+    <a class="footer-brand" href="index.html">Mon classeur numérique</a>
+    <p>STI2D · Systèmes d'Information et Numérique</p>
+    <a href="contact.html">Une question ? Contacte-moi</a>
+  </footer>
 </body>
 </html>
