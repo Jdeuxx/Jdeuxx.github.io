@@ -3,127 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07111f">
-  <meta name="description" content="Retrouve les cours de Systèmes d'Information et Numérique STI2D.">
-  <title>Cours | Mon Classeur Numérique</title>
+  <title>Cours - Mon classeur numérique</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+
   <header class="navbar">
-    <a class="nav-logo" href="index.html">
+    <a href="index.html" class="nav-logo">
       <span class="logo-box">R</span>
-      <span>Mon classeur numérique</span>
+      Mon classeur numérique
     </a>
 
-    <nav class="nav-links" aria-label="Navigation principale">
+    <nav class="nav-links">
       <a href="index.html">Accueil</a>
       <a href="documents.html">Documents</a>
-      <a href="cours.html" class="active" aria-current="page">Cours</a>
+      <a href="cours.html" class="active">Cours</a>
       <a href="tp.html">Évaluations</a>
       <a href="contact.html">Contact</a>
     </nav>
   </header>
 
-  <main>
-    <section class="courses-hero">
-      <div class="eyebrow">
-        <span class="status-dot"></span>
-        ESPACE PÉDAGOGIQUE · STI2D
-      </div>
+  <main class="courses-page">
+    <h1>Cours</h1>
 
-      <h1>Apprends.<br><span>Comprends.</span> Réussis.</h1>
+    <div class="courses-grid">
 
-      <p>
-        Tous tes cours de Systèmes d'Information et Numérique,
-        organisés pour retrouver rapidement les notions essentielles.
-      </p>
-
-      <a class="primary-button" href="#liste-cours">
-        Explorer les cours <span aria-hidden="true">↓</span>
+      <a href="s01.html" class="course-card">
+        <h2>Cours S01</h2>
+        <p>Consulter le cours S01.</p>
+        <span>Ouvrir le cours →</span>
       </a>
 
-      <div class="hero-decoration" aria-hidden="true">SIN</div>
-    </section>
+      <a href="tp-s01.html" class="course-card">
+        <h2>TP S01</h2>
+        <p>Consulter le TP associé au S01.</p>
+        <span>Ouvrir le TP →</span>
+      </a>
 
-    <section class="courses-section" id="liste-cours">
-      <div class="section-heading">
-        <div>
-          <span class="section-kicker">TA BIBLIOTHÈQUE</span>
-          <h2>Les cours disponibles</h2>
-          <p>Choisis une catégorie pour commencer à réviser.</p>
-        </div>
-        <span class="course-count">STI2D / SIN</span>
-      </div>
+      <a href="evaluation-s01.html" class="course-card">
+        <h2>Évaluation S01</h2>
+        <p>Consulter l'évaluation associée au S01.</p>
+        <span>Ouvrir l'évaluation →</span>
+      </a>
 
-      <div class="courses-grid">
-        <a class="course-card" href="#reseaux">
-          <div class="course-icon blue">⌘</div>
-          <span class="course-number">MODULE 01</span>
-          <h3>Réseaux informatiques</h3>
-          <p>Adressage IP, communication, protocoles et architecture réseau.</p>
-          <span class="course-link">Découvrir le module <span>↗</span></span>
-        </a>
-
-        <a class="course-card" href="#programmation">
-          <div class="course-icon purple">&lt;/&gt;</div>
-          <span class="course-number">MODULE 02</span>
-          <h3>Programmation</h3>
-          <p>Algorithmes, logique, code et développement informatique.</p>
-          <span class="course-link">Découvrir le module <span>↗</span></span>
-        </a>
-
-        <a class="course-card" href="#systemes">
-          <div class="course-icon green">◈</div>
-          <span class="course-number">MODULE 03</span>
-          <h3>Systèmes numériques</h3>
-          <p>Composants, acquisition, traitement et transmission des données.</p>
-          <span class="course-link">Découvrir le module <span>↗</span></span>
-        </a>
-
-        <a class="course-card" href="#donnees">
-          <div class="course-icon orange">▤</div>
-          <span class="course-number">MODULE 04</span>
-          <h3>Données et bases de données</h3>
-          <p>Organisation des informations, tables et requêtes SQL.</p>
-          <span class="course-link">Découvrir le module <span>↗</span></span>
-        </a>
-
-        <a class="course-card" href="#web">
-          <div class="course-icon pink">◎</div>
-          <span class="course-number">MODULE 05</span>
-          <h3>Développement web</h3>
-          <p>HTML, CSS et création d'interfaces web modernes.</p>
-          <span class="course-link">Découvrir le module <span>↗</span></span>
-        </a>
-
-        <a class="course-card" href="#revisions">
-          <div class="course-icon cyan">✦</div>
-          <span class="course-number">MODULE 06</span>
-          <h3>Fiches de révision</h3>
-          <p>Les définitions, méthodes et notions importantes à retenir.</p>
-          <span class="course-link">Découvrir le module <span>↗</span></span>
-        </a>
-      </div>
-
-      <div class="notice">
-        <span class="notice-icon">i</span>
-        <div>
-          <h3>Un espace à compléter</h3>
-          <p>
-            Les catégories ci-dessus sont des exemples. Ajoute tes vrais
-            cours et remplace les liens par les fichiers PDF ou les pages
-            que tu souhaites partager.
-          </p>
-        </div>
-      </div>
-    </section>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <a class="footer-brand" href="index.html">Mon classeur numérique</a>
-    <p>STI2D · Systèmes d'Information et Numérique</p>
-    <a href="contact.html">Une question ? Contacte-moi</a>
-  </footer>
 </body>
 </html>
