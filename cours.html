@@ -2,60 +2,45 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mon classeur numérique - Cours</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon classeur numérique</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="main-header">
-    <h1>Mes Cours <span class="accent-title">STI2D SIN</span></h1>
-    <p class="subtitle">Systèmes d'information et numérique</p>
-  </header>
-  <nav class="nav-bar">
-    <a href="index.html">Accueil</a>
-    <a href="cours.html" class="active">Cours</a>
-    <a href="tp.html">TP</a>
-    <a href="projets.html">Projets</a>
-    <a href="revisions.html">Révisions</a>
+
+  <!-- Barre de navigation du site principal -->
+  <nav class="navbar">
+    <div class="nav-logo"><span>R</span> Mon classeur numérique</div>
+    <div class="nav-links">
+      <a href="documents.html">Documents</a>
+      <a href="cours.html">Cours</a>
+      <a href="tp.html">Évaluations</a>
+      <a href="contact.html">Contact</a>
+    </div>
   </nav>
-  <section class="section-container">
-    <div class="section-header-flex">
-      <h2 class="section-title-dash">Mes séquences</h2>
-      <p class="section-desc">Les documents de cours sont classés par séquence.</p>
-    </div>
-    
-    <div class="cards-container">
-      <!-- Séquence 01 -->
-      <div class="content-card">
-        <div class="card-header">
-          <span class="seq-num">S01</span>
-          <span class="badge status-dispo">Disponible</span>
-        </div>
-        <h3>De la grandeur physique à la donnée numérique</h3>
-        <p>Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.</p>
-        <div class="tech-tags">
-          <span>Capteurs</span><span>Arduino</span><span>Acquisition</span>
-        </div>
-        <!-- IMPORTANT : Ouvre une nouvelle page externe pour lire le PDF -->
-        <a href="documents/s01-acquerir.html" class="card-link">Ouvrir le cours →</a>
-      </div>
-      <!-- Séquence 02 -->
-      <div class="content-card locked">
-        <div class="card-header">
-          <span class="seq-num">S02</span>
-          <span class="badge status-avenir">À venir</span>
-        </div>
-        <h3>Communication et échange de données</h3>
-        <p>Cette séquence apparaîtra ici lorsqu'elle aura été commencée.</p>
-        <div class="tech-tags">
-          <span>Réseau</span><span>Protocoles</span>
-        </div>
-        <span class="card-link-disabled">Pas encore disponible</span>
-      </div>
-    </div>
-  </section>
-  <footer class="main-footer">
-    <p>Mon classeur numérique STI2D SIN — dernière mise à jour : septembre 2026</p>
-  </footer>
+
+  <!-- En-tête -->
+  <header class="hero">
+    <h1>Bienvenue</h1>
+    <p>Systèmes d'information et numérique</p>
+    <div class="badge-sti2d">STI2D</div>
+  </header>
+
+  <!-- Grille de raccourcis -->
+  <main class="grid-container">
+    <a href="documents.html" class="card">
+      <h3>Documents</h3>
+      <p>Consulter mes documents.</p>
+    </a>
+    <a href="cours.html" class="card">
+      <h3>Cours</h3>
+      <p>Consulter mes cours.</p>
+    </a>
+    <a href="tp.html" class="card">
+      <h3>Évaluations</h3>
+      <p>Consulter mes évaluations.</p>
+    </a>
+  </main>
+
 </body>
 </html>
