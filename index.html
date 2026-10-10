@@ -10,6 +10,16 @@
 
   <!-- ÉCRAN DE VERROUILLAGE SÉCURISÉ INITIAL -->
   <div class="secure-screen" id="lockScreen">
+    
+    <!-- Barre de menu placée en haut à droite de l'écran de connexion -->
+    <nav class="lock-nav">
+      <a href="documents.html">Documents</a>
+      <a href="cours.html">Cours</a>
+      <a href="tp.html">Évaluations</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <!-- Formulaire de connexion sécurisé (en haut à gauche) -->
     <div class="secure-card">
       <div class="secure-icon">🎓</div>
       <div class="secure-brand">Mon Classeur</div>
@@ -31,33 +41,17 @@
     </div>
   </div>
 
-  <!-- INTERFACE DU SITE UNIQUE -->
+  <!-- INTERFACE DU SITE PRINCIPAL -->
   <div id="mainContent">
     
-    <!-- Bandeau d'en-tête panoramique (Orage & Pluie) -->
     <header class="hero-banner">
       <h1>Bienvenue</h1>
       <p>Systèmes d'information et numérique</p>
     </header>
 
-    <!-- Barre de navigation -->
-    <nav class="navbar">
-      <div class="nav-logo" onclick="bypassForMe()" style="cursor: pointer;" title="Accès créateur permanent">
-        <span class="logo-box">R</span> Mon classeur numérique
-      </div>
-      <div class="nav-links">
-        <a href="documents.html">Documents</a>
-        <a href="cours.html">Cours</a>
-        <a href="tp.html">Évaluations</a>
-        <a href="contact.html">Contact</a>
-      </div>
-    </nav>
-
-    <!-- Section Principale Centrale -->
     <main class="main-content">
       <div class="section-tag">STI2D</div>
 
-      <!-- Grille des 3 Cartes -->
       <div class="grid-container">
         <a href="documents.html" class="card">
           <h3>Documents</h3>
@@ -72,34 +66,19 @@
           <p>Consulter mes évaluations.</p>
         </a>
       </div>
-
-      <!-- Section À propos du modèle -->
-      <section class="about-section">
-        <h2>À propos</h2>
-        <p>Ce site regroupe mes ressources de SIN (Systèmes d'Information et Numérique).</p>
-      </section>
     </main>
-
-    <!-- Pied de page avec liens textuels -->
-    <footer class="footer-bar">
-      <div class="footer-left">
-        <a href="https://github.com" target="_blank">GitHub</a>
-        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
-      </div>
-      <div class="footer-right">
-        <a href="#">Mentions légales</a>
-      </div>
-    </footer>
 
   </div>
 
-  <!-- SCRIPT D'AUTHENTIFICATION ET ACCÈS CRÉATEUR -->
+  <!-- SCRIPT D'AUTHENTIFICATION -->
   <script>
     window.onload = function() {
       if (localStorage.getItem('user_session') === 'verified_creator') {
         document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
       } else {
         document.getElementById('lockScreen').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'none';
       }
     };
 
@@ -111,6 +90,8 @@
       if (user === 'jd' || user === 'clement') {
         errorDiv.style.display = 'none';
         document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        localStorage.setItem('user_session', 'verified_creator');
       } else {
         errorDiv.style.display = 'block';
       }
@@ -118,12 +99,7 @@
 
     function unlockAsGuest() {
       document.getElementById('lockScreen').style.display = 'none';
-    }
-
-    function bypassForMe() {
-      localStorage.setItem('user_session', 'verified_creator');
-      alert("Accès créateur mémorisé ! Bienvenue sur ton espace, JD. 🎓");
-      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
     }
   </script>
 
