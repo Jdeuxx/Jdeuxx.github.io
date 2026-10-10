@@ -8,76 +8,139 @@
 </head>
 <body>
 
-  <!-- Barre de navigation du site principal -->
-  <nav class="navbar">
-    <div class="nav-logo"><span>R</span> Mon classeur numérique</div>
-    <div class="nav-links">
-      <a href="index.html">Documents</a>
-      <a href="cours.html" class="active">Cours</a>
-      <a href="tp.html">Évaluations</a>
-      <a href="contact.html">Contact</a>
+  <!-- ÉCRAN DE VERROUILLAGE SÉCURISÉ INITIAL -->
+  <div class="secure-screen" id="lockScreen">
+    <div class="secure-card">
+      <div class="secure-icon">🎓</div>
+      <div class="secure-brand">Mon Classeur</div>
+      <h2>Connexion</h2>
+      <div class="secure-subtitle">Identifiez-vous pour accéder à l'espace STI2D.</div>
+      <form onsubmit="verifyCredentials(event)">
+        <div class="secure-field">
+          <label for="username">Identifiant</label>
+          <input type="text" id="username" required placeholder="Pseudo ou email">
+        </div>
+        <div class="secure-field">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" required placeholder="Mot de passe">
+        </div>
+        <div id="loginError" class="secure-error">Identifiant ou mot de passe incorrect.</div>
+        <button type="submit" class="secure-btn">Se connecter</button>
+      </form>
+      <a href="#" class="secure-guest" onclick="unlockAsGuest()">Continuer sans se connecter (Mode invité)</a>
     </div>
-  </nav>
+  </div>
 
-  <!-- En-tête de la page -->
-  <header class="hero">
-    <h1>Mes Cours <span class="accent-title">STI2D SIN</span></h1>
-    <p class="subtitle">Systèmes d'information et numérique</p>
-  </header>
+  <!-- INTERFACE DU SITE UNIQUE -->
+  <div id="mainContent">
+    
+    <!-- Bandeau d'en-tête panoramique (Orage & Pluie) -->
+    <header class="hero-banner">
+      <h1>Mes Cours</h1>
+      <p>Systèmes d'information et numérique — STI2D SIN</p>
+    </header>
 
-  <!-- Section principale : Conteneur des séquences -->
-  <main style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
-    
-    <div style="margin-bottom: 30px; text-align: left;">
-      <h2 style="color: #00ffff; margin: 0; font-size: 1.8rem; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);">Mes séquences</h2>
-      <p style="color: #8fa0c4; margin: 5px 0 0 0; font-size: 0.95rem;">Les documents de cours sont classés par séquence.</p>
-    </div>
-    
-    <!-- Grille alignée avec les cartes stylisées -->
-    <div class="grid-container" style="margin-top: 0; justify-content: center; gap: 25px;">
-      
-      <!-- Séquence 01 -->
-      <div class="card" style="text-align: left; width: 320px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+      <div class="nav-logo" onclick="bypassForMe()" style="cursor: pointer;" title="Accès créateur permanent">
+        <span class="logo-box">R</span> Mon classeur numérique
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Documents</a>
+        <a href="cours.html" class="active">Cours</a>
+        <a href="tp.html">Évaluations</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </nav>
+
+    <!-- Section Principale Centrale -->
+    <main class="main-content">
+      <div class="section-tag" style="text-align: left; width: 100%; max-width: 1100px; font-size: 1.8rem; margin-bottom: 10px;">Mes séquences</div>
+      <p style="color: #48566e; text-align: left; width: 100%; max-width: 1100px; margin: 0 0 40px 0; font-size: 0.95rem;">Les documents de cours sont classés par séquence.</p>
+
+      <!-- Grille des séquences d'origine -->
+      <div class="grid-container" style="justify-content: flex-start;">
+        
+        <!-- Séquence 01 -->
+        <div class="card" style="text-align: left; width: 320px; box-sizing: border-box;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span style="background: rgba(0, 255, 255, 0.1); color: #00ffff; border: 1px solid #00ffff; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);">S01</span>
+            <span class="logo-box" style="font-size: 0.8rem; padding: 2px 6px;">S01</span>
             <span style="color: #00ffcc; font-size: 0.85rem; font-weight: 600;">• Disponible</span>
           </div>
-          <h3 style="margin: 0 0 10px 0; font-size: 1.25rem; line-height: 1.4; color: #00ffff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);">De la grandeur physique à la donnée numérique</h3>
-          <p style="color: #8fa0c4; font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.5;">Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.</p>
-        </div>
-        <div>
+          <h3>De la grandeur physique à la donnée numérique</h3>
+          <p style="margin-bottom: 20px;">Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.</p>
           <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
-            <span style="background: #152238; color: #a5b4fc; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.1);">Capteurs</span>
-            <span style="background: #152238; color: #a5b4fc; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.1);">Arduino</span>
-            <span style="background: #152238; color: #a5b4fc; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.1);">Acquisition</span>
+            <span style="background: rgba(6, 12, 28, 0.6); color: #94a3b8; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Capteurs</span>
+            <span style="background: rgba(6, 12, 28, 0.6); color: #94a3b8; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Arduino</span>
+            <span style="background: rgba(6, 12, 28, 0.6); color: #94a3b8; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Acquisition</span>
           </div>
-          <!-- Ouvre une nouvelle page externe pour lire le PDF -->
-          <a href="documents/s01-acquerir.html" style="color: #ffffff; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-block; transition: color 0.2s;" onmouseover="this.style.color='#00ffff'" onmouseout="this.style.color='#ffffff'">Ouvrir le cours →</a>
+          <a href="documents/s01-acquerir.html" style="color: #00a2ff; text-decoration: none; font-weight: 600;">Ouvrir le cours →</a>
         </div>
-      </div>
 
-      <!-- Séquence 02 -->
-      <div class="card" style="text-align: left; width: 320px; box-sizing: border-box; opacity: 0.5; display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
+        <!-- Séquence 02 -->
+        <div class="card" style="text-align: left; width: 320px; box-sizing: border-box; opacity: 0.4;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span style="background: #1e293b; color: #94a3b8; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem;">S02</span>
-            <span style="color: #94a3b8; font-size: 0.85rem; font-weight: 600;">• À venir</span>
+            <span style="border: 1px solid #48566e; color: #48566e; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">S02</span>
+            <span style="color: #48566e; font-size: 0.85rem; font-weight: 600;">• À venir</span>
           </div>
-          <h3 style="margin: 0 0 10px 0; font-size: 1.25rem; line-height: 1.4; color: #94a3b8;">Communication et échange de données</h3>
-          <p style="color: #516485; font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.5;">Cette séquence apparaîtra ici lorsqu'elle aura été commencée.</p>
-        </div>
-        <div>
+          <h3>Communication et échange de données</h3>
+          <p style="margin-bottom: 20px;">Cette séquence apparaîtra ici lorsqu'elle aura été commençée.</p>
           <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
-            <span style="background: #152238; color: #516485; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Réseau</span>
-            <span style="background: #152238; color: #516485; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Protocoles</span>
+            <span style="background: rgba(6, 12, 28, 0.6); color: #48566e; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Réseau</span>
+            <span style="background: rgba(6, 12, 28, 0.6); color: #48566e; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Protocoles</span>
           </div>
-          <span style="color: #516485; font-size: 0.9rem; font-weight: 600;">Pas encore disponible</span>
+          <span style="color: #48566e; font-size: 0.9rem; font-weight: 600;">Pas encore disponible</span>
         </div>
-      </div>
 
-    </div>
-  </main>
+      </div>
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="footer-bar">
+      <div class="footer-left">
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+      </div>
+      <div class="footer-right">
+        <a href="#">Mentions légales</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- SCRIPT D'AUTHENTIFICATION ET ACCÈS CRÉATEUR -->
+  <script>
+    window.onload = function() {
+      if (localStorage.getItem('user_session') === 'verified_creator') {
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        document.getElementById('lockScreen').style.display = 'flex';
+      }
+    };
+
+    function verifyCredentials(event) {
+      event.preventDefault();
+      const user = document.getElementById('username').value.trim().toLowerCase();
+      const errorDiv = document.getElementById('loginError');
+
+      if (user === 'jd' || user === 'clement') {
+        errorDiv.style.display = 'none';
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    function unlockAsGuest() {
+      document.getElementById('lockScreen').style.display = 'none';
+    }
+
+    function bypassForMe() {
+      localStorage.setItem('user_session', 'verified_creator');
+      alert("Accès créateur mémorisé ! Bienvenue sur ton espace Cours, JD. 🎓");
+      document.getElementById('lockScreen').style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
