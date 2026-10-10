@@ -1,106 +1,229 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon classeur numérique</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030711">
+  <title>Mon classeur numérique | STI2D</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ÉCRAN DE VERROUILLAGE SÉCURISÉ INITIAL -->
-  <div class="secure-screen" id="lockScreen">
-    
-    <!-- Barre de menu placée en haut à droite de l'écran de connexion -->
-    <nav class="lock-nav">
-      <a href="documents.html">Documents</a>
-      <a href="cours.html">Cours</a>
-      <a href="tp.html">Évaluations</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-
-    <!-- Formulaire de connexion sécurisé (en haut à gauche) -->
-    <div class="secure-card">
-      <div class="secure-icon">🎓</div>
-      <div class="secure-brand">Mon Classeur</div>
-      <h2>Connexion</h2>
-      <div class="secure-subtitle">Identifiez-vous pour accéder à l'espace STI2D.</div>
-      <form onsubmit="verifyCredentials(event)">
-        <div class="secure-field">
-          <label for="username">Identifiant</label>
-          <input type="text" id="username" required placeholder="Pseudo ou email">
-        </div>
-        <div class="secure-field">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" required placeholder="Mot de passe">
-        </div>
-        <div id="loginError" class="secure-error">Identifiant ou mot de passe incorrect.</div>
-        <button type="submit" class="secure-btn">Se connecter</button>
-      </form>
-      <a href="#" class="secure-guest" onclick="unlockAsGuest()">Continuer sans se connecter (Mode invité)</a>
+  <!-- ÉCRAN DE CONNEXION -->
+  <section class="secure-screen" id="lockScreen">
+    <div class="weather-bg" aria-hidden="true">
+      <div class="rain"></div>
+      <div class="lightning lightning-one"></div>
+      <div class="lightning lightning-two"></div>
+      <div class="network-glow"></div>
     </div>
-  </div>
 
-  <!-- INTERFACE DU SITE PRINCIPAL -->
-  <div id="mainContent">
-    
-    <header class="hero-banner">
-      <h1>Bienvenue</h1>
-      <p>Systèmes d'information et numérique</p>
+    <header class="navbar">
+      <a class="nav-logo" href="index.html">
+        Mon classeur numérique
+      </a>
+
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="documents.html">Documents</a>
+        <a href="cours.html">Cours</a>
+        <a href="tp.html">Évaluations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
     </header>
 
-    <main class="main-content">
-      <div class="section-tag">STI2D</div>
+    <div class="secure-card">
+      <div class="secure-icon">🎓</div>
+      <div class="secure-brand">ESPACE STI2D</div>
+      <h2>Connexion</h2>
+      <p class="secure-subtitle">
+        Identifie-toi pour accéder à ton espace numérique.
+      </p>
 
-      <div class="grid-container">
-        <a href="documents.html" class="card">
-          <h3>Documents</h3>
-          <p>Consulter mes documents.</p>
-        </a>
-        <a href="cours.html" class="card">
-          <h3>Cours</h3>
-          <p>Consulter mes cours.</p>
-        </a>
-        <a href="tp.html" class="card">
-          <h3>Évaluations</h3>
-          <p>Consulter mes évaluations.</p>
-        </a>
-      </div>
+      <form id="loginForm">
+        <div class="secure-field">
+          <label for="username">Identifiant</label>
+          <input
+            type="text"
+            id="username"
+            autocomplete="username"
+            required
+            placeholder="Pseudo ou email"
+          >
+        </div>
+
+        <div class="secure-field">
+          <label for="password">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            autocomplete="current-password"
+            required
+            placeholder="Mot de passe"
+          >
+        </div>
+
+        <p id="loginError" class="secure-error" role="alert">
+          Connexion impossible. Vérifie tes identifiants.
+        </p>
+
+        <button type="submit" class="secure-btn">
+          Se connecter <span aria-hidden="true">→</span>
+        </button>
+      </form>
+
+      <p class="security-note">
+        <span>●</span> Accès réservé aux utilisateurs autorisés
+      </p>
+    </div>
+
+    <div class="lock-footer">
+      MON CLASSEUR NUMÉRIQUE <span>·</span> SIN / STI2D
+    </div>
+  </section>
+
+  <!-- CONTENU DU SITE -->
+  <div id="mainContent" hidden>
+    <header class="navbar">
+      <a class="nav-logo" href="index.html">
+        Mon classeur numérique
+      </a>
+
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="documents.html">Documents</a>
+        <a href="cours.html">Cours</a>
+        <a href="tp.html">Évaluations</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-banner">
+        <div class="weather-bg" aria-hidden="true">
+          <div class="rain"></div>
+          <div class="lightning lightning-one"></div>
+          <div class="lightning lightning-two"></div>
+          <div class="network-glow"></div>
+        </div>
+
+        <div class="hero-content">
+          <span class="hero-label">SYSTÈMES D'INFORMATION</span>
+          <h1><span>Bienvenue</span></h1>
+          <p>Systèmes d'information et numérique</p>
+          <a class="hero-button" href="#ressources">
+            Explorer mon espace <span>↓</span>
+          </a>
+        </div>
+
+        <div class="hero-bottom-line"></div>
+      </section>
+
+      <section class="main-content" id="ressources">
+        <div class="section-tag">STI2D</div>
+
+        <p class="section-description">
+          Ton espace de travail. Tes ressources. Tes objectifs.
+        </p>
+
+        <div class="grid-container">
+          <a href="documents.html" class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 3h9l5 5v13H5z"/>
+                <path d="M14 3v6h5M8 13h8M8 17h8"/>
+              </svg>
+            </div>
+            <span class="card-index">01 / RESSOURCES</span>
+            <h3>Documents</h3>
+            <p>Retrouve tes documents et tes ressources de travail.</p>
+            <span class="card-link">Ouvrir les documents <b>↗</b></span>
+          </a>
+
+          <a href="cours.html" class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H12v17H5.5A2.5 2.5 0 0 0 3 22z"/>
+                <path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H12v17h6.5a2.5 2.5 0 0 1 2.5 2z"/>
+              </svg>
+            </div>
+            <span class="card-index">02 / APPRENTISSAGE</span>
+            <h3>Cours</h3>
+            <p>Accède aux notions essentielles et révise à ton rythme.</p>
+            <span class="card-link">Consulter les cours <b>↗</b></span>
+          </a>
+
+          <a href="tp.html" class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 4h8M9 3h6v3H9z"/>
+                <rect x="5" y="5" width="14" height="16" rx="2"/>
+                <path d="m8 12 2 2 5-5M8 17h8"/>
+              </svg>
+            </div>
+            <span class="card-index">03 / ENTRAÎNEMENT</span>
+            <h3>Évaluations</h3>
+            <p>Retrouve tes TP, tes exercices et tes évaluations.</p>
+            <span class="card-link">Voir les évaluations <b>↗</b></span>
+          </a>
+        </div>
+
+        <div class="about-section">
+          <div class="about-symbol">SIN<span>.</span></div>
+          <div>
+            <span class="about-kicker">À PROPOS DE L'ESPACE</span>
+            <h2>Tout au même endroit.</h2>
+            <p>
+              Un espace dédié aux Systèmes d'Information et Numérique,
+              conçu pour organiser tes ressources et faciliter tes révisions.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
 
+    <footer class="footer-bar">
+      <a class="footer-brand" href="index.html">Mon classeur numérique</a>
+      <span>STI2D · SIN</span>
+      <a href="contact.html">Contact</a>
+    </footer>
   </div>
 
-  <!-- SCRIPT D'AUTHENTIFICATION -->
   <script>
-    window.onload = function() {
-      if (localStorage.getItem('user_session') === 'verified_creator') {
-        document.getElementById('lockScreen').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-      } else {
-        document.getElementById('lockScreen').style.display = 'flex';
-        document.getElementById('mainContent').style.display = 'none';
-      }
-    };
+    /*
+      IMPORTANT :
+      Cette interface ne fournit pas, à elle seule,
+      une authentification sécurisée.
 
-    function verifyCredentials(event) {
+      Le formulaire reste bloqué tant qu'un véritable
+      service d'authentification n'a pas été connecté.
+      Ne stocke pas de mot de passe dans ce fichier.
+    */
+
+    const lockScreen = document.getElementById("lockScreen");
+    const mainContent = document.getElementById("mainContent");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+
+    function showLogin() {
+      lockScreen.hidden = false;
+      mainContent.hidden = true;
+    }
+
+    function showSite() {
+      lockScreen.hidden = true;
+      mainContent.hidden = false;
+    }
+
+    loginForm.addEventListener("submit", function (event) {
       event.preventDefault();
-      const user = document.getElementById('username').value.trim().toLowerCase();
-      const errorDiv = document.getElementById('loginError');
 
-      if (user === 'jd' || user === 'clement') {
-        errorDiv.style.display = 'none';
-        document.getElementById('lockScreen').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-        localStorage.setItem('user_session', 'verified_creator');
-      } else {
-        errorDiv.style.display = 'block';
-      }
-    }
+      loginError.textContent =
+        "La connexion sécurisée n'est pas encore configurée. Aucun accès n'a été accordé.";
+      loginError.style.display = "block";
+    });
 
-    function unlockAsGuest() {
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'block';
-    }
+    // Par défaut, afficher l'écran de connexion.
+    showLogin();
   </script>
 
 </body>
