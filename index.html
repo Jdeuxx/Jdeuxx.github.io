@@ -2,64 +2,45 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mon classeur numérique STI2D SIN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon classeur numérique</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    .error-message { color: #ff3b93; font-size: 0.85rem; display: none; text-align: left; }
-    .logo-mark { filter: drop-shadow(0 0 6px #38bdf8); flex: 0 0 auto; }
-    .brand { display: flex; align-items: center; gap: 10px; }
-  </style>
 </head>
 <body>
 
-  <div class="modal-overlay" id="loginModal">
-    <div class="login-card">
-      <button class="close-modal" aria-label="Fermer" onclick="closeModal()">×</button>
-
-      <div class="brand-title">Mon Classeur</div>
-
-      <h2>Espace du créateur</h2>
-      <p>Mon classeur numérique · STI2D SIN</p>
-
-      <p>Bienvenue dans ton espace personnel ! Retrouve tes cours, évaluations, TP et projets.</p>
-
-      <button type="button" class="btn-submit" onclick="closeModal()">
-        Entrer dans mon classeur
-      </button>
+  <!-- Barre de navigation du site principal -->
+  <nav class="navbar">
+    <div class="nav-logo"><span>R</span> Mon classeur numérique</div>
+    <div class="nav-links">
+      <a href="documents.html">Documents</a>
+      <a href="cours.html">Cours</a>
+      <a href="tp.html">Évaluations</a>
+      <a href="contact.html">Contact</a>
     </div>
-  </div>
+  </nav>
 
-    <div class="login-card">
-      <button class="close-modal" aria-label="Fermer" onclick="closeModal()">×</button>
-      <div class="brand-title">Mon Classeur</div>
-      <h2>Connexion</h2>
-      <p>Identifiez-vous pour accéder au site.</p>
-      <form onsubmit="checkLogin(event)">
-        <div class="form-group">
-          <label for="username">Identifiant</label>
-          <input type="text" id="username" required placeholder="Votre identifiant">
-        </div>
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" required placeholder="••••••••">
-        </div>
-        <div id="loginError" class="error-message">Identifiant incorrect. Veuillez réessayer.</div>
-        <button type="submit" class="btn-submit">Se connecter</button>
-      </form>
-      <a href="#" class="guest-link" onclick="closeModal()">Continuer sans se connecter (Mode invité)</a>
-    </div>
-  </div>
-
-  <section class="hero">
-    <svg class="bolt" viewBox="0 0 640 260" aria-hidden="true">
-      <path d="M120 0 L150 70 L110 100 L190 170 L150 200 L180 260 M150 70 L210 110 L250 150 M110 100 L70 140" fill="none" stroke="#7dd3fc" stroke-width="2"/>
-    </svg>
-    <div class="orb" aria-hidden="true"></div>
+  <!-- En-tête -->
+  <header class="hero">
     <h1>Bienvenue</h1>
-    <p class="hero-sub">Systèmes d'information et numérique</p>
-  </section>
+    <p>Systèmes d'information et numérique</p>
+    <div class="badge-sti2d">STI2D</div>
+  </header>
 
-  <header class="topbar">
-    <a class="brand" href="index.html">
-      <svg class="logo-mark" viewBox="0 0 40 56" width="26" height="38" 
+  <!-- Grille de raccourcis -->
+  <main class="grid-container">
+    <a href="documents.html" class="card">
+      <h3>Documents</h3>
+      <p>Consulter mes documents.</p>
+    </a>
+    <a href="cours.html" class="card">
+      <h3>Cours</h3>
+      <p>Consulter mes cours.</p>
+    </a>
+    <a href="tp.html" class="card">
+      <h3>Évaluations</h3>
+      <p>Consulter mes évaluations.</p>
+    </a>
+  </main>
+
+</body>
+</html>
