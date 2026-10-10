@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon classeur numérique</title>
+  <title>Mon classeur numérique - Cours</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,34 +12,71 @@
   <nav class="navbar">
     <div class="nav-logo"><span>R</span> Mon classeur numérique</div>
     <div class="nav-links">
-      <a href="documents.html">Documents</a>
-      <a href="cours.html">Cours</a>
+      <a href="index.html">Documents</a>
+      <a href="cours.html" class="active">Cours</a>
       <a href="tp.html">Évaluations</a>
       <a href="contact.html">Contact</a>
     </div>
   </nav>
 
-  <!-- En-tête -->
+  <!-- En-tête de la page -->
   <header class="hero">
-    <h1>Bienvenue</h1>
-    <p>Systèmes d'information et numérique</p>
-    <div class="badge-sti2d">STI2D</div>
+    <h1>Mes Cours <span class="accent-title">STI2D SIN</span></h1>
+    <p class="subtitle">Systèmes d'information et numérique</p>
   </header>
 
-  <!-- Grille de raccourcis -->
-  <main class="grid-container">
-    <a href="documents.html" class="card">
-      <h3>Documents</h3>
-      <p>Consulter mes documents.</p>
-    </a>
-    <a href="cours.html" class="card">
-      <h3>Cours</h3>
-      <p>Consulter mes cours.</p>
-    </a>
-    <a href="tp.html" class="card">
-      <h3>Évaluations</h3>
-      <p>Consulter mes évaluations.</p>
-    </a>
+  <!-- Section principale : Conteneur des séquences -->
+  <main style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
+    
+    <div style="margin-bottom: 30px; text-align: left;">
+      <h2 style="color: #00ffff; margin: 0; font-size: 1.8rem; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);">Mes séquences</h2>
+      <p style="color: #8fa0c4; margin: 5px 0 0 0; font-size: 0.95rem;">Les documents de cours sont classés par séquence.</p>
+    </div>
+    
+    <!-- Grille alignée avec les cartes stylisées -->
+    <div class="grid-container" style="margin-top: 0; justify-content: center; gap: 25px;">
+      
+      <!-- Séquence 01 -->
+      <div class="card" style="text-align: left; width: 320px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="background: rgba(0, 255, 255, 0.1); color: #00ffff; border: 1px solid #00ffff; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);">S01</span>
+            <span style="color: #00ffcc; font-size: 0.85rem; font-weight: 600;">• Disponible</span>
+          </div>
+          <h3 style="margin: 0 0 10px 0; font-size: 1.25rem; line-height: 1.4; color: #00ffff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);">De la grandeur physique à la donnée numérique</h3>
+          <p style="color: #8fa0c4; font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.5;">Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.</p>
+        </div>
+        <div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
+            <span style="background: #152238; color: #a5b4fc; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.1);">Capteurs</span>
+            <span style="background: #152238; color: #a5b4fc; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.1);">Arduino</span>
+            <span style="background: #152238; color: #a5b4fc; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.1);">Acquisition</span>
+          </div>
+          <!-- Ouvre une nouvelle page externe pour lire le PDF -->
+          <a href="documents/s01-acquerir.html" style="color: #ffffff; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-block; transition: color 0.2s;" onmouseover="this.style.color='#00ffff'" onmouseout="this.style.color='#ffffff'">Ouvrir le cours →</a>
+        </div>
+      </div>
+
+      <!-- Séquence 02 -->
+      <div class="card" style="text-align: left; width: 320px; box-sizing: border-box; opacity: 0.5; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="background: #1e293b; color: #94a3b8; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem;">S02</span>
+            <span style="color: #94a3b8; font-size: 0.85rem; font-weight: 600;">• À venir</span>
+          </div>
+          <h3 style="margin: 0 0 10px 0; font-size: 1.25rem; line-height: 1.4; color: #94a3b8;">Communication et échange de données</h3>
+          <p style="color: #516485; font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.5;">Cette séquence apparaîtra ici lorsqu'elle aura été commencée.</p>
+        </div>
+        <div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
+            <span style="background: #152238; color: #516485; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Réseau</span>
+            <span style="background: #152238; color: #516485; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">Protocoles</span>
+          </div>
+          <span style="color: #516485; font-size: 0.9rem; font-weight: 600;">Pas encore disponible</span>
+        </div>
+      </div>
+
+    </div>
   </main>
 
 </body>
