@@ -5,12 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon classeur numérique</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Message d'erreur pour la connexion */
+    .error-message {
+      color: #ff2a85;
+      font-size: 0.85rem;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      display: none;
+      text-align: left;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
+  <!-- Fenêtre Pop-up de Connexion (Mélange JD) -->
+  <div class="modal-overlay" id="loginModal" style="display: none;">
+    <div class="login-card">
+      <button class="close-modal" onclick="closeModal()">×</button>
+      
+      <div class="icon-header">🎓</div>
+      <div class="brand-title">Mon Classeur</div>
+
+      <h2>Connexion</h2>
+      <div class="subtitle">Identifiez-vous pour accéder au site.</div>
+
+      <!-- Formulaire de connexion -->
+      <form onsubmit="checkLogin(event)">
+        <div class="form-group">
+          <label for="username">Identifiant</label>
+          <input type="text" id="username" required placeholder="Votre identifiant (ex: jd, clement)">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+
+        <div id="loginError" class="error-message">Identifiant incorrect. Veuillez réessayer.</div>
+
+        <button type="submit" class="btn-submit">Se connecter</button>
+      </form>
+      
+      <a href="#" class="guest-link" onclick="closeModal()">Continuer sans se connecter (Mode invité)</a>
+    </div>
+  </div>
+
   <!-- Barre de navigation du site principal -->
   <nav class="navbar">
-    <div class="nav-logo"><span>R</span> Mon classeur numérique</div>
+    <div class="nav-logo" onclick="setCreatorMode()" style="cursor: pointer;" title="Activer le mode créateur"><span>R</span> Mon classeur numérique</div>
     <div class="nav-links">
       <a href="documents.html">Documents</a>
       <a href="cours.html">Cours</a>
@@ -41,6 +85,44 @@
       <p>Consulter mes évaluations.</p>
     </a>
   </main>
+
+  <!-- Script d'automatisation intelligent -->
+  <script>
+    // Étape 1 : Vérifie au chargement si c'est toi (le créateur)
+    window.onload = function() {
+      const isCreator = localStorage.getItem('role') === 'createur';
+      if (!isCreator) {
+        // Si ce n'est pas toi, on affiche la pop-up de connexion pour l'invité
+        document.getElementById('loginModal').style.display = 'flex';
+      }
+    };
+
+    function closeModal() {
+      document.getElementById('loginModal').style.display = 'none';
+    }
+
+    // Étape 2 : Permet aux invités de se connecter avec 'jd' ou 'clement'
+    function checkLogin(event) {
+      event.preventDefault();
+      const userField = document.getElementById('username').value.trim().toLowerCase();
+      const errorDiv = document.getElementById('loginError');
+
+      if (userField === 'jd' || userField === 'clement') {
+        errorDiv.style.display = 'none';
+        closeModal();
+      } else {
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    // Étape 3 : Astuce magique pour toi. Clique sur le logo [R] en haut à gauche
+    // pour dire au site de ne plus jamais te demander la pop-up sur ton PC !
+    function setCreatorMode() {
+      localStorage.setItem('role', 'createur');
+      alert("Mode Créateur activé ! La pop-up ne s'affichera plus sur cet ordinateur. 🎓");
+      closeModal();
+    }
+  </script>
 
 </body>
 </html>
