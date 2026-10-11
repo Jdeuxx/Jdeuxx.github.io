@@ -122,11 +122,19 @@ main ul { padding-left: 1.2rem; }
 }
 
 /* Rubriques */
-.section-title { text-align: center; color: #7cc8ff; margin: 1rem 0 1.5rem; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; }
+.section-title {
+  text-align: center;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(63, 178, 255, .6);
+  margin: 2rem 0 2.5rem;
+}
+.cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
 .card {
   display: block;
-  padding: 1.5rem 1.1rem;
+  width: 280px;
+  max-width: 100%;
+  padding: 2rem 1.1rem;
   text-align: center;
   text-decoration: none;
   color: var(--muted);
