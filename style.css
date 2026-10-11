@@ -81,6 +81,7 @@ main ul { padding-left: 1.2rem; }
   text-decoration: none;
   text-shadow: 0 0 14px rgba(var(--rgb), .5);
 }
+.brand svg { flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(var(--rgb), .8)); }
 .topbar nav a { color: var(--text); text-decoration: none; }
 .topbar nav a:hover { color: var(--accent); }
 
