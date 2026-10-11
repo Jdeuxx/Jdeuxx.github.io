@@ -7,37 +7,51 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Mon classeur numérique</h1>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <svg width="30" height="34" viewBox="0 0 30 34" aria-hidden="true"><polygon points="15,2 28,9 28,25 15,32 2,25 2,9" fill="none" stroke="#3fb2ff" stroke-width="2"/></svg>
+      Mon classeur numérique
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="cours.html">Cours</a>
+      <a href="tp.html">TP</a>
+      <a href="evaluations.html">Évaluations</a>
+      <a href="projets.html">Projets</a>
+      <a href="revisions.html">Révisions</a>
+      <a href="#documents">Documents</a>
+    </nav>
   </header>
-  <nav>
-    <a href="index.html">Accueil</a> |
-    <a href="cours.html">Cours</a> |
-    <a href="tp.html">TP</a> |
-    <a href="projets.html">Projets</a> |
-    <a href="evaluations.html">Évaluations</a>
-  </nav>
+
+  <section class="hero">
+    <svg class="bolt" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <polyline points="330,0 300,80 340,110 270,200 310,225 220,330"/>
+      <polyline points="700,0 740,70 690,105 740,170 705,200 760,290"/>
+    </svg>
+    <h1>Bienvenue</h1>
+    <p>Terminale STI2D · Systèmes d'information et numérique</p>
+  </section>
+
   <main>
-    <h2>Bienvenue</h2>
-    <p>Ce site me permettra d'organiser mes ressources de SIN.</p>
+    <h2 class="section-title">SIN</h2>
+    <div class="cards">
+      <a class="card" href="cours.html"><h3>Cours</h3><p>Notions et synthèses.</p></a>
+      <a class="card" href="tp.html"><h3>TP</h3><p>Travaux pratiques.</p></a>
+      <a class="card" href="evaluations.html"><h3>Évaluations</h3><p>Devoirs et bilans.</p></a>
+      <a class="card" href="projets.html"><h3>Projets</h3><p>Dossiers et réalisations.</p></a>
+      <a class="card" href="revisions.html"><h3>Révisions</h3><p>Fiches et méthodes.</p></a>
+    </div>
+
     <section id="documents">
       <h2>Documents</h2>
       <ul>
-        <li>
-          <a href="https://jean-daniel.alwaysdata.net/documents/cours/sequence-01-acquerir-traiter.pdf"
-             target="_blank" rel="noopener">Cours : séquence 1</a>
-        </li>
-        <li>
-          <a href="https://jean-daniel.alwaysdata.net/documents/tp/tp-01-aide-stationnement.pdf"
-             target="_blank" rel="noopener">TP 1 : aide au stationnement</a>
-        </li>
-        <li>
-          <a href="https://jean-daniel.alwaysdata.net/documents/evaluations/evaluation-seq1-grandeurs.pdf"
-             target="_blank" rel="noopener">Évaluation : séquence 1</a>
-        </li>
+        <li><a href="https://jean-daniel.alwaysdata.net/documents/cours/sequence-01-acquerir-traiter.pdf" target="_blank" rel="noopener">Cours : séquence 1</a></li>
+        <li><a href="https://jean-daniel.alwaysdata.net/documents/tp/tp-01-aide-stationnement.pdf" target="_blank" rel="noopener">TP 1 : aide au stationnement</a></li>
+        <li><a href="https://jean-daniel.alwaysdata.net/documents/evaluations/evaluation-seq1-grandeurs.pdf" target="_blank" rel="noopener">Évaluation : séquence 1</a></li>
       </ul>
       <p>Ces documents sont hébergés sur un espace protégé : un identifiant et un mot de passe sont demandés à l'ouverture.</p>
     </section>
   </main>
+
+  <footer>Classeur numérique · STI2D SIN</footer>
 </body>
 </html>
