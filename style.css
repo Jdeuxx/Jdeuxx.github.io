@@ -1,43 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600&display=swap');
 
 :root {
-  --bg: #020611;
-  --panel: #07142b;
-  --line: #12335f;
-  --accent: #3fb2ff;
-  --text: #cfe3ff;
-  --muted: #9db8dc;
+  --bg: #020a06;
+  --line: #0f4a2b;
+  --accent: #35f08a;
+  --rgb: 53, 240, 138;
+  --text: #d4ffe6;
+  --muted: #9fd9b7;
 }
 
 * { box-sizing: border-box; }
-
 html { background: var(--bg); }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(ellipse at 50% 0%, #0a1c3d 0%, var(--bg) 62%);
+  background: radial-gradient(ellipse at 50% 0%, #0a2a18 0%, var(--bg) 62%);
   color: var(--text);
   font: 600 1.1rem/1.6 'Rajdhani', system-ui, sans-serif;
 }
 
-/* Pluie constante : deux couches de gouttes, fixes derrière tout le contenu */
-body::before,
-body::after {
+/* Pluie constante : deux couches de gouttes, fixes derrière le contenu */
+body::before, body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-repeat: repeat;
 }
 body::before {
-  background-image: linear-gradient(104deg, transparent 48%, rgba(160, 200, 255, .30) 50%, transparent 52%);
+  background-image: linear-gradient(104deg, transparent 48%, rgba(170, 255, 200, .30) 50%, transparent 52%);
   background-size: 34px 140px;
   animation: pluie-a .7s linear infinite;
 }
 body::after {
-  background-image: linear-gradient(104deg, transparent 49%, rgba(120, 170, 255, .18) 50%, transparent 51%);
+  background-image: linear-gradient(104deg, transparent 49%, rgba(130, 255, 180, .18) 50%, transparent 51%);
   background-size: 57px 210px;
   animation: pluie-b .95s linear infinite;
 }
@@ -47,24 +44,24 @@ body::after {
 header, nav, main, footer { position: relative; z-index: 1; }
 
 a { color: var(--accent); }
-a:hover { color: #9bd8ff; }
+a:hover { color: #a6ffcd; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
 h1, h2, h3 { font-family: 'Orbitron', system-ui, sans-serif; letter-spacing: .03em; }
 
-/* Pages intérieures (cours, tp, projets, évaluations, révisions) */
-header:not(.topbar) { text-align: center; padding: 2.5rem 1rem 0.5rem; }
+/* Pages intérieures */
+header:not(.topbar) { text-align: center; padding: 2.5rem 1rem .5rem; }
 header:not(.topbar) h1 {
   margin: 0 0 .5rem;
   font-size: clamp(1.8rem, 5vw, 2.6rem);
   color: var(--accent);
-  text-shadow: 0 0 18px rgba(63, 178, 255, .55);
+  text-shadow: 0 0 18px rgba(var(--rgb), .55);
 }
 main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
-main h2 { color: #7cc8ff; font-size: 1.4rem; }
+main h2 { color: #7dffb4; font-size: 1.4rem; }
 main ul { padding-left: 1.2rem; }
 
-/* Barre du haut de l'accueil */
+/* Barre du haut (accueil) */
 .topbar {
   display: flex;
   flex-wrap: wrap;
@@ -73,7 +70,7 @@ main ul { padding-left: 1.2rem; }
   gap: .75rem 2rem;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--line);
-  background: rgba(2, 6, 17, .85);
+  background: rgba(2, 10, 6, .85);
 }
 .brand {
   display: flex;
@@ -82,51 +79,109 @@ main ul { padding-left: 1.2rem; }
   font: 700 clamp(1.1rem, 3vw, 1.6rem) 'Orbitron', system-ui, sans-serif;
   color: var(--accent);
   text-decoration: none;
-  text-shadow: 0 0 14px rgba(63, 178, 255, .5);
+  text-shadow: 0 0 14px rgba(var(--rgb), .5);
 }
-.topbar nav { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; }
-.topbar nav a { color: var(--text); text-decoration: none; padding: .2rem 0; }
+.topbar nav a { color: var(--text); text-decoration: none; }
 .topbar nav a:hover { color: var(--accent); }
 
-/* Hero avec éclairs */
+/* Hero : globe qui tourne, éclairs, BIENVENUE */
 .hero {
   position: relative;
   z-index: 1;
   overflow: hidden;
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 6rem 1rem 5rem;
+  padding: 4rem 1rem;
   border-bottom: 1px solid var(--line);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 52%, rgba(var(--rgb), .24), transparent 55%);
 }
 .hero h1 {
   position: relative;
+  z-index: 2;
   margin: 0;
-  font-size: clamp(2.6rem, 9vw, 5rem);
+  font: 900 clamp(2.4rem, 9vw, 5.2rem)/1 'Orbitron', system-ui, sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
   color: #fff;
-  text-shadow: 0 0 22px rgba(63, 178, 255, .85);
+  text-shadow: 0 0 12px rgba(var(--rgb), .9), 0 0 34px rgba(var(--rgb), .6);
 }
-.hero p { position: relative; margin: .8rem 0 0; font-size: 1.3rem; color: var(--muted); }
-.bolt { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; animation: eclair 7s infinite; }
-.bolt polyline {
-  fill: none;
-  stroke: #bfe6ff;
-  stroke-width: 3;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 6px #3fb2ff) drop-shadow(0 0 16px #3fb2ff);
+.hero p { position: relative; z-index: 2; margin: 1rem 0 0; font-size: 1.3rem; color: var(--muted); }
+
+/* Globe fil de fer en rotation continue */
+.globe {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  width: 220px;
+  height: 220px;
+  margin: -110px 0 0 -110px;
+  perspective: 900px;
+  filter: drop-shadow(0 0 8px rgba(var(--rgb), .9));
 }
-@keyframes eclair {
-  0%, 84%, 100% { opacity: 0; }
-  85% { opacity: 1; }
-  86% { opacity: .25; }
-  87% { opacity: 1; }
-  91% { opacity: 0; }
+.globe-spin {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: tourne 16s linear infinite;
+}
+@keyframes tourne {
+  from { transform: rotateX(-22deg) rotateY(0deg); }
+  to   { transform: rotateX(-22deg) rotateY(360deg); }
+}
+.globe-spin i {
+  position: absolute;
+  border: 1.5px solid rgba(var(--rgb), .85);
+  border-radius: 50%;
+}
+.globe-spin .m { inset: 0; transform: rotateY(var(--a)); }
+.globe-spin .l {
+  left: 50%;
+  top: 50%;
+  width: var(--d);
+  height: var(--d);
+  margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
+  transform: rotateX(90deg) translateZ(var(--h));
 }
 
-/* Rubriques */
+/* Éclairs : quatre branches qui s'allument à tour de rôle, sans pause longue */
+.bolt { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; }
+.bolt polyline {
+  fill: none;
+  stroke: #d9ffe8;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #35f08a) drop-shadow(0 0 16px #35f08a);
+}
+.bolt .b1 { animation: eclair 3.3s infinite; }
+.bolt .b2 { animation: eclair 4.1s .9s infinite; }
+.bolt .b3 { animation: eclair 5.2s 1.7s infinite; }
+.bolt .b4 { animation: eclair 6.1s .4s infinite; }
+@keyframes eclair {
+  0%, 70%, 100% { opacity: 0; }
+  72% { opacity: 1; }
+  74% { opacity: .2; }
+  76% { opacity: 1; }
+  81% { opacity: 0; }
+}
+
+/* Les cinq rubriques, au milieu de la page */
 .section-title {
   text-align: center;
   font-size: clamp(2rem, 6vw, 2.8rem);
   color: var(--accent);
-  text-shadow: 0 0 18px rgba(63, 178, 255, .6);
+  text-shadow: 0 0 18px rgba(var(--rgb), .6);
   margin: 2rem 0 2.5rem;
 }
 .cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
@@ -138,7 +193,7 @@ main ul { padding-left: 1.2rem; }
   text-align: center;
   text-decoration: none;
   color: var(--muted);
-  background: rgba(7, 20, 43, .88);
+  background: rgba(6, 23, 14, .88);
   border: 1px solid var(--line);
   border-radius: 12px;
   transition: border-color .2s, box-shadow .2s;
@@ -147,7 +202,7 @@ main ul { padding-left: 1.2rem; }
 .card p { margin: 0; }
 .card:hover, .card:focus-visible {
   border-color: var(--accent);
-  box-shadow: 0 0 18px rgba(63, 178, 255, .35);
+  box-shadow: 0 0 18px rgba(var(--rgb), .35);
 }
 
 #documents { margin-top: 3rem; }
@@ -157,7 +212,7 @@ main ul { padding-left: 1.2rem; }
 
 footer { text-align: center; padding: 2rem 1rem; color: var(--muted); border-top: 1px solid var(--line); }
 
-/* Si le système demande moins d'animations, la pluie et les éclairs se figent */
+/* Si le système demande moins d'animations, tout se fige */
 @media (prefers-reduced-motion: reduce) {
-  body::before, body::after, .bolt { animation: none; }
+  body::before, body::after, .globe-spin, .bolt polyline { animation: none; }
 }
