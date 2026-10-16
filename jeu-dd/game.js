@@ -1,944 +1,220 @@
-// ==================================================
-// ECO-NETTOYEUR
-// Jeu Phaser : 3 niveaux, scores, vies et chronomètre
-// ==================================================
+const L = 1920, H = 1080;
+const ZL = 760, ZG = (L - ZL) / 2, ZD = ZG + ZL; // zone de jeu au milieu
 
-const LARGEUR = 1920;
-const HAUTEUR = 1080;
-
-const ZONE_LARGEUR = 760;
-const ZONE_GAUCHE = (LARGEUR - ZONE_LARGEUR) / 2;
-const ZONE_DROITE = ZONE_GAUCHE + ZONE_LARGEUR;
-
-const config = {
-    type: Phaser.AUTO,
-    width: LARGEUR,
-    height: HAUTEUR,
-    backgroundColor: "#102333",
-    scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
-    },
-    scene: {
-        create,
-        update
-    }
+const NIVEAUX = {
+  facile:    { multi: 5,  but: 1000, temps: 180, vies: 5, delai: 1100, delaiMin: 450, vit: 160, vitMax: 380 },
+  moyen:     { multi: 10, but: 2000, temps: 120, vies: 3, delai: 750,  delaiMin: 250, vit: 240, vitMax: 520 },
+  difficile: { multi: 20, but: 3000, temps: 90,  vies: 2, delai: 450,  delaiMin: 160, vit: 360, vitMax: 680 }
 };
 
-new Phaser.Game(config);
+const $ = id => document.getElementById(id);
+let sc, robot, cur, keys;
+let objets = [], arbres = [];
+let enCours = false, niv = "moyen", cfg = NIVEAUX.moyen;
+let score = 0, vies = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1;
 
-// ==================================================
-// VARIABLES
-// ==================================================
+new Phaser.Game({
+  type: Phaser.AUTO, width: L, height: H, parent: "jeu", backgroundColor: "#07131f",
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scene: { create: create, update: update }
+});
 
-let player;
-let cursors;
-let objets = [];
+// ---------- Dessins ----------
+const R = (s, x, y, w, h, c, b) => { const o = s.add.rectangle(x, y, w, h, c); if (b) o.setStrokeStyle(2, b); return o; };
+const C = (s, x, y, r, c) => s.add.circle(x, y, r, c);
 
-let score = 0;
-let vies = 3;
-let tempsEcoule = 0;
-let tempsLimite = 120;
-let tempsApparition = 0;
-let delaiApparition = 750;
-let vitesse = 240;
-
-let scoreVictoire = 2000;
-let multiplicateur = 10;
-let difficulte = "moyen";
-
-let scoreTexte;
-let viesTexte;
-let tempsTexte;
-let niveauTexte;
-let multiTexte;
-let message;
-let bouton;
-let titreJeu;
-let reglesTexte;
-let legendeTexte;
-let objectifTexte;
-
-let termine = false;
-let jeuDemarre = false;
-let scoreSauvegarde = false;
-
-let arbres = [];
-let arbresAffiches = [];
-let elementsVictoire = [];
-let boutonsMenu = [];
-
-let historiqueScores = chargerHistorique();
-
-// ==================================================
-// HISTORIQUE DES SCORES
-// ==================================================
-
-function chargerHistorique() {
-    try {
-        const donnees = JSON.parse(
-            localStorage.getItem("ecoScores") || "[]"
-        );
-
-        return Array.isArray(donnees) ? donnees.slice(0, 8) : [];
-    } catch (erreur) {
-        return [];
-    }
+function creerRobot(s, x, y) {
+  const c = s.add.container(x, y), l = 0x1e4a6e;
+  c.add([
+    R(s, 0, -8, 34, 27, 0x2aa0e0, l), R(s, 0, -9, 25, 14, 0x102333), C(s, -7, -9, 3, 0x7df9ff), C(s, 7, -9, 3, 0x7df9ff),
+    C(s, 0, -24, 5, 0xff8c3a), R(s, 0, 18, 42, 28, 0x3ab0e0, l), R(s, 0, 18, 18, 13, 0xffd700, 0xb8860b),
+    R(s, -26, 16, 9, 24, 0x2aa0e0, l), R(s, 26, 16, 9, 24, 0x2aa0e0, l),
+    R(s, -11, 39, 9, 17, 0x2aa0e0, l), R(s, 11, 39, 9, 17, 0x2aa0e0, l),
+    R(s, -12, 48, 16, 6, 0xb0c4de, l), R(s, 12, 48, 16, 6, 0xb0c4de, l)
+  ]);
+  return c.setScale(1.35);
 }
 
-function sauvegarderScore() {
-    if (scoreSauvegarde) return;
-
-    scoreSauvegarde = true;
-
-    historiqueScores.unshift({
-        score: score,
-        niveau: difficulte,
-        date: new Date().toLocaleString("fr-FR")
-    });
-
-    historiqueScores = historiqueScores.slice(0, 8);
-
-    try {
-        localStorage.setItem(
-            "ecoScores",
-            JSON.stringify(historiqueScores)
-        );
-    } catch (erreur) {
-        console.warn("Impossible de sauvegarder les scores.");
-    }
+function creerPoubelle(s, x, y) { // à ESQUIVER
+  const c = s.add.container(x, y), l = 0x0d6e5a;
+  c.add([
+    R(s, 0, 3, 32, 39, 0x20c997, l), R(s, 0, -19, 38, 7, 0x4dd4b0, l),
+    R(s, -10, 3, 3, 28, 0xa8f0e0), R(s, 10, 3, 3, 28, 0xa8f0e0),
+    s.add.text(0, 2, "♻", { fontSize: "18px", color: "#ffffff" }).setOrigin(0.5)
+  ]);
+  return c.setScale(1.35);
 }
 
-function afficherHistorique(scene) {
-    const lignes = historiqueScores.length
-        ? historiqueScores.map((partie, index) =>
-            `${index + 1}. ${String(partie.niveau).toUpperCase()} — ` +
-            `${partie.score} pts — ${partie.date}`
-        )
-        : ["Aucune partie jouée pour le moment."];
-
-    const texte = scene.add.text(
-        LARGEUR / 2,
-        785,
-        "HISTORIQUE DES SCORES\n\n" + lignes.join("\n"),
-        {
-            fontSize: "22px",
-            color: "#e2e8f0",
-            align: "center",
-            lineSpacing: 5
-        }
-    ).setOrigin(0.5, 0);
-
-    boutonsMenu.push(texte);
+function creerBaril(s, x, y) { // à ATTRAPER
+  const c = s.add.container(x, y), l = 0xb8860b;
+  c.add([
+    R(s, 0, 1, 36, 39, 0xffb020, l),
+    s.add.ellipse(0, -19, 40, 12, 0xffd54a).setStrokeStyle(2, l),
+    s.add.ellipse(0, 20, 34, 9, 0xe69500).setStrokeStyle(2, l),
+    R(s, 0, -7, 34, 3, l), R(s, 0, 10, 34, 3, l), C(s, 0, 1, 12, 0x2c3e50),
+    s.add.text(0, 1, "☢", { fontSize: "24px", color: "#ffd700" }).setOrigin(0.5)
+  ]);
+  return c.setScale(1.35);
 }
 
-// ==================================================
-// CRÉATION DU ROBOT
-// ==================================================
-
-function creerRobot(scene, x, y) {
-    const robot = scene.add.container(x, y);
-
-    robot.add(
-        scene.add.line(0, -24, 0, 0, 0, -8, 0x1e4a6e)
-            .setLineWidth(3)
-    );
-
-    robot.add(
-        scene.add.circle(0, -24, 5, 0xff8c3a)
-            .setStrokeStyle(2, 0x1e4a6e)
-    );
-
-    robot.add(
-        scene.add.rectangle(0, -8, 34, 27, 0x2aa0e0)
-            .setStrokeStyle(3, 0x1e4a6e)
-    );
-
-    robot.add(
-        scene.add.rectangle(0, -9, 25, 14, 0x102333)
-    );
-
-    robot.add([
-        scene.add.circle(-7, -9, 3, 0x7df9ff),
-        scene.add.circle(7, -9, 3, 0x7df9ff)
-    ]);
-
-    robot.add(
-        scene.add.rectangle(0, 18, 42, 28, 0x3ab0e0)
-            .setStrokeStyle(3, 0x1e4a6e)
-    );
-
-    robot.add(
-        scene.add.rectangle(0, 18, 18, 13, 0xffd700)
-            .setStrokeStyle(2, 0xb8860b)
-    );
-
-    robot.add([
-        scene.add.rectangle(-26, 16, 9, 24, 0x2aa0e0)
-            .setStrokeStyle(2, 0x1e4a6e),
-        scene.add.rectangle(26, 16, 9, 24, 0x2aa0e0)
-            .setStrokeStyle(2, 0x1e4a6e),
-        scene.add.circle(-26, 29, 5, 0xb0c4de)
-            .setStrokeStyle(2, 0x1e4a6e),
-        scene.add.circle(26, 29, 5, 0xb0c4de)
-            .setStrokeStyle(2, 0x1e4a6e)
-    ]);
-
-    robot.add([
-        scene.add.rectangle(-11, 39, 9, 17, 0x2aa0e0)
-            .setStrokeStyle(2, 0x1e4a6e),
-        scene.add.rectangle(11, 39, 9, 17, 0x2aa0e0)
-            .setStrokeStyle(2, 0x1e4a6e),
-        scene.add.rectangle(-12, 48, 16, 6, 0xb0c4de)
-            .setStrokeStyle(2, 0x1e4a6e),
-        scene.add.rectangle(12, 48, 16, 6, 0xb0c4de)
-            .setStrokeStyle(2, 0x1e4a6e)
-    ]);
-
-    robot.setScale(1.35);
-
-    return robot;
+function creerArbre(s, x, y, t) {
+  const c = s.add.container(x, y);
+  c.add([R(s, 0, 0, 18, 65, 0xa0522d), C(s, -15, -35, 25, 0x22c55e), C(s, 15, -35, 25, 0x4ade80), C(s, 0, -58, 28, 0x16a34a), C(s, 0, -35, 18, 0x86efac)]);
+  return c.setScale(t);
 }
 
-// ==================================================
-// OBJETS À ÉVITER : POUBELLE RECYCLABLE
-// ==================================================
-
-function creerPoubelle(scene, x, y) {
-    const poubelle = scene.add.container(x, y);
-
-    poubelle.add([
-        scene.add.rectangle(0, 3, 32, 39, 0x20c997)
-            .setStrokeStyle(2, 0x0d6e5a),
-        scene.add.rectangle(0, -19, 38, 7, 0x4dd4b0)
-            .setStrokeStyle(2, 0x0d6e5a),
-        scene.add.rectangle(-10, 3, 3, 28, 0xa8f0e0),
-        scene.add.rectangle(10, 3, 3, 28, 0xa8f0e0)
-    ]);
-
-    poubelle.add(
-        scene.add.text(0, 2, "♻", {
-            fontSize: "18px",
-            color: "#ffffff",
-            fontStyle: "bold"
-        }).setOrigin(0.5)
-    );
-
-    poubelle.add([
-        scene.add.circle(-10, 25, 4, 0x7a8a9a),
-        scene.add.circle(10, 25, 4, 0x7a8a9a)
-    ]);
-
-    poubelle.setScale(1.35);
-
-    return poubelle;
-}
-
-// ==================================================
-// OBJETS À RAMASSER : BARIL TOXIQUE
-// ==================================================
-
-function creerBarilToxique(scene, x, y) {
-    const baril = scene.add.container(x, y);
-
-    baril.add(
-        scene.add.rectangle(0, 1, 36, 39, 0xffb020)
-            .setStrokeStyle(2, 0xb8860b)
-    );
-
-    baril.add([
-        scene.add.ellipse(0, -19, 40, 12, 0xffd54a)
-            .setStrokeStyle(2, 0xb8860b),
-        scene.add.ellipse(0, 20, 34, 9, 0xe69500)
-            .setStrokeStyle(2, 0xb8860b)
-    ]);
-
-    baril.add([
-        scene.add.rectangle(0, -7, 34, 3, 0xb8860b),
-        scene.add.rectangle(0, 10, 34, 3, 0xb8860b)
-    ]);
-
-    baril.add(
-        scene.add.circle(0, 1, 12, 0x2c3e50)
-            .setStrokeStyle(1, 0xb8860b)
-    );
-
-    baril.add(
-        scene.add.text(0, 1, "☢", {
-            fontSize: "24px",
-            color: "#ffd700"
-        }).setOrigin(0.5)
-    );
-
-    baril.setScale(1.35);
-
-    return baril;
-}
-
-// ==================================================
-// ARBRES
-// ==================================================
-
-function creerArbre(scene, x, y, taille = 1) {
-    const arbre = scene.add.container(x, y);
-
-    arbre.add(
-        scene.add.rectangle(0, 0, 18, 65, 0xa0522d)
-    );
-
-    arbre.add([
-        scene.add.circle(-15, -35, 25, 0x22c55e),
-        scene.add.circle(15, -35, 25, 0x4ade80),
-        scene.add.circle(0, -58, 28, 0x16a34a),
-        scene.add.circle(0, -35, 18, 0x86efac)
-    ]);
-
-    arbre.setScale(taille);
-
-    return arbre;
-}
-
-function actualiserNature(scene) {
-    const paliers = [
-        { part: 0.2, x: 120, y: 820, taille: 1.2 },
-        { part: 0.4, x: 260, y: 825, taille: 1.5 },
-        { part: 0.6, x: 1660, y: 820, taille: 1.3 },
-        { part: 0.8, x: 1800, y: 825, taille: 1.6 }
-    ];
-
-    for (const info of paliers) {
-        if (
-            score >= info.part * scoreVictoire &&
-            !arbresAffiches.includes(info.part)
-        ) {
-            const arbre = creerArbre(
-                scene, info.x, info.y, info.taille
-            );
-
-            arbre.setDepth(2);
-            arbres.push(arbre);
-            arbresAffiches.push(info.part);
-        }
-    }
-}
-
-// ==================================================
-// MENU DE SÉLECTION
-// ==================================================
-
-function afficherMenu(scene) {
-    const titre = scene.add.text(
-        LARGEUR / 2, 125,
-        "ECO-NETTOYEUR",
-        {
-            fontSize: "76px",
-            color: "#4ade80",
-            fontStyle: "bold"
-        }
-    ).setOrigin(0.5);
-
-    boutonsMenu.push(titre);
-
-    const sousTitre = scene.add.text(
-        LARGEUR / 2, 220,
-        "Sauve la nature ! Choisis ton niveau.",
-        {
-            fontSize: "34px",
-            color: "#ffffff"
-        }
-    ).setOrigin(0.5);
-
-    boutonsMenu.push(sousTitre);
-
-    const niveaux = [
-        {
-            nom: "FACILE ×5",
-            detail: "Objectif : 1 000 points | 5 vies | 180 secondes",
-            cle: "facile",
-            multi: 5,
-            y: 325,
-            couleur: "#16864b"
-        },
-        {
-            nom: "MOYEN ×10",
-            detail: "Objectif : 2 000 points | 3 vies | 120 secondes",
-            cle: "moyen",
-            multi: 10,
-            y: 465,
-            couleur: "#b77908"
-        },
-        {
-            nom: "DIFFICILE ×20",
-            detail: "Objectif : 3 000 points | 2 vies | 90 secondes",
-            cle: "difficile",
-            multi: 20,
-            y: 605,
-            couleur: "#c53030"
-        }
-    ];
-
-    niveaux.forEach(niv => {
-        const btn = scene.add.text(
-            LARGEUR / 2, niv.y,
-            niv.nom + "\n" + niv.detail,
-            {
-                fontSize: "31px",
-                color: "#ffffff",
-                align: "center",
-                backgroundColor: niv.couleur,
-                padding: { x: 35, y: 16 }
-            }
-        ).setOrigin(0.5).setInteractive({
-            useHandCursor: true
-        });
-
-        btn.on("pointerover", () => btn.setAlpha(0.8));
-        btn.on("pointerout", () => btn.setAlpha(1));
-
-        btn.on("pointerdown", () => {
-            demarrerJeu(scene, niv.cle, niv.multi);
-        });
-
-        boutonsMenu.push(btn);
-    });
-
-    afficherHistorique(scene);
-}
-
-// ==================================================
-// DÉMARRAGE D'UNE PARTIE
-// ==================================================
-
-function demarrerJeu(scene, niveau, multi) {
-    difficulte = niveau;
-    multiplicateur = multi;
-
-    score = 0;
-    tempsEcoule = 0;
-    tempsApparition = 0;
-    termine = false;
-    jeuDemarre = true;
-    scoreSauvegarde = false;
-
-    objets.forEach(objet => objet.forme.destroy());
-    objets = [];
-
-    arbres.forEach(arbre => arbre.destroy());
-    arbres = [];
-    arbresAffiches = [];
-
-    if (niveau === "facile") {
-        delaiApparition = 1100;
-        vitesse = 160;
-        scoreVictoire = 1000;
-        tempsLimite = 180;
-        vies = 5;
-    } else if (niveau === "moyen") {
-        delaiApparition = 750;
-        vitesse = 240;
-        scoreVictoire = 2000;
-        tempsLimite = 120;
-        vies = 3;
-    } else {
-        delaiApparition = 450;
-        vitesse = 360;
-        scoreVictoire = 3000;
-        tempsLimite = 90;
-        vies = 2;
-    }
-
-    boutonsMenu.forEach(element => element.setVisible(false));
-
-    player.setPosition(LARGEUR / 2, 820);
-    player.setVisible(true);
-
-    scoreTexte.setVisible(true);
-    viesTexte.setVisible(true);
-    tempsTexte.setVisible(true);
-    niveauTexte.setVisible(true);
-    multiTexte.setVisible(true);
-    objectifTexte.setVisible(true);
-    titreJeu.setVisible(true);
-    reglesTexte.setVisible(true);
-    legendeTexte.setVisible(true);
-
-    scoreTexte.setText(
-        "POINTS : 0 / " + scoreVictoire
-    );
-
-    viesTexte.setText("VIES : " + vies);
-
-    tempsTexte.setText(
-        "TEMPS : 0 / " + tempsLimite + " s"
-    );
-
-    niveauTexte.setText(
-        "NIVEAU : " + niveau.toUpperCase()
-    );
-
-    multiTexte.setText("MULTIPLICATEUR : ×" + multi);
-
-    objectifTexte.setText(
-        "OBJECTIF : " + scoreVictoire + " pts"
-    );
-
-    message.setVisible(false);
-    bouton.setVisible(false);
-}
-
-// ==================================================
-// CRÉATION DE LA SCÈNE
-// ==================================================
-
+// ---------- Scène ----------
 function create() {
-    const scene = this;
+  sc = this;
+  R(sc, L / 2, H / 2, L, H, 0x07131f);
+  for (let i = 0; i < 18; i++) { // skyline de la ville
+    const h = Phaser.Math.Between(250, 650);
+    R(sc, i * 110 + 40, 875 - h / 2, Phaser.Math.Between(90, 160), h, 0x0e2236).setAlpha(0.8);
+  }
+  R(sc, L / 2, H / 2, ZL, H, 0x1b4560).setAlpha(0.45);
+  R(sc, ZG, H / 2, 4, H, 0x4ade80).setAlpha(0.8);
+  R(sc, ZD, H / 2, 4, H, 0x4ade80).setAlpha(0.8);
+  R(sc, L / 2, 900, L, 50, 0x245447);
+  R(sc, L / 2, 875, L, 4, 0x4ade80).setAlpha(0.6);
+  robot = creerRobot(sc, L / 2, 820);
+  cur = sc.input.keyboard.createCursorKeys();
+  keys = sc.input.keyboard.addKeys("Z,Q,S,D");
 
-    objets = [];
-    arbres = [];
-    arbresAffiches = [];
-    elementsVictoire = [];
-    boutonsMenu = [];
-
-    score = 0;
-    vies = 3;
-    tempsEcoule = 0;
-    tempsApparition = 0;
-    termine = false;
-    jeuDemarre = false;
-    scoreSauvegarde = false;
-
-    // Fond lumineux
-    scene.add.rectangle(
-        LARGEUR / 2, HAUTEUR / 2,
-        LARGEUR, HAUTEUR, 0x183c50
-    );
-
-    // Zone centrale
-    scene.add.rectangle(
-        LARGEUR / 2, HAUTEUR / 2,
-        ZONE_LARGEUR, HAUTEUR,
-        0x326987, 0.65
-    );
-
-    // Bordures vertes
-    scene.add.rectangle(
-        ZONE_GAUCHE, HAUTEUR / 2,
-        5, HAUTEUR, 0x4ade80
-    ).setAlpha(0.9);
-
-    scene.add.rectangle(
-        ZONE_DROITE, HAUTEUR / 2,
-        5, HAUTEUR, 0x4ade80
-    ).setAlpha(0.9);
-
-    // Sol
-    scene.add.rectangle(
-        LARGEUR / 2, 900,
-        LARGEUR, 50, 0x2d6a4f
-    );
-
-    scene.add.rectangle(
-        LARGEUR / 2, 875,
-        LARGEUR, 4, 0x4ade80
-    ).setAlpha(0.8);
-
-    // Robot
-    player = creerRobot(
-        scene, LARGEUR / 2, 820
-    ).setVisible(false);
-
-    cursors = scene.input.keyboard.createCursorKeys();
-
-    // Interface à gauche
-    scoreTexte = scene.add.text(
-        35, 30, "POINTS : 0",
-        {
-            fontSize: "38px",
-            color: "#ffffff",
-            fontStyle: "bold"
-        }
-    ).setVisible(false);
-
-    viesTexte = scene.add.text(
-        35, 90, "VIES : 3",
-        {
-            fontSize: "34px",
-            color: "#ffb4b4",
-            fontStyle: "bold"
-        }
-    ).setVisible(false);
-
-    tempsTexte = scene.add.text(
-        35, 145, "TEMPS : 0 s",
-        {
-            fontSize: "31px",
-            color: "#ffd700",
-            fontStyle: "bold"
-        }
-    ).setVisible(false);
-
-    niveauTexte = scene.add.text(
-        35, 200, "NIVEAU : MOYEN",
-        {
-            fontSize: "28px",
-            color: "#4ade80",
-            fontStyle: "bold"
-        }
-    ).setVisible(false);
-
-    multiTexte = scene.add.text(
-        35, 250, "MULTIPLICATEUR : ×10",
-        {
-            fontSize: "25px",
-            color: "#ffd700",
-            fontStyle: "bold"
-        }
-    ).setVisible(false);
-
-    objectifTexte = scene.add.text(
-        35, 300, "OBJECTIF : 2000 pts",
-        {
-            fontSize: "25px",
-            color: "#ffffff",
-            fontStyle: "bold"
-        }
-    ).setVisible(false);
-
-    // Interface en haut
-    titreJeu = scene.add.text(
-        LARGEUR / 2, 20, "ECO-NETTOYEUR",
-        {
-            fontSize: "38px",
-            color: "#4ade80",
-            fontStyle: "bold"
-        }
-    ).setOrigin(0.5, 0).setVisible(false);
-
-    reglesTexte = scene.add.text(
-        LARGEUR / 2, 75,
-        "Flèches : bouger | Baril ☢ : gagner des points | Poubelle ♻ : perdre une vie",
-        {
-            fontSize: "20px",
-            color: "#ffffff"
-        }
-    ).setOrigin(0.5, 0).setVisible(false);
-
-    legendeTexte = scene.add.text(
-        LARGEUR - 30, 30,
-        "☢ RAMASSER\n♻ ÉVITER",
-        {
-            fontSize: "24px",
-            color: "#4ade80",
-            align: "right",
-            fontStyle: "bold"
-        }
-    ).setOrigin(1, 0).setVisible(false);
-
-    // Message de fin
-    message = scene.add.text(
-        LARGEUR / 2, 430, "",
-        {
-            fontSize: "48px",
-            color: "#4ade80",
-            align: "center",
-            fontStyle: "bold",
-            backgroundColor: "#102333",
-            padding: { x: 24, y: 20 },
-            lineSpacing: 12
-        }
-    ).setOrigin(0.5).setDepth(30).setVisible(false);
-
-    // Bouton de redémarrage
-    bouton = scene.add.text(
-        LARGEUR / 2, 650, "RECOMMENCER",
-        {
-            fontSize: "34px",
-            color: "#ffffff",
-            backgroundColor: "#16864b",
-            padding: { x: 35, y: 18 }
-        }
-    ).setOrigin(0.5).setDepth(31).setVisible(false);
-
-    bouton.setInteractive({ useHandCursor: true });
-
-    bouton.on("pointerover", () => bouton.setAlpha(0.8));
-    bouton.on("pointerout", () => bouton.setAlpha(1));
-
-    bouton.on("pointerdown", () => {
-        scene.scene.restart();
-    });
-
-    afficherMenu(scene);
+  majCarte();
+  // Écran de chargement : polices prêtes + 1,6 s minimum
+  Promise.all([document.fonts.ready, new Promise(r => setTimeout(r, 1600))]).then(() => {
+    const c = $("chargement");
+    c.style.opacity = 0;
+    setTimeout(() => c.remove(), 600);
+  });
 }
 
-// ==================================================
-// CRÉATION DES OBJETS QUI TOMBENT
-// ==================================================
+function update(t, dt) {
+  if (!sc) return;
+  const c = enCours ? cfg : NIVEAUX.facile;
+  const p = enCours ? Math.min(1, score / cfg.but) : 0;
+  const delai = c.delai - (c.delai - c.delaiMin) * p;
+  const vit = c.vit + (c.vitMax - c.vit) * p;
 
-function creerObjet(scene) {
-    const x = Phaser.Math.Between(
-        ZONE_GAUCHE + 40,
-        ZONE_DROITE - 40
-    );
+  if (enCours) {
+    tEcoule += dt / 1000;
+    if (Math.floor(tEcoule) !== dernier) { dernier = Math.floor(tEcoule); majHud(); }
+    const d = 600 * dt / 1000;
+    if (cur.left.isDown || keys.Q.isDown) robot.x -= d;
+    if (cur.right.isDown || keys.D.isDown) robot.x += d;
+    if (cur.up.isDown || keys.Z.isDown) robot.y -= d;
+    if (cur.down.isDown || keys.S.isDown) robot.y += d;
+    robot.x = Phaser.Math.Clamp(robot.x, ZG + 45, ZD - 45);
+    robot.y = Phaser.Math.Clamp(robot.y, 160, 810);
+    if (tEcoule >= cfg.temps) return fin("TEMPS ÉCOULÉ", false);
+  }
 
-    // 30 % de barils toxiques, 70 % de poubelles
-    const danger = Math.random() < 0.30;
+  tSpawn += dt;
+  if (tSpawn >= (enCours ? delai : 900)) { tSpawn = 0; creerObjet(); }
 
-    const forme = danger
-        ? creerBarilToxique(scene, x, -50)
-        : creerPoubelle(scene, x, -50);
-
-    objets.push({
-        forme: forme,
-        danger: danger
-    });
+  for (let i = objets.length - 1; i >= 0; i--) {
+    const o = objets[i];
+    o.f.y += (enCours ? vit : 180) * dt / 1000;
+    if (enCours && Phaser.Geom.Intersects.RectangleToRectangle(robot.getBounds(), o.f.getBounds())) {
+      o.f.destroy(); objets.splice(i, 1);
+      if (o.baril) { score += 10 * cfg.multi; barils++; arbresNature(); } else vies--;
+      majHud();
+      if (vies <= 0) return fin("GAME OVER", false);
+      if (score >= cfg.but) return fin("PLANÈTE SAUVÉE", true);
+    } else if (o.f.y > H + 100) {
+      o.f.destroy(); objets.splice(i, 1);
+    }
+  }
 }
 
-// ==================================================
-// FIN DE PARTIE
-// ==================================================
-
-function finPartie(titre, sousTitre) {
-    if (termine) return;
-
-    termine = true;
-    jeuDemarre = false;
-
-    sauvegarderScore();
-
-    message.setText(
-        titre + "\n\n" +
-        sousTitre +
-        "\n\nSCORE FINAL : " + score + " POINTS"
-    );
-
-    message.setColor(
-        titre.includes("VICTOIRE")
-            ? "#86efac"
-            : "#ff8a8a"
-    );
-
-    message.setVisible(true);
-    bouton.setText("RECOMMENCER");
-    bouton.setVisible(true);
-
-    // Arrêter les objets restants
-    objets.forEach(objet => objet.forme.destroy());
-    objets = [];
+function creerObjet() {
+  const baril = Math.random() < 0.3, x = Phaser.Math.Between(ZG + 40, ZD - 40);
+  objets.push({ f: baril ? creerBaril(sc, x, -40) : creerPoubelle(sc, x, -40), baril });
 }
 
-// ==================================================
-// ÉCRAN DE VICTOIRE
-// ==================================================
-
-function afficherForetVictoire(scene) {
-    if (termine) return;
-
-    termine = true;
-    jeuDemarre = false;
-
-    sauvegarderScore();
-
-    const fond = scene.add.rectangle(
-        LARGEUR / 2, HAUTEUR / 2,
-        LARGEUR, HAUTEUR,
-        0x071f18, 0.96
-    ).setDepth(20);
-
-    elementsVictoire.push(fond);
-
-    for (let i = 0; i < 22; i++) {
-        const x = 30 + i * 88;
-        const y = Phaser.Math.Between(760, 850);
-        const taille = Phaser.Math.FloatBetween(1.2, 2.1);
-
-        const arbre = creerArbre(
-            scene, x, y, taille
-        );
-
-        arbre.setDepth(21);
-        elementsVictoire.push(arbre);
-    }
-
-    const herbe = scene.add.rectangle(
-        LARGEUR / 2, 1000,
-        LARGEUR, 160, 0x166534
-    ).setDepth(22);
-
-    elementsVictoire.push(herbe);
-
-    const sousTitre = scene.add.text(
-        LARGEUR / 2, 700,
-        "Moins de pollution, plus de vie !",
-        {
-            fontSize: "30px",
-            color: "#bbf7d0",
-            fontStyle: "bold"
-        }
-    ).setOrigin(0.5).setDepth(30);
-
-    elementsVictoire.push(sousTitre);
-
-    message.setText(
-        "VICTOIRE !\nLA NATURE EST SAUVÉE !\n\n" +
-        "SCORE FINAL : " + score + " POINTS"
-    );
-
-    message.setColor("#86efac");
-    message.setFontSize(48);
-    message.setDepth(30);
-    message.setY(420);
-    message.setVisible(true);
-
-    bouton.setDepth(31);
-    bouton.setY(600);
-    bouton.setVisible(true);
+function arbresNature() { // la nature revient à 20 / 40 / 60 / 80 % de l'objectif
+  [[0.2, 120, 820, 1.2], [0.4, 260, 825, 1.5], [0.6, 1660, 820, 1.3], [0.8, 1800, 825, 1.6]].forEach(([p, x, y, t], i) => {
+    if (score >= p * cfg.but && !arbres[i]) arbres[i] = creerArbre(sc, x, y, t);
+  });
 }
 
-// ==================================================
-// BOUCLE PRINCIPALE
-// ==================================================
-
-function update(time, delta) {
-    if (!jeuDemarre || termine) return;
-
-    // Chronomètre
-    tempsEcoule += delta / 1000;
-
-    const secondes = Math.floor(tempsEcoule);
-
-    tempsTexte.setText(
-        "TEMPS : " + secondes + " / " + tempsLimite + " s"
-    );
-
-    if (tempsEcoule >= tempsLimite) {
-        finPartie(
-            "TEMPS ÉCOULÉ !",
-            "Le temps est terminé."
-        );
-        return;
-    }
-
-    // Déplacement du robot
-    const deplacement = 600 * delta / 1000;
-
-    if (cursors.left.isDown) player.x -= deplacement;
-    if (cursors.right.isDown) player.x += deplacement;
-    if (cursors.up.isDown) player.y -= deplacement;
-    if (cursors.down.isDown) player.y += deplacement;
-
-    // Limites de la zone centrale
-    player.x = Phaser.Math.Clamp(
-        player.x,
-        ZONE_GAUCHE + 45,
-        ZONE_DROITE - 45
-    );
-
-    player.y = Phaser.Math.Clamp(
-        player.y, 160, 810
-    );
-
-    // Apparition des objets
-    tempsApparition += delta;
-
-    if (tempsApparition >= delaiApparition) {
-        tempsApparition = 0;
-        creerObjet(this);
-    }
-
-    // Difficulté progressive
-    if (difficulte === "facile") {
-        delaiApparition = Math.max(
-            450, 1100 - score * 0.1
-        );
-
-        vitesse = Math.min(
-            380, 160 + score * 0.08
-        );
-    } else if (difficulte === "moyen") {
-        delaiApparition = Math.max(
-            250, 750 - score * 0.05
-        );
-
-        vitesse = Math.min(
-            520, 240 + score * 0.06
-        );
-    } else {
-        delaiApparition = Math.max(
-            160, 450 - score * 0.03
-        );
-
-        vitesse = Math.min(
-            680, 360 + score * 0.06
-        );
-    }
-
-    // Déplacement et collisions
-    for (let i = objets.length - 1; i >= 0; i--) {
-        const objet = objets[i];
-
-        objet.forme.y += vitesse * delta / 1000;
-
-        const collision =
-            Phaser.Geom.Intersects.RectangleToRectangle(
-                player.getBounds(),
-                objet.forme.getBounds()
-            );
-
-        if (collision) {
-            if (objet.danger) {
-                // Baril toxique : gagner des points
-                const pointsGagnes = 10 * multiplicateur;
-
-                score += pointsGagnes;
-
-                scoreTexte.setText(
-                    "POINTS : " + score +
-                    " / " + scoreVictoire
-                );
-
-                multiTexte.setText(
-                    "+" + pointsGagnes +
-                    " pts  (×" + multiplicateur + ")"
-                );
-
-                objectifTexte.setText(
-                    "OBJECTIF : " + scoreVictoire +
-                    " pts — " +
-                    Math.min(
-                        100,
-                        Math.floor(score / scoreVictoire * 100)
-                    ) + "%"
-                );
-
-                actualiserNature(this);
-            } else {
-                // Poubelle : perdre une vie
-                vies--;
-
-                viesTexte.setText("VIES : " + vies);
-            }
-
-            objet.forme.destroy();
-            objets.splice(i, 1);
-
-            // Défaite
-            if (vies <= 0) {
-                finPartie(
-                    "GAME OVER",
-                    "Tu n'as plus de vies !"
-                );
-                return;
-            }
-
-            // Victoire
-            if (score >= scoreVictoire) {
-                afficherForetVictoire(this);
-                return;
-            }
-        } else if (objet.forme.y > HAUTEUR + 100) {
-            objet.forme.destroy();
-            objets.splice(i, 1);
-        }
-    }
+// ---------- Parties ----------
+function lancer() {
+  cfg = NIVEAUX[niv];
+  objets.forEach(o => o.f.destroy()); objets = [];
+  arbres.forEach(a => a.destroy()); arbres = [];
+  score = 0; barils = 0; vies = cfg.vies; tEcoule = 0; tSpawn = 0; dernier = -1;
+  robot.setPosition(L / 2, 820);
+  $("menu").classList.add("cache");
+  $("fin").classList.add("cache");
+  $("hud").classList.remove("cache");
+  majHud();
+  enCours = true;
 }
+
+function fin(titre, gagne) {
+  enCours = false;
+  const hist = historique();
+  hist.unshift({ score, niveau: niv, date: new Date().toLocaleDateString("fr-FR") });
+  localStorage.setItem("ecoScores", JSON.stringify(hist.slice(0, 8)));
+  localStorage.setItem("ecoXP", xpTotal() + Math.round(score / 10));
+  if (gagne) { // forêt complète
+    for (let i = 0; i < 22; i++) arbres.push(creerArbre(sc, 30 + i * 88, Phaser.Math.Between(760, 850), Phaser.Math.FloatBetween(1.2, 2.1)));
+  }
+  $("fTitre").textContent = titre;
+  $("fTitre").className = "titre " + (gagne ? "ok" : "ko");
+  $("fScore").textContent = score + " pts  ·  " + barils + " barils nettoyés";
+  $("fMsg").textContent = gagne ? "Moins de pollution, plus de vie !" : "La planète a encore besoin de toi.";
+  $("hud").classList.add("cache");
+  $("fin").classList.remove("cache");
+}
+
+function montrerMenu() {
+  enCours = false;
+  $("fin").classList.add("cache");
+  $("hud").classList.add("cache");
+  $("menu").classList.remove("cache");
+  majCarte();
+}
+
+// ---------- Interface (HTML) ----------
+const historique = () => JSON.parse(localStorage.getItem("ecoScores") || "[]");
+const xpTotal = () => +localStorage.getItem("ecoXP") || 0;
+
+function majCarte() {
+  const xp = xpTotal(), r = xp % 400;
+  $("niveauJ").textContent = "Niveau " + (Math.floor(xp / 400) + 1);
+  $("xpJ").textContent = r + " / 400 XP";
+  $("xpBarre").style.width = r / 4 + "%";
+}
+
+function majHud() {
+  const reste = Math.max(0, Math.ceil(cfg.temps - tEcoule));
+  $("hTemps").textContent = Math.floor(reste / 60) + ":" + String(reste % 60).padStart(2, "0");
+  $("hNiveau").textContent = niv + " ×" + cfg.multi;
+  $("hScore").textContent = score;
+  $("hBut").textContent = "/ " + cfg.but + " pts";
+  $("hVies").textContent = "◆".repeat(Math.max(vies, 0)) + "◇".repeat(Math.max(cfg.vies - vies, 0));
+  $("hBarils").textContent = barils;
+  $("hBarilsMax").textContent = "/ " + cfg.but / (10 * cfg.multi);
+  const p = Math.min(100, score / cfg.but * 100);
+  $("hPlanete").style.width = p + "%";
+  $("hPct").textContent = Math.round(p) + "%";
+}
+
+function panneau(txt) { const p = $("panneau"); p.textContent = txt; p.classList.remove("cache"); }
+
+$("jouer").onclick = lancer;
+$("rejouer").onclick = lancer;
+$("versMenu").onclick = montrerMenu;
+$("panneau").onclick = () => $("panneau").classList.add("cache");
+$("plein").onclick = () => document.documentElement.requestFullscreen();
+$("cCommandes").onclick = () => panneau("Flèches ou ZQSD : se déplacer\n☢ Baril jaune : ATTRAPE-LE (+points × niveau)\n♻ Poubelle verte : ESQUIVE-LA (-1 vie)\nRemplis la jauge PLANÈTE avant la fin du temps !");
+$("cRecords").onclick = () => {
+  const h = historique();
+  panneau(h.length ? h.map((p, i) => (i + 1) + ". " + p.score + " pts · " + p.niveau + " · " + p.date).join("\n") : "Aucune partie jouée");
+};
+document.querySelectorAll("[data-niv]").forEach(b => b.onclick = () => {
+  niv = b.dataset.niv;
+  document.querySelectorAll("[data-niv]").forEach(x => x.classList.toggle("actif", x === b));
+});
