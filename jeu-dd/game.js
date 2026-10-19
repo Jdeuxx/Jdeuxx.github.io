@@ -10,9 +10,9 @@ const NIVEAUX = {
 
 // aimant = zone de ramassage des barils | solide = zone de collision des obstacles (en voies)
 const PERSOS = {
-  simple: { nom: "Léo",  seuil: 0,    bonus: "Standard",        aimant: 0.5,  solide: 0.45, peau: 0xf2b38c, cheveux: 0xe8552b, haut: 0xf1f5f9, bas: 0x1e3a8a, casq: 0x2563eb, sac: 0x22c55e },
-  moyen:  { nom: "Maya", seuil: 1000, bonus: "Aimant à barils", aimant: 0.95, solide: 0.45, peau: 0xd49a73, cheveux: 0x5b3a29, haut: 0xf97316, bas: 0x1f2937, casq: 0x22c55e, sac: 0x16a34a },
-  expert: { nom: "Max",  seuil: 2000, bonus: "Résistant",       aimant: 0.5,  solide: 0.3,  peau: 0x8d5a3b, cheveux: 0x111827, haut: 0x7c3aed, bas: 0x111827, casq: 0x4c1d95, sac: 0x22d3ee }
+  simple: { nom: "Léo",  seuil: 0,    bonus: "Standard",        aimant: 0.5,  solide: 0.45, peau: 0xf6c7a4, cheveux: 0xe8652b, haut: 0xf1f5f9, bas: 0x1e40af, chaus: 0x2563eb, casq: 0x2563eb, sac: 0x2d4a2e, accent: 0x22c55e },
+  moyen:  { nom: "Maya", seuil: 1000, bonus: "Aimant à barils", aimant: 0.95, solide: 0.45, peau: 0xf5c9a8, cheveux: 0x7b3f26, haut: 0xf97316, bas: 0x1f2937, chaus: 0xf8fafc, casq: 0x22c55e, sac: 0x15803d, accent: 0xffffff },
+  expert: { nom: "Max",  seuil: 2000, bonus: "Résistant",       aimant: 0.5,  solide: 0.3,  peau: 0x6b4226, cheveux: 0x111827, haut: 0x7c3aed, bas: 0x1e1b3a, chaus: 0xe9d5ff, casq: 0x4c1d95, sac: 0x312e81, accent: 0x22d3ee }
 };
 
 const $ = id => document.getElementById(id);
@@ -95,21 +95,41 @@ function decor() {
 }
 
 // ---------- Personnages (vus de dos) ----------
-function creerPerso(p) {
-  const g = new THREE.Group();
+function creerPerso(p) { // personnage cartoon : grosse tête, visage, cheveux, casquette ou bonnet
+  const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
   const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
-  const jl = pivot(-0.18, 0.7), jr = pivot(0.18, 0.7), bl = pivot(-0.45, 1.45), br = pivot(0.45, 1.45);
-  for (const j of [jl, jr]) j.add(placer(box(0.28, 0.7, 0.3, p.bas), 0, -0.35, 0), placer(box(0.32, 0.14, 0.44, 0xffffff), 0, -0.72, -0.05));
-  for (const b of [bl, br]) b.add(placer(box(0.2, 0.6, 0.22, p.haut), 0, -0.3, 0), placer(sph(0.12, p.peau), 0, -0.66, 0));
-  g.add(placer(box(0.74, 0.82, 0.42, p.haut), 0, 1.1, 0));
-  g.add(placer(box(0.5, 0.58, 0.22, p.sac), 0, 1.12, 0.3));              // sac à dos
-  g.add(placer(sph(0.3, p.peau), 0, 1.8, 0));                            // tête
-  for (const s of [-1, 1]) g.add(placer(sph(0.045, 0x1f2937), s * 0.1, 1.8, -0.28)); // yeux (visibles de face)
-  g.add(placer(sph(0.31, p.cheveux), 0, 1.78, 0.05));                    // cheveux (arrière de la tête)
-  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.34, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), M(p.casq));
-  cap.position.set(0, 1.86, 0.02); cap.castShadow = true; g.add(cap);
-  if (p.nom === "Maya") g.add(placer(sph(0.13, p.cheveux), 0, 1.55, 0.3));                      // queue de cheval
-  if (p.nom === "Max") for (const s of [-1, 1]) g.add(placer(cyl(0.13, 0.13, 0.1, 0x22d3ee), s * 0.33, 1.8, 0)); // casque audio
+  const jl = pivot(-0.17, 0.72), jr = pivot(0.17, 0.72), bl = pivot(-0.47, 1.5), br = pivot(0.47, 1.5);
+  for (const j of [jl, jr]) j.add(placer(cyl(0.13, 0.12, 0.62, p.bas), 0, -0.3, 0), placer(box(0.3, 0.18, 0.46, p.chaus), 0, -0.68, -0.07), placer(box(0.32, 0.05, 0.48, 0xffffff), 0, -0.78, -0.07));
+  for (const b of [bl, br]) b.add(placer(cyl(0.11, 0.1, 0.55, p.haut), 0, -0.27, 0), placer(sph(0.115, p.peau), 0, -0.6, 0));
+  add(cyl(0.4, 0.34, 0.9, p.haut), 0, 1.15, 0);                                   // sweat
+  const capuche = add(sph(0.24, p.haut), 0, 1.58, 0.22); capuche.scale.set(1.2, 0.7, 0.6);
+  const logo = new THREE.Mesh(new THREE.CircleGeometry(0.08, 12), new THREE.MeshBasicMaterial({ color: p.accent }));
+  logo.position.set(0.14, 1.32, -0.39); logo.rotation.y = Math.PI; g.add(logo);
+  add(box(0.52, 0.66, 0.26, p.sac), 0, 1.2, 0.36);                                // sac à dos
+  for (const s of [-1, 1]) add(box(0.07, 0.75, 0.05, 0x1f2937), s * 0.2, 1.25, -0.38); // bretelles
+  add(sph(0.42, p.peau), 0, 2.0, 0);                                              // tête
+  for (const s of [-1, 1]) {                                                      // visage
+    const oeil = add(sph(0.085, 0xffffff), s * 0.15, 2.04, -0.34); oeil.scale.z = 0.5;
+    add(sph(0.045, 0x1f2937), s * 0.15, 2.04, -0.385);
+    const sourcil = add(box(0.17, 0.035, 0.03, p.cheveux), s * 0.15, 2.17, -0.38); sourcil.rotation.z = -s * 0.15;
+  }
+  add(sph(0.05, p.peau), 0, 1.96, -0.42);
+  const bouche = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.018, 6, 12, Math.PI), M(0x7a2e2e));
+  bouche.rotation.z = Math.PI; bouche.position.set(0, 1.9, -0.39); g.add(bouche);
+  const coiffe = (r, y, sy) => { // demi-sphère : casquette ou bonnet
+    const m = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), M(p.casq));
+    m.position.set(0, y, 0.04); m.scale.y = sy || 1; m.castShadow = true; g.add(m);
+  };
+  if (n === "Max") {                                                              // bonnet violet + casque audio
+    coiffe(0.46, 2.08, 1.15); add(cyl(0.465, 0.465, 0.12, 0x2e1065), 0, 2.1, 0.04);
+    for (const s of [-1, 1]) add(cyl(0.15, 0.15, 0.1, p.accent), s * 0.44, 1.98, 0).rotation.z = Math.PI / 2;
+  } else {                                                                        // casquette + cheveux
+    add(sph(0.44, p.cheveux), 0, 2.04, 0.12);
+    coiffe(0.47, 2.22); add(box(0.52, 0.05, 0.38), 0, 2.23, -0.42).material.color.setHex(p.casq);
+    if (n === "Léo") for (const s of [-1, 1]) add(sph(0.11, p.cheveux), s * 0.2, 2.15, -0.3);   // mèches
+    else { for (const s of [-1, 1]) add(cyl(0.07, 0.05, 0.6, p.cheveux), s * 0.4, 1.8, -0.02);  // longs cheveux
+      const q = add(cyl(0.11, 0.05, 0.7, p.cheveux), 0, 1.8, 0.5); q.rotation.x = 0.3; }        // queue de cheval
+  }
   g.userData.membres = [jl, jr, bl, br];
   return g;
 }
@@ -402,7 +422,7 @@ function majUI(dt) {
     const q = Math.min(1, temps / 1.6);
     ui.cBarre.scale.x = Math.max(0.001, q); ui.cBaril.rotation.y += dt * 3;
     if (q >= 1 && fontsOk) { redessiner(); montrer("menu"); }
-  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.membres) c.rotation.y += dt * 0.9; });
+  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.membres) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4; }); // face au joueur
   else if (etat === "jeu") {
     ui.iconeBaril.rotation.y += dt * 3; ui.globe.rotation.y += dt;
     ui.coeurs.forEach((c, i) => { c.rotation.y = Math.sin(temps * 2 + i) * 0.5; });
