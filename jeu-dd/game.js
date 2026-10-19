@@ -1,284 +1,457 @@
-// ECO-NETTOYEUR : runner à 3 voies (inspiré de Bus Rush)
-// ☢ Barils toxiques = à ramasser  |  Déchets verts (poubelle, sac, branche) = à éviter
-const L = 1920, H = 1080, HZ = 300, PY = 860, LW = 330; // horizon, ligne du joueur, largeur d'une voie
+// ECO-NETTOYEUR 3D : runner à 3 voies (Three.js)
+// ☢ Barils jaunes = à ramasser | Poubelles, sacs, branches, barrières = à éviter
+const LW = 2; // largeur d'une voie (unités 3D)
 
 const NIVEAUX = {
-  facile:    { multi: 5,  but: 1000, temps: 180, vies: 5, spawn: 1100, v: 0.45, blocs: [1, 1] },
-  moyen:     { multi: 10, but: 2000, temps: 120, vies: 3, spawn: 850,  v: 0.6,  blocs: [1, 2] },
-  difficile: { multi: 20, but: 3000, temps: 90,  vies: 2, spawn: 650,  v: 0.8,  blocs: [2, 2] }
+  facile:    { multi: 5,  but: 1000, temps: 180, vies: 5, spawn: 1.1,  v: 9,  blocs: [1, 1] },
+  moyen:     { multi: 10, but: 2000, temps: 120, vies: 3, spawn: 0.85, v: 12, blocs: [1, 2] },
+  difficile: { multi: 20, but: 3000, temps: 90,  vies: 2, spawn: 0.65, v: 15, blocs: [2, 2] }
 };
 
-// Personnages : débloqués selon ton MEILLEUR score
+// aimant = zone de ramassage des barils | solide = zone de collision des obstacles (en voies)
 const PERSOS = {
-  simple: { nom: "Léo",  seuil: 0,    bonus: 0, peau: 0xf2b38c, cheveux: 0xe8552b, haut: 0xffffff, raie: 0xef4444, bas: 0x7c3aed, chaus: 0x2563eb, acc: "casque" },
-  moyen:  { nom: "Maya", seuil: 1000, bonus: 1, peau: 0xd49a73, cheveux: 0x2b1b12, haut: 0xf97316, raie: 0xfde047, bas: 0x1e3a8a, chaus: 0xffffff, acc: "casquette" },
-  expert: { nom: "Max",  seuil: 2000, bonus: 2, peau: 0x8d5a3b, cheveux: 0x111827, haut: 0x1e293b, raie: 0x22d3ee, bas: 0x0f172a, chaus: 0x22d3ee, acc: "sac" }
+  simple: { nom: "Léo",  seuil: 0,    bonus: "Standard",        aimant: 0.5,  solide: 0.45, peau: 0xf2b38c, cheveux: 0xe8552b, haut: 0xf1f5f9, bas: 0x1e3a8a, casq: 0x2563eb, sac: 0x22c55e },
+  moyen:  { nom: "Maya", seuil: 1000, bonus: "Aimant à barils", aimant: 0.95, solide: 0.45, peau: 0xd49a73, cheveux: 0x5b3a29, haut: 0xf97316, bas: 0x1f2937, casq: 0x22c55e, sac: 0x16a34a },
+  expert: { nom: "Max",  seuil: 2000, bonus: "Résistant",       aimant: 0.5,  solide: 0.3,  peau: 0x8d5a3b, cheveux: 0x111827, haut: 0x7c3aed, bas: 0x111827, casq: 0x4c1d95, sac: 0x22d3ee }
 };
 
 const $ = id => document.getElementById(id);
-let sc, robot, ombre, rayG, cur, keys;
-let objets = [], enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
-let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, tDeco = 0, dernier = -1;
-let lane = 1, saut = -1, defil = 0, trail = 0, trailLane = 1;
+const rnd = (a, b) => a + Math.random() * (b - a);
+let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
+let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1, temps = 0, secousse = 0;
+let lane = 1, saut = -1, glisse = -1, trail = 0, trailLane = 1, cmd = "", d0 = null;
+let objets = [], batiments = [], arbres = [], tirets = [], joueur;
 
-new Phaser.Game({
-  type: Phaser.AUTO, width: L, height: H, parent: "jeu", backgroundColor: "#7cc8ff",
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: { create: create, update: update }
-});
+// ---------- Monde 3D ----------
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 220);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.shadowMap.enabled = true;
+$("jeu").appendChild(renderer.domElement);
+function redim() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); if (uiPret) placerUI(); }
+addEventListener("resize", redim); redim();
 
-// ---------- Dessins ----------
-const R = (s, x, y, w, h, c, b) => { const o = s.add.rectangle(x, y, w, h, c); if (b) o.setStrokeStyle(2, b); return o; };
-const C = (s, x, y, r, c) => s.add.circle(x, y, r, c);
+scene.background = new THREE.Color(0x7ccfff);
+scene.fog = new THREE.Fog(0x9fdcff, 45, 150);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x88aa88, 0.9));
+const soleil = new THREE.DirectionalLight(0xffffff, 0.9);
+soleil.position.set(6, 12, 6); soleil.castShadow = true;
+soleil.target.position.set(0, 0, -6); scene.add(soleil, soleil.target);
+Object.assign(soleil.shadow.camera, { left: -10, right: 10, top: 16, bottom: -16 });
+soleil.shadow.camera.updateProjectionMatrix(); soleil.shadow.mapSize.set(1024, 1024);
+camera.position.set(0, 3.4, 6.2);
 
-function creerPerso(s, x, y, p) { // personnage vu de dos, comme dans un runner
-  const c = s.add.container(x, y), o = 0x1f2937;
-  const jambe = dx => { const g = s.add.container(dx, 38); g.add([R(s, 0, 0, 13, 28, p.bas), R(s, 0, 16, 16, 8, p.chaus)]); return g; };
-  const bras = dx => { const g = s.add.container(dx, 4); g.add([R(s, 0, 0, 11, 32, p.haut), C(s, 0, 18, 6, p.peau)]); return g; };
-  const jl = jambe(-9), jr = jambe(9), bl = bras(-24), br = bras(24);
-  c.add([jl, jr, R(s, 0, 2, 36, 42, p.haut, o), R(s, 0, 10, 36, 6, p.raie), bl, br, R(s, 0, -22, 10, 8, p.peau)]);
-  if (p.acc === "sac") c.add([R(s, 0, 4, 38, 44, 0x374151, o), R(s, -11, 4, 10, 38, 0x22c55e), R(s, 11, 4, 10, 38, 0x22c55e), C(s, -11, 28, 5, 0xfacc15), C(s, 11, 28, 5, 0xfacc15)]);
-  c.add([C(s, -18, -38, 4, p.peau), C(s, 18, -38, 4, p.peau), C(s, 0, -40, 18, p.cheveux)]);
-  if (p.acc === "casque") c.add([C(s, -10, -56, 7, p.cheveux), C(s, 3, -60, 8, p.cheveux), C(s, 14, -54, 7, p.cheveux), R(s, 0, -46, 40, 5, 0x1d4ed8), C(s, -20, -38, 7, 0x1d4ed8), C(s, 20, -38, 7, 0x1d4ed8)]);
-  if (p.acc === "casquette") c.add([C(s, 0, -46, 18, 0x16a34a), R(s, 0, -37, 30, 6, 0x15803d), s.add.ellipse(0, -18, 12, 26, p.cheveux)]);
-  if (p.acc === "sac") c.add(R(s, 0, -40, 38, 6, 0x22d3ee));
-  c.anim = [[jl, 38, 1], [jr, 38, -1], [bl, 4, -1], [br, 4, 1]]; // course : jambes et bras alternent
-  return c.setScale(1.6).setDepth(20);
-}
+const M = (c, e) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.7, emissive: e || 0 });
+const box = (w, h, d, c) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), M(c)); m.castShadow = true; return m; };
+const cyl = (r1, r2, h, c) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, h, 14), M(c)); m.castShadow = true; return m; };
+const sph = (r, c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 10), M(c)); m.castShadow = true; return m; };
+const placer = (m, x, y, z) => { m.position.set(x, y, z); return m; };
 
-function creerBaril(s, x, y) { // à RAMASSER
-  const c = s.add.container(x, y), l = 0xb8860b;
-  c.add([
-    R(s, 0, 1, 36, 39, 0xffb020, l),
-    s.add.ellipse(0, -19, 40, 12, 0xffd54a).setStrokeStyle(2, l),
-    s.add.ellipse(0, 20, 34, 9, 0xe69500).setStrokeStyle(2, l),
-    R(s, 0, -7, 34, 3, l), R(s, 0, 10, 34, 3, l), C(s, 0, 1, 12, 0x2c3e50),
-    s.add.text(0, 1, "☢", { fontSize: "24px", color: "#ffd700" }).setOrigin(0.5)
-  ]);
-  return c;
-}
-
-function creerPoubelle(s, x, y) { // déchet vert HAUT : change de voie
-  const c = s.add.container(x, y), l = 0x0d6e5a;
-  c.add([
-    R(s, 0, 3, 32, 39, 0x20c997, l), R(s, 0, -19, 38, 7, 0x4dd4b0, l),
-    R(s, -10, 3, 3, 28, 0xa8f0e0), R(s, 10, 3, 3, 28, 0xa8f0e0),
-    s.add.text(0, 2, "♻", { fontSize: "18px", color: "#ffffff" }).setOrigin(0.5)
-  ]);
-  return c;
-}
-
-function creerSac(s, x, y) { // sac de tonte : saute dessus
-  const c = s.add.container(x, y);
-  c.add([s.add.ellipse(0, 6, 56, 40, 0x3f9b3a).setStrokeStyle(2, 0x1f5f1f), R(s, 0, -16, 10, 8, 0x1f5f1f), C(s, -10, 6, 6, 0x7bd96f), C(s, 12, 10, 5, 0x7bd96f)]);
-  return c;
-}
-
-function creerBranche(s, x, y) { // branche coupée : saute dessus
-  const c = s.add.container(x, y);
-  c.add([R(s, 0, 4, 84, 12, 0x8b5a2b, 0x5b3a1b), C(s, -28, -4, 12, 0x22c55e), C(s, 4, -8, 14, 0x16a34a), C(s, 30, -3, 11, 0x4ade80)]);
-  return c;
-}
-
-function creerArbre(s, x, y, vivant) { // arbre vert si la nature revient, gris sinon
-  const c = s.add.container(x, y), k = vivant ? [0x22c55e, 0x4ade80, 0x16a34a, 0x86efac] : [0x8a8a76, 0x9b9b88, 0x7a7a68, 0xaaaa98];
-  c.add([R(s, 0, 0, 18, 65, 0xa0522d), C(s, -15, -35, 25, k[0]), C(s, 15, -35, 25, k[1]), C(s, 0, -58, 28, k[2]), C(s, 0, -35, 18, k[3])]);
-  return c;
-}
-
-// ---------- Scène ----------
-function create() {
-  sc = this;
-  const g = sc.add.graphics();
-  g.fillStyle(0x7cc8ff).fillRect(0, 0, L, HZ);
-  g.fillStyle(0xb9e4ff).fillRect(0, HZ - 90, L, 90);
-  for (let i = 0; i < 16; i++) { // immeubles à l'horizon
-    const h = Phaser.Math.Between(70, 190);
-    g.fillStyle([0xf4a261, 0xe9c46a, 0xf1e3d3, 0xd98e73][i % 4]).fillRect(i * 125, HZ - h, 120, h);
-  }
-  g.fillStyle(0x5bbf5b).fillRect(0, HZ, L, H - HZ);
-  g.fillStyle(0x4a5568); // route
-  g.fillTriangle(L / 2 - 74, HZ, L / 2 + 74, HZ, L / 2 + 650, H);
-  g.fillTriangle(L / 2 - 74, HZ, L / 2 + 650, H, L / 2 - 650, H);
-  rayG = sc.add.graphics().setDepth(1);
-  ombre = sc.add.ellipse(L / 2, PY + 100, 130, 30, 0x000000, 0.3).setDepth(5);
-  cur = sc.input.keyboard.createCursorKeys();
-  keys = sc.input.keyboard.addKeys("Z,Q,S,D");
-  appliquerPerso(); majPersos(); majCarte();
-  Promise.all([document.fonts.ready, new Promise(r => setTimeout(r, 1600))]).then(() => {
-    const c = $("chargement"); c.style.opacity = 0; setTimeout(() => c.remove(), 600);
-  });
-}
-
-function rayures() { // tirets blancs qui défilent entre les voies
-  rayG.clear(); rayG.fillStyle(0xffffff, 0.85);
-  for (let i = 0; i < 9; i++) {
-    const t = (((i / 9) + defil) % 1) * 1.37, s = 0.15 + 0.85 * t, y = HZ + (PY - HZ) * t;
-    for (const d of [-0.5, 0.5]) rayG.fillRect(L / 2 + d * LW * s - 4 * s, y, 8 * s, 60 * s);
+function sol() {
+  const route = placer(new THREE.Mesh(new THREE.PlaneGeometry(6.6, 320), M(0x3b4252)), 0, 0, -100);
+  route.rotation.x = -Math.PI / 2; route.receiveShadow = true; scene.add(route);
+  for (const s of [-1, 1]) {
+    const herbe = placer(new THREE.Mesh(new THREE.PlaneGeometry(60, 320), M(0x6fc46a)), s * 34.5, -0.02, -100);
+    herbe.rotation.x = -Math.PI / 2; scene.add(herbe);
+    const trottoir = placer(box(2.4, 0.12, 320, 0xdde3ea), s * 4.5, 0.05, -100); trottoir.castShadow = false; trottoir.receiveShadow = true; scene.add(trottoir);
+    const ligne = placer(box(0.12, 0.02, 320, 0xfacc15), s * 3.2, 0.02, -100); ligne.castShadow = false; scene.add(ligne);
+    const bord = placer(box(0.14, 0.02, 2.6, 0xffffff), 0, 0, 0); // modèle de tiret
+    for (let i = 0; i < 26; i++) { const t = bord.clone(); t.position.set(s, 0.03, 8 - i * 6); scene.add(t); tirets.push(t); }
   }
 }
 
-function update(time, dt) {
-  if (!sc) return;
-  const c = enCours ? cfg : NIVEAUX.facile;
-  const p = enCours ? Math.min(1, score / cfg.but) : 0;
-  const v = c.v * (1 + 0.5 * p) * (enCours ? 1 : 0.7); // vitesse (progression de 0 à 1 par seconde)
-  const spawn = c.spawn * (1 - 0.4 * p);
-  let hauteur = 0;
-  defil = (defil + v * dt / 1000 / 1.37) % 1;
-  rayures();
-  if (robot.anim) { const a = Math.sin(time / 90) * 8; robot.anim.forEach(([o, y0, sg]) => { o.y = y0 + sg * a; }); }
+function texFenetres() {
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const g = c.getContext("2d"); g.fillStyle = "#ffffff"; g.fillRect(0, 0, 128, 128); g.fillStyle = "#6bb6e6";
+  for (let x = 12; x < 128; x += 32) for (let y = 12; y < 128; y += 32) g.fillRect(x, y, 16, 20);
+  return new THREE.CanvasTexture(c);
+}
+const COULS = [0xf4a261, 0xf6d186, 0xf1e3d3, 0xe76f51, 0x7fd1c7, 0xf7a8b8, 0x9ad0f5];
 
-  if (enCours) {
-    tEcoule += dt / 1000;
-    if (Math.floor(tEcoule) !== dernier) { dernier = Math.floor(tEcoule); majHud(); }
-    const JD = Phaser.Input.Keyboard.JustDown;
-    if (JD(cur.left) || JD(keys.Q)) lane = Math.max(0, lane - 1);
-    if (JD(cur.right) || JD(keys.D)) lane = Math.min(2, lane + 1);
-    if ((JD(cur.up) || JD(keys.Z) || JD(cur.space)) && saut < 0) saut = 0;
-    robot.x += (L / 2 + (lane - 1) * LW - robot.x) * Math.min(1, dt / 70);
-    if (saut >= 0) { saut += dt; if (saut >= 750) saut = -1; else hauteur = 170 * Math.sin(Math.PI * saut / 750); }
-    robot.y = PY - hauteur;
-    ombre.x = robot.x; ombre.setScale(1 - hauteur / 400);
-    if (tEcoule >= cfg.temps) return fin("TEMPS ÉCOULÉ", false);
-  }
+function placerBatiment(b, z) {
+  const h = rnd(10, 26);
+  b.scale.set(1, h / 10, 1); b.position.y = h / 2; b.position.z = z;
+  b.material.color.setHex(COULS[Math.floor(rnd(0, COULS.length))]);
+}
 
-  tSpawn += dt; tDeco += dt;
-  if (tSpawn >= (enCours ? spawn : 900)) { tSpawn = 0; faireApparaitre(); }
-  if (tDeco >= 450) { tDeco = 0; arbreDeco(); }
+function placerArbre(t, z) { // plus tu nettoies, plus les arbres sont verts
+  t.position.z = z;
+  t.userData.feuille.material.color.setHex(Math.random() < (enCours ? Math.min(1, score / cfg.but) : 1) ? 0x2fb344 : 0x9b9b88);
+}
 
-  for (let i = objets.length - 1; i >= 0; i--) {
-    const o = objets[i];
-    o.t += v * dt / 1000;
-    const s = 0.15 + 0.85 * o.t;
-    o.f.setPosition(L / 2 + o.dx * s, HZ + (PY - HZ) * o.t).setScale(s * o.k).setDepth(10 + o.t * 10);
-    const touche = enCours && o.type !== "deco" && o.t > 0.9 && o.t < 1.1 &&
-      Math.abs(o.dx - (robot.x - L / 2)) < LW * 0.45 && !(o.bas && hauteur > 70);
-    if (touche) {
-      o.f.destroy(); objets.splice(i, 1);
-      if (o.type === "baril") { score += 10 * cfg.multi; barils++; }
-      else { vies--; sc.cameras.main.shake(180, 0.01); }
-      majHud();
-      if (vies <= 0) return fin("GAME OVER", false);
-      if (score >= cfg.but) return fin("PLANÈTE SAUVÉE", true);
-    } else if (o.t > 1.4) { o.f.destroy(); objets.splice(i, 1); }
+function decor() {
+  const fen = texFenetres();
+  for (const s of [-1, 1]) {
+    for (let i = 0; i < 12; i++) {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(7, 10, 8), new THREE.MeshStandardMaterial({ map: fen }));
+      b.position.x = s * rnd(11, 13); placerBatiment(b, 10 - i * 14); scene.add(b); batiments.push(b);
+    }
+    for (let i = 0; i < 10; i++) {
+      const t = new THREE.Group(), f = placer(sph(1.1, 0x2fb344), 0, 2.6, 0);
+      t.add(placer(cyl(0.18, 0.25, 1.8, 0xa0522d), 0, 0.9, 0), f);
+      t.userData.feuille = f; t.position.x = s * 5.4; placerArbre(t, 8 - i * 15); scene.add(t); arbres.push(t);
+    }
   }
 }
 
-// ---------- Apparition des objets ----------
+// ---------- Personnages (vus de dos) ----------
+function creerPerso(p) {
+  const g = new THREE.Group();
+  const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
+  const jl = pivot(-0.18, 0.7), jr = pivot(0.18, 0.7), bl = pivot(-0.45, 1.45), br = pivot(0.45, 1.45);
+  for (const j of [jl, jr]) j.add(placer(box(0.28, 0.7, 0.3, p.bas), 0, -0.35, 0), placer(box(0.32, 0.14, 0.44, 0xffffff), 0, -0.72, -0.05));
+  for (const b of [bl, br]) b.add(placer(box(0.2, 0.6, 0.22, p.haut), 0, -0.3, 0), placer(sph(0.12, p.peau), 0, -0.66, 0));
+  g.add(placer(box(0.74, 0.82, 0.42, p.haut), 0, 1.1, 0));
+  g.add(placer(box(0.5, 0.58, 0.22, p.sac), 0, 1.12, 0.3));              // sac à dos
+  g.add(placer(sph(0.3, p.peau), 0, 1.8, 0));                            // tête
+  for (const s of [-1, 1]) g.add(placer(sph(0.045, 0x1f2937), s * 0.1, 1.8, -0.28)); // yeux (visibles de face)
+  g.add(placer(sph(0.31, p.cheveux), 0, 1.78, 0.05));                    // cheveux (arrière de la tête)
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.34, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), M(p.casq));
+  cap.position.set(0, 1.86, 0.02); cap.castShadow = true; g.add(cap);
+  if (p.nom === "Maya") g.add(placer(sph(0.13, p.cheveux), 0, 1.55, 0.3));                      // queue de cheval
+  if (p.nom === "Max") for (const s of [-1, 1]) g.add(placer(cyl(0.13, 0.13, 0.1, 0x22d3ee), s * 0.33, 1.8, 0)); // casque audio
+  g.userData.membres = [jl, jr, bl, br];
+  return g;
+}
+
+function appliquerPerso() {
+  if (joueur) scene.remove(joueur);
+  const x = joueur ? joueur.position.x : 0;
+  joueur = creerPerso(PERSOS[perso]); joueur.position.x = x; joueur.visible = enCours; scene.add(joueur);
+}
+
+// ---------- Objets ----------
+function creerObjet3d(type) {
+  const g = new THREE.Group();
+  if (type === "baril") {
+    const b = cyl(0.4, 0.4, 0.8, 0xffb020); b.material.emissive.setHex(0x6b3d00);
+    g.add(placer(b, 0, 0.6, 0), placer(cyl(0.43, 0.43, 0.08, 0xb8860b), 0, 0.3, 0), placer(cyl(0.43, 0.43, 0.08, 0xb8860b), 0, 0.9, 0));
+    g.add(placer(new THREE.Mesh(new THREE.CircleGeometry(0.2, 16), new THREE.MeshBasicMaterial({ color: 0x1f2937 })), 0, 0.6, 0.41));
+  } else if (type === "poubelle") {
+    g.add(placer(box(0.9, 1.0, 0.8, 0x1f9d55), 0, 0.5, 0), placer(box(1, 0.12, 0.9, 0x167a42), 0, 1.06, 0));
+    g.add(placer(new THREE.Mesh(new THREE.CircleGeometry(0.22, 16), new THREE.MeshBasicMaterial({ color: 0xffffff })), 0, 0.55, 0.41));
+  } else if (type === "sac") {
+    const s = placer(sph(0.5, 0x2e7d32), 0, 0.42, 0); s.scale.set(1.1, 0.85, 1);
+    g.add(s, placer(cyl(0.05, 0.16, 0.3, 0x1b5e20), 0, 0.98, 0));
+  } else if (type === "branche") {
+    for (let i = 0; i < 4; i++) { const l = placer(cyl(0.08, 0.08, 1.6, 0x8b5a2b), rnd(-0.2, 0.2), 0.12 + i * 0.12, rnd(-0.2, 0.2)); l.rotation.z = Math.PI / 2; l.rotation.y = rnd(-0.5, 0.5); g.add(l); }
+    for (const x of [-0.5, 0, 0.5]) g.add(placer(sph(0.28, 0x22c55e), x, 0.5, 0));
+  } else { // barrière : on glisse dessous
+    for (const x of [-1.05, 1.05]) g.add(placer(box(0.14, 1.6, 0.14, 0x6b4f3a), x, 0.8, 0));
+    g.add(placer(box(2.3, 0.35, 0.2, 0xf97316), 0, 1.45, 0), placer(box(0.5, 0.36, 0.22, 0xffffff), -0.6, 1.45, 0), placer(box(0.5, 0.36, 0.22, 0xffffff), 0.6, 1.45, 0));
+  }
+  return g;
+}
+
 function ajouter(type, voie) {
-  const mk = { baril: creerBaril, poubelle: creerPoubelle, sac: creerSac, branche: creerBranche }[type];
-  objets.push({ f: mk(sc, 0, 0), type, dx: (voie - 1) * LW, t: 0, k: 2.2, bas: type === "sac" || type === "branche" });
+  const g = creerObjet3d(type), x = (voie - 1) * LW;
+  g.position.set(x, 0, -100); scene.add(g);
+  objets.push({ g, type, x, z: -100, bas: type === "sac" || type === "branche", haut: type === "barriere" });
+}
+
+function retirer(o) {
+  scene.remove(o.g);
+  o.g.traverse(m => { if (m.geometry) m.geometry.dispose(); if (m.material) m.material.dispose(); });
 }
 
 function faireApparaitre() {
-  if (trail > 0) { trail--; ajouter("baril", trailLane); return; } // file de barils comme les pièces de Bus Rush
+  if (trail > 0) { trail--; ajouter("baril", trailLane); return; } // file de barils
   if (Math.random() < 0.18) { trailLane = Math.floor(Math.random() * 3); trail = 1; ajouter("baril", trailLane); return; }
-  const [a, b] = (enCours ? cfg : NIVEAUX.facile).blocs, T = ["poubelle", "sac", "branche"];
+  const [a, b] = (enCours ? cfg : NIVEAUX.facile).blocs, T = ["poubelle", "sac", "branche", "barriere"];
   const n = a + Math.floor(Math.random() * (b - a + 1)), voies = [0, 1, 2].sort(() => Math.random() - 0.5);
-  for (let i = 0; i < n; i++) ajouter(T[Math.floor(Math.random() * 3)], voies[i]);
+  for (let i = 0; i < n; i++) ajouter(T[Math.floor(Math.random() * 4)], voies[i]);
   if (n < 3 && Math.random() < 0.5) ajouter("baril", voies[n]);
 }
 
-function arbreDeco() { // plus tu nettoies, plus les arbres sont verts
-  const p = enCours ? Math.min(1, score / cfg.but) : 1;
-  objets.push({ f: creerArbre(sc, 0, 0, Math.random() < p), type: "deco", dx: (Math.random() < 0.5 ? -1 : 1) * (760 + Math.random() * 200), t: 0, k: 2.8 });
+// ---------- Boucle de jeu ----------
+function maj(dt) {
+  majUI(dt);
+  const P = PERSOS[perso], p = enCours ? Math.min(1, score / cfg.but) : 0;
+  const v = enCours ? cfg.v * (1 + 0.4 * p) : 6;
+  const spawn = enCours ? cfg.spawn * (1 - 0.35 * p) : 1.1;
+  let hauteur = 0;
+
+  tirets.forEach(t => { t.position.z += v * dt; if (t.position.z > 10) t.position.z -= 156; });
+  batiments.forEach(b => { b.position.z += v * dt; if (b.position.z > 14) placerBatiment(b, b.position.z - 168); });
+  arbres.forEach(t => { t.position.z += v * dt; if (t.position.z > 12) placerArbre(t, t.position.z - 150); });
+
+  if (enCours) {
+    tEcoule += dt;
+    if (Math.floor(tEcoule) !== dernier) { dernier = Math.floor(tEcoule); majHud(); }
+    if (cmd === "g") lane = Math.max(0, lane - 1);
+    if (cmd === "d") lane = Math.min(2, lane + 1);
+    if (cmd === "h" && saut < 0) saut = 0;
+    if (cmd === "b" && glisse < 0 && saut < 0) glisse = 0;
+    if (tEcoule >= cfg.temps) { cmd = ""; return fin("TEMPS ÉCOULÉ", false); }
+  }
+  cmd = "";
+
+  joueur.position.x += ((lane - 1) * LW - joueur.position.x) * Math.min(1, dt * 14);
+  if (saut >= 0) { saut += dt; if (saut >= 0.75) saut = -1; else hauteur = 1.6 * Math.sin(Math.PI * saut / 0.75); }
+  if (glisse >= 0) { glisse += dt; if (glisse >= 0.65) glisse = -1; }
+  joueur.position.y = hauteur;
+  joueur.scale.y = glisse >= 0 ? 0.55 : 1;
+  const a = Math.sin(temps * 13) * 0.9, [jl, jr, bl, br] = joueur.userData.membres;
+  jl.rotation.x = a; jr.rotation.x = -a; bl.rotation.x = -a; br.rotation.x = a;
+
+  secousse = Math.max(0, secousse - dt);
+  camera.position.x += (joueur.position.x * 0.5 - camera.position.x) * Math.min(1, dt * 5);
+  camera.position.y = 3.4 + Math.sin(temps * 60) * secousse * 0.6;
+  camera.lookAt(camera.position.x * 0.5, 1.3, -6);
+
+  tSpawn += dt;
+  if (tSpawn >= spawn) { tSpawn = 0; faireApparaitre(); }
+
+  for (let i = objets.length - 1; i >= 0; i--) {
+    const o = objets[i];
+    o.z += v * dt; o.g.position.z = o.z;
+    if (o.type === "baril") o.g.rotation.y += dt * 2.5;
+    const touche = enCours && o.z > -0.8 && o.z < 0.8 &&
+      Math.abs(o.x - joueur.position.x) < (o.type === "baril" ? P.aimant : P.solide) * LW &&
+      !(o.bas && hauteur > 0.8) && !(o.haut && glisse >= 0);
+    if (touche) {
+      retirer(o); objets.splice(i, 1);
+      if (o.type === "baril") { score += 10 * cfg.multi; barils++; } else { vies--; secousse = 0.25; }
+      majHud();
+      if (vies <= 0) return fin("GAME OVER", false);
+      if (score >= cfg.but) return fin("PLANÈTE SAUVÉE", true);
+    } else if (o.z > 5) { retirer(o); objets.splice(i, 1); }
+  }
+}
+
+let tPrec = 0;
+function boucle(now) {
+  requestAnimationFrame(boucle);
+  const dt = Math.min(0.05, (now - tPrec) / 1000); tPrec = now; temps += dt;
+  maj(dt);
+  renderer.render(scene, camera);
 }
 
 // ---------- Parties ----------
-function appliquerPerso() {
-  if (robot) robot.destroy();
-  robot = creerPerso(sc, L / 2, PY, PERSOS[perso]);
+var uiPret = false;
+let etat = "chargement", fontsOk = false, survol = null, survPrec = null;
+const ui = {}, hud = new THREE.Group(), menuG = new THREE.Group(), finG = new THREE.Group(), chargG = new THREE.Group();
+
+function montrer(e) {
+  etat = e; enCours = e === "jeu";
+  hud.visible = enCours; menuG.visible = e === "menu"; finG.visible = e === "fin"; chargG.visible = e === "chargement";
+  joueur.visible = enCours;
 }
 
 function lancer() {
   cfg = NIVEAUX[niv];
-  objets.forEach(o => o.f.destroy()); objets = [];
-  viesMax = cfg.vies + PERSOS[perso].bonus;
-  score = 0; barils = 0; vies = viesMax; tEcoule = 0; tSpawn = 0; dernier = -1; lane = 1; saut = -1; trail = 0;
-  appliquerPerso();
-  $("menu").classList.add("cache"); $("fin").classList.add("cache"); $("hud").classList.remove("cache");
-  majHud();
-  enCours = true;
+  objets.forEach(retirer); objets = [];
+  viesMax = cfg.vies;
+  score = 0; barils = 0; vies = viesMax; tEcoule = 0; tSpawn = 0; dernier = -1; lane = 1; saut = -1; glisse = -1; trail = 0;
+  appliquerPerso(); majHud(); montrer("jeu");
 }
 
 function fin(titre, gagne) {
-  enCours = false;
-  const avant = meilleur();
-  const hist = historique();
+  const avant = meilleur(), hist = historique();
   hist.unshift({ score, niveau: niv, date: new Date().toLocaleDateString("fr-FR") });
   localStorage.setItem("ecoScores", JSON.stringify(hist.slice(0, 8)));
   localStorage.setItem("ecoXP", xpTotal() + Math.round(score / 10));
   if (score > avant) localStorage.setItem("ecoMeilleur", score);
-  const nouveaux = Object.values(PERSOS).filter(p => p.seuil > avant && p.seuil <= score).map(p => p.nom);
-  $("fTitre").textContent = titre;
-  $("fTitre").className = "titre " + (gagne ? "ok" : "ko");
-  $("fScore").textContent = score + " pts  ·  " + barils + " barils nettoyés";
-  $("fMsg").textContent = nouveaux.length ? "🔓 Personnage débloqué : " + nouveaux.join(", ") + " !" :
-    (gagne ? "Moins de pollution, plus de vie !" : "La planète a encore besoin de toi.");
-  $("hud").classList.add("cache"); $("fin").classList.remove("cache");
+  const nouveaux = Object.values(PERSOS).filter(q => q.seuil > avant && q.seuil <= score).map(q => q.nom);
+  ecrire(ui.fin, [[titre, 0.3, gagne ? "#8cf56a" : "#ff7b7b"], [score + " pts · " + barils + " barils nettoyés", 0.15], [
+    nouveaux.length ? "🔓 Personnage débloqué : " + nouveaux.join(", ") : (gagne ? "Moins de pollution, plus de vie !" : "La planète a encore besoin de toi."), 0.13, "#cfe9ff"]]);
+  majPersos(); montrer("fin");
 }
 
-function montrerMenu() {
-  enCours = false;
-  $("fin").classList.add("cache"); $("hud").classList.add("cache"); $("menu").classList.remove("cache");
-  majPersos(); majCarte();
-}
-
-// ---------- Interface (HTML) ----------
 const historique = () => JSON.parse(localStorage.getItem("ecoScores") || "[]");
 const xpTotal = () => +localStorage.getItem("ecoXP") || 0;
 const meilleur = () => +localStorage.getItem("ecoMeilleur") || 0;
 
-function majCarte() {
-  const xp = xpTotal(), r = xp % 400;
-  $("niveauJ").textContent = "Niveau " + (Math.floor(xp / 400) + 1);
-  $("xpJ").textContent = r + " / 400 XP";
-  $("xpBarre").style.width = r / 4 + "%";
+// ---------- Interface 3D : plaques, boutons, HUD, menu ----------
+function plaque(w, h, coul) { // plaque 3D : épaisseur + face avant dessinée sur un canvas
+  const c = document.createElement("canvas"); c.width = Math.round(w * 160); c.height = Math.round(h * 160);
+  const tex = new THREE.CanvasTexture(c), cote = new THREE.MeshStandardMaterial({ color: coul, roughness: 0.5 });
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.14), [cote, cote, cote, cote, new THREE.MeshBasicMaterial({ map: tex }), cote]);
+  m.userData = { c, tex, fond: "#" + new THREE.Color(coul).getHexString() };
+  return m;
 }
 
-function majPersos() {
-  document.querySelectorAll("[data-perso]").forEach(b => {
-    const k = b.dataset.perso, p = PERSOS[k], ouvert = meilleur() >= p.seuil;
-    b.innerHTML = p.nom.toUpperCase() + "<small>" + (ouvert ? (p.bonus ? "+" + p.bonus + " vie" + (p.bonus > 1 ? "s" : "") : "Standard") : "🔒 " + p.seuil + " pts") + "</small>";
-    b.classList.toggle("lock", !ouvert);
-    b.classList.toggle("actif", k === perso);
-  });
+function ecrire(m, lignes, fond) { // lignes : [texte, taille (part de la hauteur), couleur]
+  const u = m.userData, c = u.c, g = c.getContext("2d"), W = c.width, Hc = c.height;
+  u.lignes = lignes; if (fond) u.fond = fond;
+  g.clearRect(0, 0, W, Hc); g.fillStyle = u.fond; g.fillRect(0, 0, W, Hc);
+  g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 6; g.strokeRect(3, 3, W - 6, Hc - 6);
+  const tot = lignes.reduce((a, l) => a + l[1], 0); let y = (1 - tot) / 2;
+  g.textAlign = "center"; g.textBaseline = "middle";
+  for (const [t, s, col] of lignes) {
+    g.font = "800 " + Math.round(s * Hc * 0.8) + "px 'Baloo 2', Arial, sans-serif";
+    g.fillStyle = col || "#ffffff"; g.fillText(t, W / 2, (y + s / 2) * Hc); y += s;
+  }
+  u.tex.needsUpdate = true;
+}
+
+function bouton(parent, w, h, x, y, coul, lignes, action) {
+  const m = plaque(w, h, coul); ecrire(m, lignes);
+  m.position.set(x, y, 0); m.userData.action = action; parent.add(m);
+  return m;
+}
+
+function coeurGeo() {
+  const s = new THREE.Shape(); s.moveTo(0, -0.5); s.bezierCurveTo(-0.9, 0.1, -0.45, 0.8, 0, 0.35); s.bezierCurveTo(0.45, 0.8, 0.9, 0.1, 0, -0.5);
+  const g = new THREE.ExtrudeGeometry(s, { depth: 0.25, bevelEnabled: true, bevelSize: 0.06, bevelThickness: 0.06, bevelSegments: 2 });
+  g.center(); return g;
+}
+
+function construireHud() {
+  const mk = (w, h) => { const m = plaque(w, h, 0x14407a); hud.add(m); return m; };
+  ui.score = mk(1.9, 0.75); ui.temps = mk(1.5, 0.75); ui.vies = mk(2.6, 0.8); ui.planete = mk(2.6, 0.95); ui.barils = mk(2.1, 0.85);
+  const gc = coeurGeo(); ui.mCoeur = new THREE.MeshStandardMaterial({ color: 0xff3b4e, emissive: 0x55000a }); ui.mVide = M(0x555b66);
+  ui.coeurs = [];
+  for (let i = 0; i < 5; i++) { const c = new THREE.Mesh(gc, ui.mCoeur); c.scale.setScalar(0.3); c.position.set(0, -0.12, 0.16); ui.vies.add(c); ui.coeurs.push(c); }
+  const gb = new THREE.BoxGeometry(2.0, 0.14, 0.1); gb.translate(1.0, 0, 0);
+  const fond = new THREE.Mesh(gb, M(0x0a1630)); fond.position.set(-1.0, -0.3, 0.09); ui.planete.add(fond);
+  ui.barre = new THREE.Mesh(gb, new THREE.MeshStandardMaterial({ color: 0x4ade80, emissive: 0x1c6b36 })); ui.barre.position.set(-1.0, -0.3, 0.14); ui.planete.add(ui.barre);
+  ui.globe = new THREE.Group(); ui.globe.add(sph(0.2, 0x2b8be8), placer(sph(0.1, 0x3fbf5a), 0.1, 0.06, 0.12));
+  ui.globe.position.set(-1.05, 0.12, 0.2); ui.planete.add(ui.globe);
+  ui.iconeBaril = creerObjet3d("baril"); ui.iconeBaril.scale.setScalar(0.5); ui.iconeBaril.position.set(-0.8, -0.3, 0.2); ui.barils.add(ui.iconeBaril);
 }
 
 function majHud() {
-  const reste = Math.max(0, Math.ceil(cfg.temps - tEcoule));
-  $("hTemps").textContent = Math.floor(reste / 60) + ":" + String(reste % 60).padStart(2, "0");
-  $("hNiveau").textContent = niv + " ×" + cfg.multi;
-  $("hPerso").textContent = "Héros · " + PERSOS[perso].nom;
-  $("hScore").textContent = score;
-  $("hBut").textContent = "/ " + cfg.but + " pts";
-  $("hVies").textContent = "◆".repeat(Math.max(vies, 0)) + "◇".repeat(Math.max(viesMax - vies, 0));
-  $("hBarils").textContent = barils;
-  $("hBarilsMax").textContent = "/ " + cfg.but / (10 * cfg.multi);
-  const p = Math.min(100, score / cfg.but * 100);
-  $("hPlanete").style.width = p + "%";
-  $("hPct").textContent = Math.round(p) + "%";
+  const reste = Math.max(0, Math.ceil(cfg.temps - tEcoule)), q = Math.min(100, score / cfg.but * 100);
+  ecrire(ui.score, [["SCORE", 0.2, "#9fd3ff"], [String(score), 0.42], ["/ " + cfg.but + " pts", 0.2, "#9fd3ff"]]);
+  ecrire(ui.temps, [[Math.floor(reste / 60) + ":" + String(reste % 60).padStart(2, "0"), 0.5], [niv.toUpperCase() + " ×" + cfg.multi, 0.2, "#9fd3ff"]]);
+  ecrire(ui.vies, [["VIES", 0.24, "#9fd3ff"], ["", 0.5]]);
+  ui.coeurs.forEach((c, i) => { c.visible = i < viesMax; c.position.x = (i - (viesMax - 1) / 2) * 0.46; c.material = i < vies ? ui.mCoeur : ui.mVide; });
+  ecrire(ui.planete, [["HÉROS · " + PERSOS[perso].nom.toUpperCase(), 0.2, "#7dfbd2"], ["PLANÈTE SAUVÉE  " + Math.round(q) + "%", 0.24], ["", 0.3]]);
+  ui.barre.scale.x = Math.max(0.001, q / 100);
+  ecrire(ui.barils, [["BARILS NETTOYÉS", 0.2, "#9fd3ff"], [barils + " / " + cfg.but / (10 * cfg.multi), 0.42]]);
 }
 
-function panneau(txt) { const p = $("panneau"); p.textContent = txt; p.classList.remove("cache"); }
+function info(lignes) {
+  const n = lignes.length, t = Math.min(0.14, 0.9 / n);
+  ecrire(ui.info, lignes.map(l => [l, t]), "#0b2a5e"); ui.info.visible = true;
+}
 
-$("jouer").onclick = lancer;
-$("rejouer").onclick = lancer;
-$("versMenu").onclick = montrerMenu;
-$("panneau").onclick = () => $("panneau").classList.add("cache");
-$("plein").onclick = () => document.documentElement.requestFullscreen();
-$("cCommandes").onclick = () => panneau("← → ou Q D : changer de voie\n↑ ou Z ou ESPACE : sauter\n☢ Baril jaune : RAMASSE-LE (+points × niveau)\n♻ Poubelle verte : change de voie\nSac et branche : saute par-dessus\nRemplis la jauge PLANÈTE avant la fin du temps !");
-$("cRecords").onclick = () => {
-  const h = historique();
-  panneau(h.length ? h.map((p, i) => (i + 1) + ". " + p.score + " pts · " + p.niveau + " · " + p.date).join("\n") : "Aucune partie jouée");
-};
-document.querySelectorAll("[data-niv]").forEach(b => b.onclick = () => {
-  niv = b.dataset.niv;
-  document.querySelectorAll("[data-niv]").forEach(x => x.classList.toggle("actif", x === b));
+function choisir(k) {
+  if (meilleur() < PERSOS[k].seuil) return info(["Personnage verrouillé", "", "Fais un score de " + PERSOS[k].seuil + " points", "dans une partie pour le débloquer."]);
+  perso = k; appliquerPerso(); majPersos();
+}
+
+function majMenu() {
+  for (const k in ui.niveaux) ecrire(ui.niveaux[k], ui.niveaux[k].userData.lignes, k === niv ? "#d79a00" : "#14407a");
+}
+
+function majPersos() { // les 3 personnages en 3D sur leurs socles
+  ui.d.clear();
+  ["simple", "moyen", "expert"].forEach((k, i) => {
+    const p = PERSOS[k], ouvert = meilleur() >= p.seuil, x = (i - 1) * 1.45, actif = k === perso;
+    const m = creerPerso(p); m.position.set(x, -1.0, 0); m.scale.setScalar(0.85);
+    m.userData.base = 0.85; m.userData.action = () => choisir(k);
+    if (!ouvert) m.traverse(o => { if (o.isMesh) o.material = M(0x4b5563); });
+    const socle = placer(cyl(0.6, 0.66, 0.18, actif ? 0x4ade80 : 0x334155), x, -1.1, 0);
+    bouton(ui.d, 1.4, 0.62, x, -1.6, actif ? 0x1fa83a : 0x14407a, [[p.nom.toUpperCase(), 0.4], [ouvert ? p.bonus : "🔒 " + p.seuil + " pts", 0.24, "#cfe9ff"]], () => choisir(k));
+    ui.d.add(m, socle);
+  });
+}
+
+function construireMenu() {
+  ui.g = new THREE.Group(); ui.d = new THREE.Group(); menuG.add(ui.g, ui.d);
+  ui.jouer = bouton(ui.g, 3.6, 0.9, 0, 0.15, 0x1fa83a, [["JOUER", 0.6]], lancer);
+  ui.niveaux = {};
+  ["facile", "moyen", "difficile"].forEach((k, i) => {
+    ui.niveaux[k] = bouton(ui.g, 1.15, 0.85, (i - 1) * 1.22, -0.95, 0x14407a, [[k.toUpperCase(), 0.26], ["×" + NIVEAUX[k].multi + " · " + NIVEAUX[k].but, 0.2, "#cfe9ff"]], () => { niv = k; majMenu(); });
+  });
+  bouton(ui.g, 1.75, 0.62, -0.92, -1.85, 0x14407a, [["CARRIÈRE", 0.34]], () => {
+    const h = historique();
+    info(["SCORES DES PARTIES", ""].concat(h.length ? h.map((q, i) => (i + 1) + ". " + q.score + " pts · " + q.niveau + " · " + q.date) : ["Aucune partie jouée"]));
+  });
+  bouton(ui.g, 1.75, 0.62, 0.92, -1.85, 0x14407a, [["COMMANDES", 0.34]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Baril jaune : ramasse-le !", "Poubelle, sac, branche : évite-les"]));
+  ui.info = bouton(menuG, 5, 3, 0, 0, 0x0b2a5e, [], () => { ui.info.visible = false; });
+  ui.info.position.z = 0.8; ui.info.visible = false;
+  if (THREE.FontLoader && THREE.TextGeometry) { // titre en lettres 3D
+    new THREE.FontLoader().load("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json", f => {
+      [["ECO", 0xff7a1a, 1.8, 0.58], ["NETTOYEUR", 0x35d44a, 1.15, 0.5]].forEach(([t, coul, y, s]) => {
+        const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
+        g.center(); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: coul, roughness: 0.35 }));
+        m.position.set(0, y, 0); m.castShadow = false; ui.g.add(m);
+      });
+    });
+  }
+}
+
+function construireFin() {
+  ui.fin = bouton(finG, 5, 2.4, 0, 0.6, 0x0b2a5e, [], () => {});
+  bouton(finG, 2.3, 0.8, -1.3, -1.0, 0x1fa83a, [["REJOUER", 0.5]], lancer);
+  bouton(finG, 2.3, 0.8, 1.3, -1.0, 0x14407a, [["MENU", 0.5]], () => { majPersos(); montrer("menu"); });
+}
+
+function construireCharg() {
+  ui.cBaril = creerObjet3d("baril"); ui.cBaril.scale.setScalar(1.8); ui.cBaril.position.set(0, 0.5, 0); chargG.add(ui.cBaril);
+  bouton(chargG, 3.8, 0.8, 0, -0.6, 0x0b2a5e, [["CHARGEMENT…", 0.5]], () => {});
+  const gb = new THREE.BoxGeometry(3.6, 0.14, 0.12); gb.translate(1.8, 0, 0);
+  ui.cBarre = new THREE.Mesh(gb, new THREE.MeshStandardMaterial({ color: 0xffd23f, emissive: 0x6b5200 })); ui.cBarre.position.set(-1.8, -1.2, 0); chargG.add(ui.cBarre);
+}
+
+function placerUI() { // adapte la position des éléments 3D à la taille de la fenêtre
+  const a = camera.aspect, k = Math.tan(Math.PI / 6), s = Math.min(1, a / 1.8), t = Math.min(1, a / 1.5) * 0.85;
+  menuG.position.z = -4; menuG.scale.setScalar(s); finG.position.z = -4; finG.scale.setScalar(s); chargG.position.z = -4;
+  ui.g.position.x = -k * 4 * a / s + 2.1; ui.d.position.x = k * 4 * a / s - 2.2;
+  hud.position.z = -3; hud.scale.setScalar(t);
+  const X = k * 3 * a / t, Y = k * 3 / t;
+  ui.score.position.set(-X + 1.1, Y - 0.45, 0); ui.temps.position.set(0, Y - 0.45, 0); ui.vies.position.set(X - 1.5, Y - 0.5, 0);
+  ui.planete.position.set(-X + 1.5, -Y + 0.6, 0); ui.barils.position.set(X - 1.2, -Y + 0.55, 0);
+}
+
+function majUI(dt) {
+  if (etat === "chargement") {
+    const q = Math.min(1, temps / 1.6);
+    ui.cBarre.scale.x = Math.max(0.001, q); ui.cBaril.rotation.y += dt * 3;
+    if (q >= 1 && fontsOk) { redessiner(); montrer("menu"); }
+  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.membres) c.rotation.y += dt * 0.9; });
+  else if (etat === "jeu") {
+    ui.iconeBaril.rotation.y += dt * 3; ui.globe.rotation.y += dt;
+    ui.coeurs.forEach((c, i) => { c.rotation.y = Math.sin(temps * 2 + i) * 0.5; });
+  }
+  if (survol !== survPrec) {
+    if (survPrec) survPrec.scale.setScalar(survPrec.userData.base || 1);
+    if (survol) survol.scale.setScalar((survol.userData.base || 1) * 1.07);
+    survPrec = survol;
+  }
+}
+
+function redessiner() { // redessine tous les textes une fois la police chargée
+  [hud, menuG, finG, chargG].forEach(g => g.traverse(o => { if (o.userData.lignes) ecrire(o, o.userData.lignes); }));
+  majPersos(); majMenu(); majHud();
+}
+
+// ---------- Souris, clavier, doigt ----------
+const ray = new THREE.Raycaster(), souris = new THREE.Vector2();
+function viser(e) {
+  souris.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  camera.updateMatrixWorld(true); ray.setFromCamera(souris, camera);
+  const cibles = [], col = o => { if (!o.visible) return; if (o.isMesh) cibles.push(o); o.children.forEach(col); };
+  if (etat === "menu") col(menuG); else if (etat === "fin") col(finG);
+  const h = ray.intersectObjects(cibles, false)[0];
+  let o = h && h.object;
+  while (o && !(o.userData && o.userData.action)) o = o.parent;
+  return o || null;
+}
+renderer.domElement.addEventListener("click", e => { const o = viser(e); if (o) o.userData.action(); });
+renderer.domElement.addEventListener("pointermove", e => { survol = viser(e); renderer.domElement.style.cursor = survol ? "pointer" : "default"; });
+
+addEventListener("keydown", e => {
+  const c = { arrowleft: "g", q: "g", arrowright: "d", d: "d", arrowup: "h", z: "h", " ": "h", arrowdown: "b", s: "b" }[e.key.toLowerCase()];
+  if (c && enCours) { cmd = c; e.preventDefault(); }
 });
-document.querySelectorAll("[data-perso]").forEach(b => b.onclick = () => {
-  const k = b.dataset.perso;
-  if (meilleur() < PERSOS[k].seuil) return panneau("Personnage verrouillé : fais un score de " + PERSOS[k].seuil + " points dans une partie pour le débloquer.");
-  perso = k; if (sc) appliquerPerso(); majPersos();
+addEventListener("pointerdown", e => { d0 = [e.clientX, e.clientY]; });
+addEventListener("pointerup", e => {
+  if (!d0 || !enCours) { d0 = null; return; }
+  const dx = e.clientX - d0[0], dy = e.clientY - d0[1];
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) cmd = dx < 0 ? "g" : "d";
+  else if (dy < -40) cmd = "h"; else if (dy > 40) cmd = "b";
+  d0 = null;
 });
+
+// ---------- Démarrage ----------
+sol(); decor(); appliquerPerso();
+scene.add(camera); camera.add(hud, menuG, finG, chargG);
+construireHud(); construireMenu(); construireFin(); construireCharg();
+majPersos(); majMenu(); majHud(); placerUI(); uiPret = true;
+montrer("chargement");
+document.fonts.load("800 40px 'Baloo 2'").then(() => { fontsOk = true; }, () => { fontsOk = true; });
+requestAnimationFrame(boucle);
