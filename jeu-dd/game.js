@@ -17,6 +17,10 @@ const PERSOS = {
 
 const $ = id => document.getElementById(id);
 const rnd = (a, b) => a + Math.random() * (b - a);
+// Modèles 3D optionnels (VRoid / Sketchfab / Mixamo) : modeles/leo.glb, maya.glb, max.glb
+// Si tu vois le VISAGE au lieu du DOS pendant la course, change ROTATION_MODELE (0 <-> Math.PI)
+const ROTATION_MODELE = 0, HAUTEUR_MODELE = 2.4;
+const FICHIERS = { simple: "leo", moyen: "maya", expert: "max" }, modeles = {};
 let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
 let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1, temps = 0, secousse = 0;
 let lane = 1, saut = -1, glisse = -1, trail = 0, trailLane = 1, cmd = "", d0 = null;
@@ -95,7 +99,22 @@ function decor() {
 }
 
 // ---------- Personnages (vus de dos) ----------
-function creerPerso(p) { // style manga : grands yeux brillants, cheveux en pointes, contours noirs
+function creerDepuisModele(src) { // utilise un vrai modèle 3D .glb
+  const m = THREE.SkeletonUtils.clone(src), g = new THREE.Group();
+  m.traverse(o => {
+    if (!o.isMesh) return;
+    o.castShadow = true; o.frustumCulled = false;
+    o.material = Array.isArray(o.material) ? o.material.map(x => x.clone()) : o.material.clone();
+  });
+  const b = new THREE.Box3().setFromObject(m), sc = HAUTEUR_MODELE / (b.max.y - b.min.y);
+  m.scale.setScalar(sc); m.position.y = -b.min.y * sc; m.rotation.y = ROTATION_MODELE;
+  g.add(m); g.userData.estPerso = true; g.userData.corps = m;
+  return g;
+}
+
+function creerPerso(p) {
+  const cle = Object.keys(PERSOS).find(q => PERSOS[q] === p);
+  if (modeles[cle]) return creerDepuisModele(modeles[cle]); // style manga : grands yeux brillants, cheveux en pointes, contours noirs
   const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
   const bas = c => new THREE.MeshBasicMaterial({ color: c });
   const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
@@ -154,7 +173,7 @@ function creerPerso(p) { // style manga : grands yeux brillants, cheveux en poin
       c.scale.setScalar(1.07); o.add(c);
     }
   });
-  g.userData.membres = [jl, jr, bl, br];
+  g.userData.membres = [jl, jr, bl, br]; g.userData.estPerso = true;
   return g;
 }
 
@@ -235,8 +254,11 @@ function maj(dt) {
   if (glisse >= 0) { glisse += dt; if (glisse >= 0.65) glisse = -1; }
   joueur.position.y = hauteur;
   joueur.scale.y = glisse >= 0 ? 0.55 : 1;
-  const a = Math.sin(temps * 13) * 0.9, [jl, jr, bl, br] = joueur.userData.membres;
-  jl.rotation.x = a; jr.rotation.x = -a; bl.rotation.x = -a; br.rotation.x = a;
+  const a = Math.sin(temps * 13) * 0.9, mb = joueur.userData.membres;
+  if (mb) { mb[0].rotation.x = a; mb[1].rotation.x = -a; mb[2].rotation.x = -a; mb[3].rotation.x = a; }
+  else if (joueur.userData.corps) { // modèle .glb : petit rebond de course
+    joueur.userData.corps.position.y = Math.abs(Math.sin(temps * 13)) * 0.08; joueur.userData.corps.rotation.z = Math.sin(temps * 6.5) * 0.05;
+  }
 
   secousse = Math.max(0, secousse - dt);
   camera.position.x += (joueur.position.x * 0.5 - camera.position.x) * Math.min(1, dt * 5);
@@ -386,7 +408,7 @@ function majPersos() { // les 3 personnages en 3D sur leurs socles
     const p = PERSOS[k], ouvert = meilleur() >= p.seuil, x = (i - 1) * 1.45, actif = k === perso;
     const m = creerPerso(p); m.position.set(x, -1.0, 0); m.scale.setScalar(0.85);
     m.userData.base = 0.85; m.userData.action = () => choisir(k);
-    if (!ouvert) m.traverse(o => { if (o.isMesh && o.material.color) o.material.color.multiplyScalar(0.35); });
+    if (!ouvert) m.traverse(o => { if (o.isMesh) [].concat(o.material).forEach(q => { if (q.color) q.color.multiplyScalar(0.35); }); });
     const socle = placer(cyl(0.6, 0.66, 0.18, actif ? 0x4ade80 : 0x334155), x, -1.1, 0);
     bouton(ui.d, 1.4, 0.62, x, -1.6, actif ? 0x1fa83a : 0x14407a, [[p.nom.toUpperCase(), 0.4], [ouvert ? p.bonus : "🔒 " + p.seuil + " pts", 0.24, "#cfe9ff"]], () => choisir(k));
     ui.d.add(m, socle);
@@ -446,7 +468,7 @@ function majUI(dt) {
     const q = Math.min(1, temps / 1.6);
     ui.cBarre.scale.x = Math.max(0.001, q); ui.cBaril.rotation.y += dt * 3;
     if (q >= 1 && fontsOk) { redessiner(); montrer("menu"); }
-  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.membres) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4; }); // face au joueur
+  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4; }); // face au joueur
   else if (etat === "jeu") {
     ui.iconeBaril.rotation.y += dt * 3; ui.globe.rotation.y += dt;
     ui.coeurs.forEach((c, i) => { c.rotation.y = Math.sin(temps * 2 + i) * 0.5; });
@@ -491,11 +513,20 @@ addEventListener("pointerup", e => {
   d0 = null;
 });
 
+function chargerModeles() { // charge les .glb s'ils existent, sinon on garde les personnages du jeu
+  if (!THREE.GLTFLoader || !THREE.SkeletonUtils) return;
+  const gl = new THREE.GLTFLoader();
+  for (const k in FICHIERS) gl.load("modeles/" + FICHIERS[k] + ".glb", r => {
+    modeles[k] = r.scene; if (uiPret) { appliquerPerso(); majPersos(); }
+  }, undefined, () => {});
+}
+
 // ---------- Démarrage ----------
 sol(); decor(); appliquerPerso();
 scene.add(camera); camera.add(hud, menuG, finG, chargG);
 construireHud(); construireMenu(); construireFin(); construireCharg();
 majPersos(); majMenu(); majHud(); placerUI(); uiPret = true;
 montrer("chargement");
+chargerModeles();
 document.fonts.load("800 40px 'Baloo 2'").then(() => { fontsOk = true; }, () => { fontsOk = true; });
 requestAnimationFrame(boucle);
