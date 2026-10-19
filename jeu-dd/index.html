@@ -3,127 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ECO-NETTOYEUR</title>
+<title>ECO-NETTOYEUR 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&display=swap" rel="stylesheet">
 <style>
-:root{--v:#4ade80;--c:#38bdf8;--bg:#040a12;--pan:rgba(8,20,32,.82);--bord:rgba(148,197,230,.28)}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:#e6f3ff;font-family:Rajdhani,sans-serif;overflow:hidden}
+html,body{margin:0;height:100%;background:#7ccfff;overflow:hidden;font-family:'Baloo 2',sans-serif}
 #jeu{position:fixed;inset:0}
-.cache{display:none!important}
-b,h1,h2{font-family:Orbitron,sans-serif}
-small{display:block;color:#93b4cc;letter-spacing:.12em;text-transform:uppercase;font-size:13px}
-em{font-style:normal;color:#93b4cc;font-size:14px}
-button{font-family:inherit;color:inherit;cursor:pointer}
-.titre{margin:0;font-weight:900;line-height:.95;letter-spacing:.04em;text-shadow:0 0 28px rgba(56,189,248,.45)}
-.titre b{display:block;color:var(--v)}
-.pan{background:var(--pan);border:1px solid var(--bord);border-radius:6px;padding:10px 16px;backdrop-filter:blur(4px)}
-.ligne{display:flex;justify-content:space-between;font-size:15px;margin:4px 0}
-.barre{height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden}
-.barre i{display:block;height:100%;width:0;background:var(--v);transition:width .3s}
-.gros{background:#7dfbd2;color:#04201a;border:0;border-radius:4px;padding:16px;font:900 22px Orbitron,sans-serif;letter-spacing:.4em}
-.sec{background:var(--pan);border:1px solid var(--bord);border-radius:4px;padding:16px;font:700 16px Orbitron,sans-serif;letter-spacing:.2em}
-
-#chargement{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;transition:opacity .5s}
-#chargement .titre{font-size:clamp(40px,7vw,80px)}
-#chargement small{font-size:15px;letter-spacing:.25em;color:var(--c)}
-.charge{width:240px;height:4px;background:rgba(255,255,255,.12);overflow:hidden}
-.charge i{display:block;height:100%;background:var(--c);animation:rempli 1.6s linear forwards}
-@keyframes rempli{from{width:0}to{width:100%}}
-
-#menu{position:fixed;inset:0;z-index:10;display:flex;align-items:center;padding:0 7vw;background:linear-gradient(90deg,rgba(4,10,18,.93),rgba(4,10,18,.45) 55%,transparent)}
-.col{width:min(520px,92vw);display:flex;flex-direction:column;gap:10px}
-.col .titre{font-size:clamp(32px,4.2vw,64px);margin-bottom:6px}
-.niv{display:flex;gap:8px}
-.niv button{flex:1;background:var(--pan);border:1px solid var(--bord);border-radius:4px;padding:10px 4px;font:700 15px Orbitron,sans-serif}
-.niv small{font:500 13px Rajdhani,sans-serif;letter-spacing:.05em;margin-top:2px}
-.niv .actif{border-color:var(--v);background:rgba(74,222,128,.2)}
-.niv .lock{opacity:.45}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.g2 .pan{text-align:left;font-size:17px}
-a{color:var(--c);font:700 15px Orbitron,sans-serif;letter-spacing:.12em;cursor:pointer}
-#panneau{white-space:pre-line;font-size:17px}
-
-#hud .haut{position:fixed;top:14px;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:8;pointer-events:none}
-.haut .pan{min-width:160px;text-align:center}
-.haut b{font-size:30px}
-.haut .centre b{font-size:38px}
-.rouge{color:#f87171;letter-spacing:.2em}
-.bas-g{position:fixed;left:20px;bottom:20px;width:300px;z-index:8}
-.bas-d{position:fixed;right:20px;bottom:20px;text-align:right;z-index:8}
-.bas-d b{font-size:56px;color:#ffd54a}
-
-#fin{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(4,10,18,.55)}
-.boite{text-align:center;padding:30px 44px;width:min(540px,92vw)}
-.boite h2{font-size:clamp(26px,3.4vw,44px)}
-.boite p{font-size:20px;margin:10px 0}
-.rang{display:flex;gap:10px;margin-top:16px}
-.rang button{flex:1}
-.ok{color:var(--v)}.ko{color:#f87171}
+#jeu canvas{display:block}
 </style>
 </head>
 <body>
-
 <div id="jeu"></div>
-
-<div id="chargement">
-  <h1 class="titre">ECO<b>NETTOYEUR</b></h1>
-  <small>Chargement de la zone…</small>
-  <div class="charge"><i></i></div>
-</div>
-
-<div id="menu">
-  <div class="col">
-    <h1 class="titre">ECO<b>NETTOYEUR</b></h1>
-    <div class="pan">
-      <b>Joueur</b> <small style="display:inline;margin-left:8px">Invité · éco-héros</small>
-      <div class="ligne"><span id="niveauJ">Niveau 1</span><span id="xpJ">0 / 400 XP</span></div>
-      <div class="barre"><i id="xpBarre"></i></div>
-    </div>
-    <button id="jouer" class="gros">JOUER</button>
-    <div class="niv">
-      <button data-niv="facile">FACILE<small>×5 · 1000 pts</small></button>
-      <button data-niv="moyen" class="actif">MOYEN<small>×10 · 2000 pts</small></button>
-      <button data-niv="difficile">DIFFICILE<small>×20 · 3000 pts</small></button>
-    </div>
-    <div class="niv" id="persos"><button data-perso="simple"></button><button data-perso="moyen"></button><button data-perso="expert"></button></div>
-    <div class="g2">
-      <button id="cRecords" class="pan"><b>Carrière</b><small>Scores des parties</small></button>
-      <button id="cCommandes" class="pan"><b>Commandes</b><small>Comment jouer</small></button>
-    </div>
-    <div id="panneau" class="pan cache"></div>
-    <div><a id="plein">Plein écran</a></div>
-  </div>
-</div>
-
-<div id="hud" class="cache">
-  <div class="haut">
-    <div class="pan"><small>Score</small><b id="hScore">0</b><em id="hBut"></em></div>
-    <div class="pan centre"><b id="hTemps">0:00</b><small id="hNiveau"></small></div>
-    <div class="pan"><small>Vies</small><b id="hVies" class="rouge"></b></div>
-  </div>
-  <div class="pan bas-g">
-    <small id="hPerso">Héros</small>
-    <div class="ligne"><span>PLANÈTE SAUVÉE</span><span id="hPct">0%</span></div>
-    <div class="barre"><i id="hPlanete"></i></div>
-  </div>
-  <div class="pan bas-d"><small>Barils nettoyés</small><b id="hBarils">0</b><em id="hBarilsMax"></em></div>
-</div>
-
-<div id="fin" class="cache">
-  <div class="pan boite">
-    <h2 id="fTitre" class="titre"></h2>
-    <p id="fScore"></p>
-    <p id="fMsg"></p>
-    <div class="rang">
-      <button id="rejouer" class="gros" style="letter-spacing:.2em;font-size:18px">REJOUER</button>
-      <button id="versMenu" class="sec">MENU</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
 <script src="game.js"></script>
 </body>
 </html>
