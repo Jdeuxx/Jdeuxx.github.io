@@ -95,41 +95,65 @@ function decor() {
 }
 
 // ---------- Personnages (vus de dos) ----------
-function creerPerso(p) { // personnage cartoon : grosse tête, visage, cheveux, casquette ou bonnet
+function creerPerso(p) { // style manga : grands yeux brillants, cheveux en pointes, contours noirs
   const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
+  const bas = c => new THREE.MeshBasicMaterial({ color: c });
   const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
-  const jl = pivot(-0.17, 0.72), jr = pivot(0.17, 0.72), bl = pivot(-0.47, 1.5), br = pivot(0.47, 1.5);
-  for (const j of [jl, jr]) j.add(placer(cyl(0.13, 0.12, 0.62, p.bas), 0, -0.3, 0), placer(box(0.3, 0.18, 0.46, p.chaus), 0, -0.68, -0.07), placer(box(0.32, 0.05, 0.48, 0xffffff), 0, -0.78, -0.07));
-  for (const b of [bl, br]) b.add(placer(cyl(0.11, 0.1, 0.55, p.haut), 0, -0.27, 0), placer(sph(0.115, p.peau), 0, -0.6, 0));
-  add(cyl(0.4, 0.34, 0.9, p.haut), 0, 1.15, 0);                                   // sweat
-  const capuche = add(sph(0.24, p.haut), 0, 1.58, 0.22); capuche.scale.set(1.2, 0.7, 0.6);
-  const logo = new THREE.Mesh(new THREE.CircleGeometry(0.08, 12), new THREE.MeshBasicMaterial({ color: p.accent }));
-  logo.position.set(0.14, 1.32, -0.39); logo.rotation.y = Math.PI; g.add(logo);
-  add(box(0.52, 0.66, 0.26, p.sac), 0, 1.2, 0.36);                                // sac à dos
-  for (const s of [-1, 1]) add(box(0.07, 0.75, 0.05, 0x1f2937), s * 0.2, 1.25, -0.38); // bretelles
-  add(sph(0.42, p.peau), 0, 2.0, 0);                                              // tête
-  for (const s of [-1, 1]) {                                                      // visage
-    const oeil = add(sph(0.085, 0xffffff), s * 0.15, 2.04, -0.34); oeil.scale.z = 0.5;
-    add(sph(0.045, 0x1f2937), s * 0.15, 2.04, -0.385);
-    const sourcil = add(box(0.17, 0.035, 0.03, p.cheveux), s * 0.15, 2.17, -0.38); sourcil.rotation.z = -s * 0.15;
+  const iris = { "Léo": 0x3b82f6, "Maya": 0x16a34a, "Max": 0xd97706 }[n];
+  const pic = (x, y, z, rx, rz, r, h, c) => { // mèche de cheveux en pointe
+    const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 6), M(c)); m.position.set(x, y, z); m.rotation.set(rx, 0, rz); g.add(m); return m;
+  };
+  const jl = pivot(-0.14, 0.85), jr = pivot(0.14, 0.85), bl = pivot(-0.36, 1.58), br = pivot(0.36, 1.58);
+  for (const j of [jl, jr]) j.add(placer(cyl(0.1, 0.085, 0.78, p.bas), 0, -0.39, 0), placer(box(0.26, 0.16, 0.42, p.chaus), 0, -0.77, -0.07), placer(box(0.28, 0.04, 0.44, 0xffffff), 0, -0.84, -0.07));
+  for (const b of [bl, br]) b.add(placer(cyl(0.075, 0.065, 0.62, p.haut), 0, -0.31, 0), placer(sph(0.08, p.peau), 0, -0.66, 0));
+  add(cyl(0.27, 0.22, 0.8, p.haut), 0, 1.25, 0);                                  // torse fin
+  add(cyl(0.07, 0.07, 0.14, p.peau), 0, 1.7, 0);                                  // cou
+  const capuche = add(sph(0.2, p.haut), 0, 1.62, 0.2); capuche.scale.set(1.2, 0.7, 0.6);
+  const logo = new THREE.Mesh(new THREE.CircleGeometry(0.06, 12), bas(p.accent)); logo.position.set(0.1, 1.38, -0.275); logo.rotation.y = Math.PI; g.add(logo);
+  add(box(0.44, 0.58, 0.22, p.sac), 0, 1.3, 0.3);                                 // sac à dos
+  add(sph(0.4, p.peau), 0, 2.0, 0);                                               // tête
+  for (const s of [-1, 1]) {                                                       // yeux de manga
+    add(sph(0.12, 0xffffff), s * 0.17, 1.94, -0.33).scale.set(1, 1.35, 0.35);
+    add(sph(0.085, iris), s * 0.17, 1.93, -0.365).scale.set(1, 1.35, 0.3);
+    add(sph(0.045, 0x111827), s * 0.17, 1.93, -0.385).scale.set(1, 1.35, 0.3);
+    const reflet = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), bas(0xffffff)); reflet.position.set(s * 0.17 + 0.03, 1.99, -0.395); g.add(reflet);
+    add(box(0.24, 0.035, 0.03, 0x111827), s * 0.17, 2.08, -0.35).rotation.z = -s * 0.25;       // cils
+    add(box(0.18, 0.03, 0.03, p.cheveux), s * 0.17, 2.16, -0.33).rotation.z = -s * 0.15;       // sourcils
+    const joue = new THREE.Mesh(new THREE.CircleGeometry(0.06, 10), new THREE.MeshBasicMaterial({ color: 0xff8fa3, transparent: true, opacity: 0.5 }));
+    joue.position.set(s * 0.25, 1.83, -0.3); joue.rotation.y = Math.PI; g.add(joue);
   }
-  add(sph(0.05, p.peau), 0, 1.96, -0.42);
-  const bouche = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.018, 6, 12, Math.PI), M(0x7a2e2e));
-  bouche.rotation.z = Math.PI; bouche.position.set(0, 1.9, -0.39); g.add(bouche);
+  const bouche = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.012, 6, 10, Math.PI), bas(0x8a3b3b));
+  bouche.rotation.z = Math.PI; bouche.position.set(0, 1.81, -0.385); g.add(bouche);
   const coiffe = (r, y, sy) => { // demi-sphère : casquette ou bonnet
     const m = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), M(p.casq));
     m.position.set(0, y, 0.04); m.scale.y = sy || 1; m.castShadow = true; g.add(m);
   };
-  if (n === "Max") {                                                              // bonnet violet + casque audio
-    coiffe(0.46, 2.08, 1.15); add(cyl(0.465, 0.465, 0.12, 0x2e1065), 0, 2.1, 0.04);
-    for (const s of [-1, 1]) add(cyl(0.15, 0.15, 0.1, p.accent), s * 0.44, 1.98, 0).rotation.z = Math.PI / 2;
-  } else {                                                                        // casquette + cheveux
-    add(sph(0.44, p.cheveux), 0, 2.04, 0.12);
-    coiffe(0.47, 2.22); add(box(0.52, 0.05, 0.38), 0, 2.23, -0.42).material.color.setHex(p.casq);
-    if (n === "Léo") for (const s of [-1, 1]) add(sph(0.11, p.cheveux), s * 0.2, 2.15, -0.3);   // mèches
-    else { for (const s of [-1, 1]) add(cyl(0.07, 0.05, 0.6, p.cheveux), s * 0.4, 1.8, -0.02);  // longs cheveux
-      const q = add(cyl(0.11, 0.05, 0.7, p.cheveux), 0, 1.8, 0.5); q.rotation.x = 0.3; }        // queue de cheval
+  if (n === "Max") {                                                               // bonnet + casque audio + mèches noires
+    coiffe(0.43, 2.2, 1.15); add(cyl(0.435, 0.435, 0.12, 0x2e1065), 0, 2.24, 0.04);
+    for (const s of [-1, 1]) {
+      add(cyl(0.14, 0.14, 0.1, p.accent), s * 0.42, 1.98, 0).rotation.z = Math.PI / 2;
+      for (let i = 0; i < 2; i++) pic(s * (0.08 + i * 0.14), 2.13, -0.31, Math.PI + 0.35, 0, 0.07, 0.26, p.cheveux);
+    }
+  } else {                                                                         // casquette + frange en pointes
+    add(sph(0.42, p.cheveux), 0, 2.06, 0.1);
+    coiffe(0.45, 2.22); add(box(0.5, 0.05, 0.36, p.casq), 0, 2.23, -0.4);
+    for (let i = -2; i <= 2; i++) pic(i * 0.1, 2.2, -0.31, Math.PI + 0.3, 0, 0.065, 0.24, p.cheveux);
+    if (n === "Léo") {
+      for (const s of [-1, 1]) pic(s * 0.39, 2.0, -0.02, 0, Math.PI + s * 0.3, 0.08, 0.5, p.cheveux);
+      for (const x of [-0.2, 0, 0.2]) pic(x, 2.2, 0.4, 1.2, 0, 0.1, 0.4, p.cheveux);
+    } else {                                                                       // Maya : longs cheveux
+      for (const s of [-1, 1]) add(cyl(0.09, 0.04, 0.8, p.cheveux), s * 0.37, 1.72, -0.04);
+      add(cyl(0.24, 0.1, 1.0, p.cheveux), 0, 1.62, 0.34).rotation.x = -0.1;
+    }
   }
+  const ms = []; g.traverse(o => { if (o.isMesh) ms.push(o); });                 // rendu "dessin animé" + contour noir
+  ms.forEach(o => {
+    if (o.material.isMeshStandardMaterial) o.material = new THREE.MeshToonMaterial({ color: o.material.color.getHex() });
+    if (o.material.isMeshToonMaterial) {
+      const c = new THREE.Mesh(o.geometry, new THREE.MeshBasicMaterial({ color: 0x15151f, side: THREE.BackSide }));
+      c.scale.setScalar(1.07); o.add(c);
+    }
+  });
   g.userData.membres = [jl, jr, bl, br];
   return g;
 }
@@ -362,7 +386,7 @@ function majPersos() { // les 3 personnages en 3D sur leurs socles
     const p = PERSOS[k], ouvert = meilleur() >= p.seuil, x = (i - 1) * 1.45, actif = k === perso;
     const m = creerPerso(p); m.position.set(x, -1.0, 0); m.scale.setScalar(0.85);
     m.userData.base = 0.85; m.userData.action = () => choisir(k);
-    if (!ouvert) m.traverse(o => { if (o.isMesh) o.material = M(0x4b5563); });
+    if (!ouvert) m.traverse(o => { if (o.isMesh && o.material.color) o.material.color.multiplyScalar(0.35); });
     const socle = placer(cyl(0.6, 0.66, 0.18, actif ? 0x4ade80 : 0x334155), x, -1.1, 0);
     bouton(ui.d, 1.4, 0.62, x, -1.6, actif ? 0x1fa83a : 0x14407a, [[p.nom.toUpperCase(), 0.4], [ouvert ? p.bonus : "🔒 " + p.seuil + " pts", 0.24, "#cfe9ff"]], () => choisir(k));
     ui.d.add(m, socle);
@@ -385,7 +409,7 @@ function construireMenu() {
   ui.info.position.z = 0.8; ui.info.visible = false;
   if (THREE.FontLoader && THREE.TextGeometry) { // titre en lettres 3D
     new THREE.FontLoader().load("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json", f => {
-      [["ECO", 0xff7a1a, 1.8, 0.58], ["NETTOYEUR", 0x35d44a, 1.15, 0.5]].forEach(([t, coul, y, s]) => {
+      [["ECO", 0xff7a1a, 1.85, 0.5], ["NETTOYEUR", 0x35d44a, 1.3, 0.4]].forEach(([t, coul, y, s]) => {
         const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
         g.center(); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: coul, roughness: 0.35 }));
         m.position.set(0, y, 0); m.castShadow = false; ui.g.add(m);
