@@ -431,8 +431,7 @@ function construireMenu() {
   ui.info.position.z = 0.8; ui.info.visible = false;
   if (THREE.FontLoader && THREE.TextGeometry) { // titre en lettres 3D
     new THREE.FontLoader().load("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json", f => {
-      [["ECO", 0xff7a1a, 1.85, 0.5], ["NETTOYEUR", 0x35d44a, 1.3, 0.4]].forEach(([t, coul, y, s]) => {
-        const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
+[["BARIL", 0xffb020, 1.85, 0.5], ["RUNNER", 0x35d44a, 1.3, 0.4]]        const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
         g.center(); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: coul, roughness: 0.35 }));
         m.position.set(0, y, 0); m.castShadow = false; ui.g.add(m);
       });
