@@ -1,5 +1,5 @@
 //BARIL RUNNER 3D : runner à 3 voies (Three.js)
-// ☢ Barils jaunes = à ramasser | Poubelles, sacs, branches, barrières = à éviter
+// ☢ Barils jaunes = à ramasser | Poubelles, sacs, branches, barrières, bus = à éviter
 const LW = 2; // largeur d'une voie (unités 3D)
 
 const NIVEAUX = {
@@ -23,7 +23,7 @@ const ROTATION_MODELE = 0, HAUTEUR_MODELE = 2.4;
 const FICHIERS = { simple: "leo", moyen: "maya", expert: "max" }, modeles = {};
 let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
 let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1, temps = 0, secousse = 0;
-let lane = 1, saut = -1, glisse = -1, trail = 0, trailLane = 1, cmd = "", d0 = null;
+let lane = 1, saut = -1, glisse = -1, cmd = "", d0 = null;
 let objets = [], batiments = [], arbres = [], tirets = [], joueur;
 
 // ---------- Monde 3D ----------
@@ -199,6 +199,12 @@ function creerObjet3d(type) {
   } else if (type === "branche") {
     for (let i = 0; i < 4; i++) { const l = placer(cyl(0.08, 0.08, 1.6, 0x8b5a2b), rnd(-0.2, 0.2), 0.12 + i * 0.12, rnd(-0.2, 0.2)); l.rotation.z = Math.PI / 2; l.rotation.y = rnd(-0.5, 0.5); g.add(l); }
     for (const x of [-0.5, 0, 0.5]) g.add(placer(sph(0.28, 0x22c55e), x, 0.5, 0));
+  } else if (type === "bus") { // gros obstacle : il faut changer de voie
+    g.add(placer(box(1.7, 1.9, 3.2, 0xfacc15), 0, 1.05, 0));
+    g.add(placer(box(1.74, 0.55, 3.0, 0x1e3a8a), 0, 1.5, 0));
+    g.add(placer(box(1.72, 0.12, 3.22, 0xb45309), 0, 0.35, 0));
+    g.add(placer(box(1.2, 0.45, 0.06, 0x93c5fd), 0, 1.5, 1.62));
+    for (const x of [-0.82, 0.82]) for (const z of [-1.0, 1.0]) { const r = placer(cyl(0.3, 0.3, 0.2, 0x111827), x, 0.3, z); r.rotation.z = Math.PI / 2; g.add(r); }
   } else { // barrière : on glisse dessous
     for (const x of [-1.05, 1.05]) g.add(placer(box(0.14, 1.6, 0.14, 0x6b4f3a), x, 0.8, 0));
     g.add(placer(box(2.3, 0.35, 0.2, 0xf97316), 0, 1.45, 0), placer(box(0.5, 0.36, 0.22, 0xffffff), -0.6, 1.45, 0), placer(box(0.5, 0.36, 0.22, 0xffffff), 0.6, 1.45, 0));
@@ -206,10 +212,10 @@ function creerObjet3d(type) {
   return g;
 }
 
-function ajouter(type, voie) {
-  const g = creerObjet3d(type), x = (voie - 1) * LW;
-  g.position.set(x, 0, -100); scene.add(g);
-  objets.push({ g, type, x, z: -100, bas: type === "sac" || type === "branche", haut: type === "barriere" });
+function ajouter(type, voie, dz) {
+  const g = creerObjet3d(type), x = (voie - 1) * LW, z = -100 - (dz || 0);
+  g.position.set(x, 0, z); scene.add(g);
+  objets.push({ g, type, x, z, bas: type === "sac" || type === "branche", haut: type === "barriere", prof: type === "bus" ? 1.7 : 0.8 });
 }
 
 function retirer(o) {
@@ -218,11 +224,14 @@ function retirer(o) {
 }
 
 function faireApparaitre() {
-  if (trail > 0) { trail--; ajouter("baril", trailLane); return; } // file de barils
-  if (Math.random() < 0.18) { trailLane = Math.floor(Math.random() * 3); trail = 1; ajouter("baril", trailLane); return; }
-  const [a, b] = (enCours ? cfg : NIVEAUX.facile).blocs, T = ["poubelle", "sac", "branche", "barriere"];
+  if (Math.random() < 0.25) { // file de barils (comme les pièces de Subway Surfers)
+    const l = Math.floor(Math.random() * 3);
+    for (let i = 0; i < 6; i++) ajouter("baril", l, i * 2.2);
+    return;
+  }
+  const [a, b] = (enCours ? cfg : NIVEAUX.facile).blocs, T = ["poubelle", "sac", "branche", "barriere", "bus"];
   const n = a + Math.floor(Math.random() * (b - a + 1)), voies = [0, 1, 2].sort(() => Math.random() - 0.5);
-  for (let i = 0; i < n; i++) ajouter(T[Math.floor(Math.random() * 4)], voies[i]);
+  for (let i = 0; i < n; i++) ajouter(T[Math.floor(Math.random() * T.length)], voies[i]);
   if (n < 3 && Math.random() < 0.5) ajouter("baril", voies[n]);
 }
 
@@ -272,7 +281,7 @@ function maj(dt) {
     const o = objets[i];
     o.z += v * dt; o.g.position.z = o.z;
     if (o.type === "baril") o.g.rotation.y += dt * 2.5;
-    const touche = enCours && o.z > -0.8 && o.z < 0.8 &&
+    const touche = enCours && o.z > -o.prof && o.z < o.prof &&
       Math.abs(o.x - joueur.position.x) < (o.type === "baril" ? P.aimant : P.solide) * LW &&
       !(o.bas && hauteur > 0.8) && !(o.haut && glisse >= 0);
     if (touche) {
@@ -281,7 +290,7 @@ function maj(dt) {
       majHud();
       if (vies <= 0) return fin("GAME OVER", false);
       if (score >= cfg.but) return fin("PLANÈTE SAUVÉE", true);
-    } else if (o.z > 5) { retirer(o); objets.splice(i, 1); }
+    } else if (o.z > 5 + o.prof) { retirer(o); objets.splice(i, 1); }
   }
 }
 
@@ -308,7 +317,7 @@ function lancer() {
   cfg = NIVEAUX[niv];
   objets.forEach(retirer); objets = [];
   viesMax = cfg.vies;
-  score = 0; barils = 0; vies = viesMax; tEcoule = 0; tSpawn = 0; dernier = -1; lane = 1; saut = -1; glisse = -1; trail = 0;
+  score = 0; barils = 0; vies = viesMax; tEcoule = 0; tSpawn = 0; dernier = -1; lane = 1; saut = -1; glisse = -1;
   appliquerPerso(); majHud(); montrer("jeu");
 }
 
@@ -319,7 +328,7 @@ function fin(titre, gagne) {
   localStorage.setItem("ecoXP", xpTotal() + Math.round(score / 10));
   if (score > avant) localStorage.setItem("ecoMeilleur", score);
   const nouveaux = Object.values(PERSOS).filter(q => q.seuil > avant && q.seuil <= score).map(q => q.nom);
-  ecrire(ui.fin, [[titre, 0.3, gagne ? "#8cf56a" : "#ff7b7b"], [score + " pts · " + barils + " barils nettoyés", 0.15], [
+  ecrire(ui.fin, [[titre, 0.3, gagne ? "#8cf56a" : "#ff7b7b"], [score + " pts · " + barils + " barils ramassés", 0.15], [
     nouveaux.length ? "🔓 Personnage débloqué : " + nouveaux.join(", ") : (gagne ? "Moins de pollution, plus de vie !" : "La planète a encore besoin de toi."), 0.13, "#cfe9ff"]]);
   majPersos(); montrer("fin");
 }
@@ -385,7 +394,7 @@ function majHud() {
   ui.coeurs.forEach((c, i) => { c.visible = i < viesMax; c.position.x = (i - (viesMax - 1) / 2) * 0.46; c.material = i < vies ? ui.mCoeur : ui.mVide; });
   ecrire(ui.planete, [["HÉROS · " + PERSOS[perso].nom.toUpperCase(), 0.2, "#7dfbd2"], ["PLANÈTE SAUVÉE  " + Math.round(q) + "%", 0.24], ["", 0.3]]);
   ui.barre.scale.x = Math.max(0.001, q / 100);
-  ecrire(ui.barils, [["BARILS NETTOYÉS", 0.2, "#9fd3ff"], [barils + " / " + cfg.but / (10 * cfg.multi), 0.42]]);
+  ecrire(ui.barils, [["BARILS RAMASSÉS", 0.2, "#9fd3ff"], [barils + " / " + cfg.but / (10 * cfg.multi), 0.42]]);
 }
 
 function info(lignes) {
@@ -426,12 +435,13 @@ function construireMenu() {
     const h = historique();
     info(["SCORES DES PARTIES", ""].concat(h.length ? h.map((q, i) => (i + 1) + ". " + q.score + " pts · " + q.niveau + " · " + q.date) : ["Aucune partie jouée"]));
   });
-  bouton(ui.g, 1.75, 0.62, 0.92, -1.85, 0x14407a, [["COMMANDES", 0.34]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Baril jaune : ramasse-le !", "Poubelle, sac, branche : évite-les"]));
+  bouton(ui.g, 1.75, 0.62, 0.92, -1.85, 0x14407a, [["COMMANDES", 0.34]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Baril jaune : ramasse-le !", "Poubelle, sac, branche, bus : évite-les"]));
   ui.info = bouton(menuG, 5, 3, 0, 0, 0x0b2a5e, [], () => { ui.info.visible = false; });
   ui.info.position.z = 0.8; ui.info.visible = false;
   if (THREE.FontLoader && THREE.TextGeometry) { // titre en lettres 3D
     new THREE.FontLoader().load("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json", f => {
-[["BARIL", 0xffb020, 1.85, 0.5], ["RUNNER", 0x35d44a, 1.3, 0.4]]        const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
+      [["BARIL", 0xffb020, 1.85, 0.5], ["RUNNER", 0x35d44a, 1.3, 0.4]].forEach(([t, coul, y, s]) => {
+        const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
         g.center(); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: coul, roughness: 0.35 }));
         m.position.set(0, y, 0); m.castShadow = false; ui.g.add(m);
       });
