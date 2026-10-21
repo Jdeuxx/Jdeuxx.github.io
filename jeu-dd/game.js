@@ -13,6 +13,9 @@ const NIVEAUX = {
 const PERSOS = {
   simple: { nom: "Léo",  seuil: 0,    bonus: "Standard",        aimant: 0.5,  solide: 0.45, peau: 0xf6c7a4, cheveux: 0xe8652b, haut: 0xf1f5f9, bas: 0x1e40af, chaus: 0x2563eb, casq: 0x2563eb, sac: 0x2d4a2e, accent: 0x22c55e },
   moyen:  { nom: "Maya", seuil: 1000, bonus: "Aimant à barils", aimant: 0.95, solide: 0.45, peau: 0xf5c9a8, cheveux: 0x7b3f26, haut: 0xf97316, bas: 0x1f2937, chaus: 0xf8fafc, casq: 0x22c55e, sac: 0x15803d, accent: 0xffffff },
+  momie:  { nom: "Momo", seuil: 3000, bonus: "Bandages",       aimant: 0.75, solide: 0.4,  style: "momie", peau: 0xc9d6c0, cheveux: 0x6b21a8, haut: 0xe7dcc3, bas: 0xd9cdb0, chaus: 0xb8a88a, casq: 0x7e22ce, sac: 0x92400e, accent: 0xfacc15 },
+  jet:    { nom: "Jet",  seuil: 4500, bonus: "Super aimant",    aimant: 1.15, solide: 0.45, style: "jet",   peau: 0xe8b48f, cheveux: 0x5b3a1f, haut: 0xea580c, bas: 0x0e7490, chaus: 0x1f2937, casq: 0x0ea5e9, sac: 0x9ca3af, accent: 0x22d3ee },
+  zip:    { nom: "Zip",  seuil: 6000, bonus: "Agile",           aimant: 0.6,  solide: 0.3,  style: "zip",   peau: 0xf2c09a, cheveux: 0x14b8a6, haut: 0xf8fafc, bas: 0xb45309, chaus: 0xfacc15, casq: 0xf59e0b, sac: 0x1f2937, accent: 0xfacc15 },
   expert: { nom: "Max",  seuil: 2000, bonus: "Résistant",       aimant: 0.5,  solide: 0.3,  peau: 0x6b4226, cheveux: 0x111827, haut: 0x7c3aed, bas: 0x1e1b3a, chaus: 0xe9d5ff, casq: 0x4c1d95, sac: 0x312e81, accent: 0x22d3ee }
 };
 
@@ -119,10 +122,11 @@ function musique() { // boucle musicale planifiée à l'avance (128 bpm)
 // Modèles 3D optionnels (VRoid / Sketchfab / Mixamo) : modeles/leo.glb, maya.glb, max.glb
 // Si tu vois le VISAGE au lieu du DOS pendant la course, change ROTATION_MODELE (0 <-> Math.PI)
 const ROTATION_MODELE = 0, HAUTEUR_MODELE = 2.4;
-const FICHIERS = { simple: "leo", moyen: "maya", expert: "max" }, modeles = {};
+const FICHIERS = { simple: "leo", moyen: "maya", expert: "max", momie: "momo", jet: "jet", zip: "zip" }, modeles = {};
 let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
 let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1, temps = 0, secousse = 0;
 let lane = 1, vy = 0, glisse = -1, cmd = "", d0 = null, camBase = 3.4;
+let fontJeu = null;
 const BUS_H = 1.4, DUREES = { aimant: 8, double: 10, saut: 8 }, bonus = { aimant: 0, double: 0, saut: 0 };
 const avancement = () => cfg.infini ? Math.min(1, score / 3000) : Math.min(1, score / cfg.but); // barre planète + arbres
 const rythme = () => cfg.infini ? Math.min(1, tEcoule / 120) : avancement();                    // vitesse et fréquence des obstacles
@@ -179,7 +183,7 @@ function texFenetresNuit() {
   for (let x = 12; x < 128; x += 32) for (let y = 12; y < 128; y += 32) g.fillRect(x, y, 16, 20);
   return new THREE.CanvasTexture(c);
 }
-const COULS = [0xf4a261, 0xf6d186, 0xf1e3d3, 0xe76f51, 0x7fd1c7, 0xf7a8b8, 0x9ad0f5];
+const COULS = [0xe07b53, 0xf2a65a, 0xf6d186, 0xf1e3d3, 0xd9694a, 0xe9b872, 0xf4c7a1, 0xc65d3b];
 
 function placerBatiment(b, z) {
   const h = rnd(10, 26);
@@ -197,10 +201,11 @@ function decor() {
   for (const s of [-1, 1]) {
     for (let i = 0; i < 12; i++) {
       const b = new THREE.Mesh(new THREE.BoxGeometry(7, 10, 8), new THREE.MeshStandardMaterial({ map: fen, emissiveMap: fenNuit, emissive: 0x000000 }));
+      const toit = new THREE.Mesh(new THREE.BoxGeometry(7.6, 0.3, 8.6), M(0xfff7ed)); toit.position.y = 5.1; b.add(toit);
       b.position.x = s * rnd(11, 13); placerBatiment(b, 10 - i * 14); scene.add(b); batiments.push(b);
     }
     for (let i = 0; i < 10; i++) {
-      const t = new THREE.Group(), f = placer(sph(1.1, 0x2fb344), 0, 2.6, 0);
+      const t = new THREE.Group(), f = placer(new THREE.Mesh(new THREE.IcosahedronGeometry(1.3, 0), new THREE.MeshStandardMaterial({ color: 0x2fb344, flatShading: true, roughness: 0.8 })), 0, 2.7, 0); f.castShadow = true;
       t.add(placer(cyl(0.18, 0.25, 1.8, 0xa0522d), 0, 0.9, 0), f);
       t.userData.feuille = f; t.position.x = s * 5.4; placerArbre(t, 8 - i * 15); scene.add(t); arbres.push(t);
     }
@@ -228,7 +233,7 @@ function creerPerso(p) {
   const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
   const bas = c => new THREE.MeshBasicMaterial({ color: c });
   const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
-  const iris = { "Léo": 0x3b82f6, "Maya": 0x16a34a, "Max": 0xd97706 }[n];
+  const iris = { "Léo": 0x3b82f6, "Maya": 0x16a34a, "Max": 0xd97706, "Momo": 0xa3e635, "Jet": 0x92400e, "Zip": 0x8b5cf6 }[n];
   const pic = (x, y, z, rx, rz, r, h, c) => { // mèche de cheveux en pointe
     const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 6), M(c)); m.position.set(x, y, z); m.rotation.set(rx, 0, rz); g.add(m); return m;
   };
@@ -238,7 +243,7 @@ function creerPerso(p) {
   add(cyl(0.27, 0.22, 0.8, p.haut), 0, 1.25, 0);                                  // torse fin
   add(cyl(0.07, 0.07, 0.14, p.peau), 0, 1.7, 0);                                  // cou
   const capuche = add(sph(0.2, p.haut), 0, 1.62, 0.2); capuche.scale.set(1.2, 0.7, 0.6);
-  const logo = new THREE.Mesh(new THREE.CircleGeometry(0.06, 12), bas(p.accent)); logo.position.set(0.1, 1.38, -0.275); logo.rotation.y = Math.PI; g.add(logo);
+  const logo = placer(cyl(0.06, 0.06, 0.04, p.accent), 0.1, 1.38, -0.27); logo.rotation.x = Math.PI / 2; g.add(logo);
   add(box(0.44, 0.58, 0.22, p.sac), 0, 1.3, 0.3);                                 // sac à dos
   add(sph(0.4, p.peau), 0, 2.0, 0);                                               // tête
   for (const s of [-1, 1]) {                                                       // yeux de manga
@@ -248,8 +253,7 @@ function creerPerso(p) {
     const reflet = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), bas(0xffffff)); reflet.position.set(s * 0.17 + 0.03, 1.99, -0.395); g.add(reflet);
     add(box(0.24, 0.035, 0.03, 0x111827), s * 0.17, 2.08, -0.35).rotation.z = -s * 0.25;       // cils
     add(box(0.18, 0.03, 0.03, p.cheveux), s * 0.17, 2.16, -0.33).rotation.z = -s * 0.15;       // sourcils
-    const joue = new THREE.Mesh(new THREE.CircleGeometry(0.06, 10), new THREE.MeshBasicMaterial({ color: 0xff8fa3, transparent: true, opacity: 0.5 }));
-    joue.position.set(s * 0.25, 1.83, -0.3); joue.rotation.y = Math.PI; g.add(joue);
+    const joue = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), bas(0xff9aae)); joue.scale.z = 0.4; joue.position.set(s * 0.25, 1.83, -0.31); g.add(joue);
   }
   const bouche = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.012, 6, 10, Math.PI), bas(0x8a3b3b));
   bouche.rotation.z = Math.PI; bouche.position.set(0, 1.81, -0.385); g.add(bouche);
@@ -257,7 +261,29 @@ function creerPerso(p) {
     const m = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), M(p.casq));
     m.position.set(0, y, 0.04); m.scale.y = sy || 1; m.castShadow = true; g.add(m);
   };
-  if (n === "Max") {                                                               // bonnet + casque audio + mèches noires
+  const band = (y, r, c) => { // arc de cercle sur l'arrière de la tête (bandage, sangle)
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.05, 14, 1, true, -Math.PI / 2, Math.PI), M(c)); m.material.side = THREE.DoubleSide; m.position.set(0, y, 0); g.add(m); return m;
+  };
+  if (p.style === "momie") {                                                       // momie : bandages + coiffe de pharaon violette et or
+    for (let i = 0; i < 5; i++) { const y = 0.95 + i * 0.16; add(cyl(0.22 + (y - 0.85) / 0.8 * 0.05 + 0.012, 0.22 + (y - 0.85) / 0.8 * 0.05 + 0.012, 0.05, 0xf5efe0), 0, y, 0); }
+    for (const [y, r] of [[1.75, 0.325], [1.95, 0.405], [2.1, 0.4]]) band(y, r, 0xf5efe0);
+    add(sph(0.42, 0xf5efe0), 0, 2.02, 0.08);
+    coiffe(0.46, 2.2, 1.0); add(cyl(0.465, 0.465, 0.07, 0xfacc15), 0, 2.26, 0.04); add(cyl(0.465, 0.465, 0.05, 0xfacc15), 0, 2.12, 0.04);
+    for (const s of [-1, 1]) { add(box(0.16, 0.7, 0.34, p.casq), s * 0.4, 1.85, 0.12); add(box(0.165, 0.06, 0.35, 0xfacc15), s * 0.4, 1.7, 0.12); add(box(0.165, 0.06, 0.35, 0xfacc15), s * 0.4, 1.95, 0.12); }
+    add(sph(0.05, 0x22d3ee), 0, 2.34, -0.42);
+  } else if (p.style === "jet") {                                                  // garçon au jetpack : lunettes sur le front
+    add(sph(0.42, p.cheveux), 0, 2.08, 0.08); pic(0, 2.42, 0, 0, 0, 0.12, 0.3, p.cheveux);
+    band(2.22, 0.43, 0x111827);
+    for (const s of [-1, 1]) { add(cyl(0.13, 0.13, 0.05, 0x111827), s * 0.15, 2.28, -0.38).rotation.x = Math.PI / 2; add(cyl(0.1, 0.1, 0.06, 0x38bdf8), s * 0.15, 2.28, -0.4).rotation.x = Math.PI / 2; }
+    add(box(0.5, 0.3, 0.15, 0x6b7280), 0, 1.7, 0.4);
+    for (const s of [-1, 1]) { add(cyl(0.12, 0.12, 0.7, 0x9ca3af), s * 0.17, 1.3, 0.45); const fl = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.32, 8), bas(0xfb923c)); fl.position.set(s * 0.17, 0.78, 0.45); fl.rotation.x = Math.PI; g.add(fl); }
+  } else if (p.style === "zip") {                                                  // cheveux turquoise en pointes + casque audio jaune
+    add(sph(0.42, p.cheveux), 0, 2.06, 0.1);
+    for (let i = -3; i <= 3; i++) pic(i * 0.1, 2.36, -0.02, 0, -i * 0.22, 0.1, 0.5, p.cheveux);
+    for (let i = -2; i <= 2; i++) pic(i * 0.1, 2.2, -0.31, Math.PI + 0.3, 0, 0.065, 0.24, p.cheveux);
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.04, 8, 16, Math.PI), M(p.casq)); arc.position.set(0, 1.98, 0); g.add(arc);
+    for (const s of [-1, 1]) add(cyl(0.14, 0.14, 0.12, p.casq), s * 0.46, 1.98, 0).rotation.z = Math.PI / 2;
+  } else if (n === "Max") {                                                        // bonnet + casque audio + mèches noires
     coiffe(0.43, 2.2, 1.15); add(cyl(0.435, 0.435, 0.12, 0x2e1065), 0, 2.24, 0.04);
     for (const s of [-1, 1]) {
       add(cyl(0.14, 0.14, 0.1, p.accent), s * 0.42, 1.98, 0).rotation.z = Math.PI / 2;
@@ -299,22 +325,31 @@ function creerObjet3d(type) {
   if (type === "baril") {
     const b = cyl(0.4, 0.4, 0.8, 0xffb020); b.material.emissive.setHex(0x6b3d00);
     g.add(placer(b, 0, 0.6, 0), placer(cyl(0.43, 0.43, 0.08, 0xb8860b), 0, 0.3, 0), placer(cyl(0.43, 0.43, 0.08, 0xb8860b), 0, 0.9, 0), placer(cyl(0.42, 0.42, 0.05, 0xb8860b), 0, 0.6, 0), placer(cyl(0.3, 0.3, 0.04, 0xfde68a), 0, 1.0, 0));
-    g.add(placer(new THREE.Mesh(new THREE.CircleGeometry(0.2, 16), new THREE.MeshBasicMaterial({ color: 0x1f2937 })), 0, 0.6, 0.41));
+    const em = placer(cyl(0.2, 0.2, 0.06, 0x1f2937), 0, 0.6, 0.4); em.rotation.x = Math.PI / 2; g.add(em);
   } else if (type === "poubelle") {
     g.add(placer(box(0.9, 1.0, 0.8, 0x1f9d55), 0, 0.5, 0), placer(box(1, 0.12, 0.9, 0x167a42), 0, 1.06, 0));
-    g.add(placer(new THREE.Mesh(new THREE.CircleGeometry(0.22, 16), new THREE.MeshBasicMaterial({ color: 0xffffff })), 0, 0.55, 0.41));
+    const em = placer(cyl(0.22, 0.22, 0.06, 0xffffff), 0, 0.55, 0.4); em.rotation.x = Math.PI / 2; g.add(em);
   } else if (type === "sac") {
     const s = placer(sph(0.5, 0x2e7d32), 0, 0.42, 0); s.scale.set(1.1, 0.85, 1);
     g.add(s, placer(cyl(0.05, 0.16, 0.3, 0x1b5e20), 0, 0.98, 0));
   } else if (type === "branche") {
     for (let i = 0; i < 4; i++) { const l = placer(cyl(0.08, 0.08, 1.6, 0x8b5a2b), rnd(-0.2, 0.2), 0.12 + i * 0.12, rnd(-0.2, 0.2)); l.rotation.z = Math.PI / 2; l.rotation.y = rnd(-0.5, 0.5); g.add(l); }
     for (const x of [-0.5, 0, 0.5]) g.add(placer(sph(0.28, 0x22c55e), x, 0.5, 0));
-  } else if (type.startsWith("bonus")) { // objets bonus : aimant, ×2, super-saut, vie
-    const I = { aimant: ["🧲", "#ef4444"], double: ["×2", "#f59e0b"], saut: ["⬆", "#8b5cf6"], vie: ["❤", "#ec4899"] }[type.slice(6)];
-    const c = document.createElement("canvas"); c.width = c.height = 128; const x = c.getContext("2d");
-    x.fillStyle = I[1]; x.beginPath(); x.arc(64, 64, 58, 0, Math.PI * 2); x.fill(); x.lineWidth = 8; x.strokeStyle = "#ffffff"; x.stroke();
-    x.font = "800 62px 'Baloo 2', Arial, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle"; x.fillStyle = "#ffffff"; x.fillText(I[0], 64, 70);
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c) })); sp.scale.set(1.1, 1.1, 1); sp.position.y = 0.9; g.add(sp);
+  } else if (type.startsWith("bonus")) { // bonus 3D : aimant, x2, super-saut, vie
+    const k = type.slice(6), ic = new THREE.Group(), cols = { aimant: 0xef4444, double: 0xf59e0b, saut: 0x8b5cf6, vie: 0xec4899 };
+    ic.add(new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12), new THREE.MeshBasicMaterial({ color: cols[k], transparent: true, opacity: 0.28 })));
+    if (k === "aimant") { // aimant en fer à cheval
+      ic.add(new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.1, 10, 18, Math.PI), M(0xef4444, 0x550000)));
+      for (const sd of [-1, 1]) ic.add(placer(cyl(0.1, 0.1, 0.3, 0xef4444), sd * 0.3, -0.15, 0), placer(cyl(0.105, 0.105, 0.1, 0xe5e7eb), sd * 0.3, -0.33, 0));
+    } else if (k === "double") { // "x2" en lettres 3D
+      if (fontJeu) { const tg = new THREE.TextGeometry("x2", { font: fontJeu, size: 0.5, height: 0.2, curveSegments: 5, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2 }); tg.center(); ic.add(new THREE.Mesh(tg, M(0xf59e0b, 0x6b3d00))); }
+      else ic.add(box(0.5, 0.5, 0.2, 0xf59e0b));
+    } else if (k === "saut") { // flèche vers le haut
+      ic.add(placer(new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 12), M(0x8b5cf6, 0x2e1065)), 0, 0.2, 0), placer(cyl(0.12, 0.12, 0.4, 0x8b5cf6), 0, -0.15, 0));
+    } else { // coeur
+      const h = new THREE.Mesh(coeurGeo(), M(0xff3b4e, 0x55000a)); h.scale.setScalar(0.45); ic.add(h);
+    }
+    ic.position.y = 0.9; g.add(ic);
   } else if (type === "rampe") { // rampe qui mène au toit d'un bus (3,2 de long)
     const sh = new THREE.Shape(); sh.moveTo(-1.6, 0); sh.lineTo(1.6, 0); sh.lineTo(1.6, BUS_H); sh.lineTo(-1.6, 0);
     const geo = new THREE.ExtrudeGeometry(sh, { depth: 1.5, bevelEnabled: false }); geo.translate(0, 0, -0.75);
@@ -345,9 +380,12 @@ const EVENEMENTS = [[16, "tunnel"], [40, "pont"], [62, "tunnel"]]; // secondes d
 const tmpC = new THREE.Color();
 const matLampe = new THREE.MeshStandardMaterial({ color: 0xfff3c4, emissive: 0x000000 });
 const matNuage = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const matAstre = new THREE.MeshBasicMaterial({ color: 0xfff2a8, fog: false });
+const ASTRE = { jour: 0xfff2a8, couchant: 0xff8a3d, nuit: 0xdfe6ff, tunnel: 0xfff2a8, pont: 0xfff2a8 };
 const matTunnel = new THREE.MeshStandardMaterial({ color: 0xfff1b0, emissive: 0xfff1b0 });
 
 function decorPlus() {
+  const astre = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 14), matAstre); astre.position.set(45, 46, -190); scene.add(astre); // soleil / lune
   for (const s of [-1, 1]) for (let i = 0; i < 12; i++) { // lampadaires
     const l = new THREE.Group();
     l.add(placer(cyl(0.06, 0.08, 3.4, 0x475569), 0, 1.7, 0), placer(box(0.7, 0.07, 0.07, 0x475569), -s * 0.32, 3.4, 0), placer(new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.28), matLampe), -s * 0.6, 3.32, 0));
@@ -397,7 +435,8 @@ function zoneActuelle() {
   const c = tEcoule % 84; return c < 30 ? "jour" : c < 48 ? "couchant" : c < 76 ? "nuit" : "jour";
 }
 function majAmbiance(dt) {
-  const C = CIEL[zoneActuelle()], k = Math.min(1, dt * 1.6);
+  const z = zoneActuelle(), C = CIEL[z], k = Math.min(1, dt * 1.6);
+  matAstre.color.lerp(tmpC.setHex(ASTRE[z]), k);
   scene.background.lerp(tmpC.setHex(C.ciel), k); scene.fog.color.lerp(tmpC.setHex(C.brume), k);
   scene.fog.near += (C.near - scene.fog.near) * k; scene.fog.far += (C.far - scene.fog.far) * k;
   hemi.intensity += (C.hemi - hemi.intensity) * k; soleil.intensity += (C.soleil - soleil.intensity) * k;
@@ -609,7 +648,7 @@ function maj(dt) {
     if (o.type === "baril" && enCours && !mort && bonus.aimant > 0 && !o.y && o.z > -10 && o.z < 1) o.x += (joueur.position.x - o.x) * Math.min(1, dt * 5); // aimant
     o.g.position.set(o.x, o.y, o.z);
     if (o.type === "baril") o.g.rotation.y += dt * 2.5;
-    else if (ram) o.g.children[0].position.y = 0.9 + Math.sin(temps * 4 + o.x) * 0.15;
+    else if (ram) { const ic = o.g.children[0]; ic.position.y = 0.9 + Math.sin(temps * 4 + o.x) * 0.15; ic.rotation.y += dt * 2.2; }
     const touche = enCours && !mort && o.type !== "rampe" && o.z > -o.prof && o.z < o.prof &&
       Math.abs(o.x - joueur.position.x) < (ram ? P.aimant : P.solide) * LW &&
       !(o.bas && hauteur > 0.8) && !(o.haut && glisse >= 0) &&
@@ -760,9 +799,11 @@ function majMenu() {
   for (const k in ui.niveaux) ecrire(ui.niveaux[k], ui.niveaux[k].userData.lignes, k === niv ? "#d79a00" : "#14407a");
 }
 
-function majPersos() { // les 3 personnages en 3D sur leurs socles
+const ORDRE = ["simple", "moyen", "expert", "momie", "jet", "zip"]; let pagePerso = 0;
+function majPersos() { // les personnages en 3D sur leurs socles (3 par page)
   ui.d.clear();
-  ["simple", "moyen", "expert"].forEach((k, i) => {
+  bouton(ui.d, 1.6, 0.4, 0, -2.08, 0x14407a, [["◀ ▶ PERSOS", 0.4]], () => { pagePerso = 1 - pagePerso; majPersos(); });
+  ORDRE.slice(pagePerso * 3, pagePerso * 3 + 3).forEach((k, i) => {
     const p = PERSOS[k], ouvert = meilleur() >= p.seuil, x = (i - 1) * 1.45, actif = k === perso;
     const m = creerPerso(p); m.position.set(x, -1.0, 0); m.scale.setScalar(0.85);
     m.userData.base = 0.85; m.userData.action = () => choisir(k);
@@ -793,6 +834,7 @@ function construireMenu() {
   ui.info.position.z = 0.8; ui.info.visible = false;
   if (THREE.FontLoader && THREE.TextGeometry) { // titre en lettres 3D
     new THREE.FontLoader().load("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json", f => {
+      fontJeu = f;
       [["BARIL", 0xffb020, 1.85, 0.5], ["RUNNER", 0x35d44a, 1.3, 0.4]].forEach(([t, coul, y, s]) => {
         const g = new THREE.TextGeometry(t, { font: f, size: s, height: 0.28, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
         g.center(); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: coul, roughness: 0.35 }));
