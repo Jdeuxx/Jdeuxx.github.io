@@ -1,26 +1,33 @@
-# BARIL RUNNER 
+# BARIL RUNNER 3D
 
-## Présentation
-BARIL-RUNNER est un jeu de course en 3D où le joueur doit ramasser des barils et éviter les obstacles pour protéger la planète.
+Runner 3D à 3 voies (Three.js) : ramasse les barils jaunes, évite les obstacles, monte sur les bus, échappe à l'inspecteur et à son chien.
 
-## Objectif
-Atteindre le score demandé avant la fin du compteur, sans perdre ses vies.
+## Lancer
+Ouvre `index.html` (ou active GitHub Pages : Settings > Pages > branche `main`, dossier `/root`).
+
+## Modes
+- **Facile / Moyen / Difficile** : atteins le score avant la fin du temps.
+- **Infini** : course sans fin, la vitesse augmente, bats ton record.
+
 ## Commandes
-- **← / Q** : aller à gauche
-- **→ / D** : aller à droite
-- **↑ / Z / Espace** : sauter
-- **↓ / S** : glisser
+- ← → ou Q D : changer de voie
+- ↑ / Z / Espace : sauter
+- ↓ / S : glisser sous les barrières
+- M : couper / remettre le son
+- Mobile : glisser le doigt
 
-## Technologies utilisées
-- HTML et JavaScript
-- Three.js pour les graphismes 3D
-- GitHub Pages pour publier le jeu
+## Gameplay
+- **Rampes et rames de bus** : prends la rampe pour courir sur le toit et ramasser les barils.
+- **Poursuivant** : après un choc, l'inspecteur et son chien arrivent derrière toi. Un 2e choc rapproché = attrapé (-2 vies).
+- **Bonus** : 🧲 aimant, ×2 points, ⬆ super-saut, ❤ vie.
+- **Décors** : jour, coucher de soleil, nuit, tunnels et ponts.
+- **Sons et musique** générés par le navigateur (aucun fichier audio).
 
-## Difficultés
-Le jeu propose trois niveaux : facile, moyen et difficile.
+## Progression (sauvegardée dans le navigateur)
+- Les barils ramassés deviennent des 🪙 pièces.
+- **Boutique** : tenues (Doré, Forêt, Néon, Feu), améliorations de bonus (niveau 3 max), +1 vie permanente.
+- **Missions** : 3 missions actives, récompense en pièces + 📦 coffre.
+- **Coffres** : pièces, tenues ou améliorations. Un coffre offert tous les 2000 points dans une partie.
 
-## Améliorations possibles
-Ajouter de nouveaux obstacles, des personnages et des environnements 3D.
-
-## Lien du jeu
-https://jdeuxx.github.io/jeu-dd/index.html
+## Modèles 3D optionnels
+Place `leo.glb`, `maya.glb`, `max.glb` dans un dossier `modeles/` pour remplacer les personnages dessinés en code.
