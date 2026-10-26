@@ -246,6 +246,7 @@ function creerDepuisModele(src) { // utilise un vrai modèle 3D .glb
 function creerPerso(p) {
   const sk = SKINS.find(q => q.id === sauv.skin); if (sk && sk.haut) p = Object.assign({}, p, { haut: sk.haut, casq: sk.casq, bas: sk.bas });
   const cle = Object.keys(PERSOS).find(q => PERSOS[q].nom === p.nom);
+  if (texPersos[cle]) return creerDepuisImage(texPersos[cle]);
   if (modeles[cle]) return creerDepuisModele(modeles[cle]); // style manga : grands yeux brillants, cheveux en pointes, contours noirs
   const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
   const bas = c => new THREE.MeshBasicMaterial({ color: c });
@@ -1020,6 +1021,7 @@ scene.add(camera); camera.add(hud, menuG, finG, chargG, boutiqueG, missionsG, po
 construireHud(); construireMenu(); construireFin(); construireCharg(); construireBoutique(); construireMissions();
 majPersos(); majMenu(); majHud(); placerUI(); uiPret = true;
 montrer("chargement");
+chargerImages();
 chargerModeles();
 document.fonts.load("800 40px 'Baloo 2'").then(() => { fontsOk = true; }, () => { fontsOk = true; });
 requestAnimationFrame(boucle);
