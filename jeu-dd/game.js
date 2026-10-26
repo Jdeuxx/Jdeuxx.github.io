@@ -126,7 +126,8 @@ const FICHIERS = { simple: "leo", moyen: "maya", expert: "max", momie: "momo", j
 const texPersos = {};
 function chargerImages() {
   const tl = new THREE.TextureLoader();
-tl.load(FICHIERS[k] + ".png"    texPersos[k] = t; if (uiPret) { appliquerPerso(); majPersos(); }
+  for (const k in FICHIERS) tl.load(FICHIERS[k] + ".png", t => {
+    texPersos[k] = t; if (uiPret) { appliquerPerso(); majPersos(); }
   }, undefined, () => {});
 }
 function creerDepuisImage(tex) {
