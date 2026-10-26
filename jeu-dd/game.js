@@ -131,13 +131,20 @@ function chargerImages() {
   }, undefined, () => {});
 }
 function creerDepuisImage(tex) {
-  const g = new THREE.Group(), corps = new THREE.Group(), h = HAUTEUR_MODELE;
-  const m = new THREE.Mesh(
-    new THREE.PlaneGeometry(h * tex.image.width / tex.image.height, h),
-    new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide })
-  );
-  m.position.y = h / 2; corps.add(m); g.add(corps);
-  g.userData.corps = corps;
+  const g = new THREE.Group(), corps = new THREE.Group(), h = HAUTEUR_MODELE, w = h * tex.image.width / tex.image.height;
+  const S = 0.45; // part du bas de l'image qui bouge = les jambes (0.45 = 45 %)
+  const partie = (u0, u1, v0, v1) => { // un morceau de l'image
+    const t = tex.clone(); t.needsUpdate = true; t.repeat.set(u1 - u0, v1 - v0); t.offset.set(u0, v0);
+    return new THREE.Mesh(new THREE.PlaneGeometry(w * (u1 - u0), h * (v1 - v0)),
+      new THREE.MeshBasicMaterial({ map: t, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide }));
+  };
+  const haut = partie(0, 1, S, 1); haut.position.set(0, h * (S + (1 - S) / 2), 0);
+  const jg = new THREE.Group(), jd = new THREE.Group();
+  const mg = partie(0, 0.5, 0, S), md = partie(0.5, 1, 0, S);
+  mg.position.y = md.position.y = -h * S / 2;
+  jg.position.set(-w / 4, h * S, 0.01); jd.position.set(w / 4, h * S, 0.01);
+  jg.add(mg); jd.add(md); corps.add(haut, jg, jd); g.add(corps);
+  g.userData.corps = corps; g.userData.jambes = [jg, jd]; g.userData.hanche = h * S;
   return g;
 }
 let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
@@ -638,6 +645,13 @@ function maj(dt) {
   joueur.visible = enCours && (invul <= 0 || Math.floor(temps * 14) % 2 === 0);
   const a = Math.sin(temps * 13) * 0.9, mb = joueur.userData.membres;
   if (mb) { mb[0].rotation.x = a; mb[1].rotation.x = -a; mb[2].rotation.x = -a; mb[3].rotation.x = a; }
+    else if (joueur.userData.jambes) { // image découpée : les jambes montent et descendent
+    const J = joueur.userData.jambes, y0 = joueur.userData.hanche, ph = temps * 14, s = Math.sin(ph);
+    J[0].position.y = y0 + Math.max(0, s) * 0.22;  J[0].rotation.x = s * 0.35;
+    J[1].position.y = y0 + Math.max(0, -s) * 0.22; J[1].rotation.x = -s * 0.35;
+    joueur.userData.corps.position.y = Math.abs(s) * 0.08;
+    joueur.userData.corps.rotation.z = s * 0.04;
+  }
   else if (joueur.userData.corps) { // modèle .glb : petit rebond de course
     joueur.userData.corps.position.y = Math.abs(Math.sin(temps * 13)) * 0.08; joueur.userData.corps.rotation.z = Math.sin(temps * 6.5) * 0.05;
   }
