@@ -123,6 +123,23 @@ function musique() { // boucle musicale planifiée à l'avance (128 bpm)
 // Si tu vois le VISAGE au lieu du DOS pendant la course, change ROTATION_MODELE (0 <-> Math.PI)
 const ROTATION_MODELE = 0, HAUTEUR_MODELE = 2.4;
 const FICHIERS = { simple: "leo", moyen: "maya", expert: "max", momie: "momo", jet: "jet", zip: "zip" }, modeles = {};
+const texPersos = {};
+function chargerImages() {
+  const tl = new THREE.TextureLoader();
+  for (const k in FICHIERS) tl.load("persos/" + FICHIERS[k] + ".png", t => {
+    texPersos[k] = t; if (uiPret) { appliquerPerso(); majPersos(); }
+  }, undefined, () => {});
+}
+function creerDepuisImage(tex) {
+  const g = new THREE.Group(), corps = new THREE.Group(), h = HAUTEUR_MODELE;
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(h * tex.image.width / tex.image.height, h),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide })
+  );
+  m.position.y = h / 2; corps.add(m); g.add(corps);
+  g.userData.corps = corps;
+  return g;
+}
 let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
 let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1, temps = 0, secousse = 0;
 let lane = 1, vy = 0, glisse = -1, cmd = "", d0 = null, camBase = 3.4;
