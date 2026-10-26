@@ -961,7 +961,7 @@ function majUI(dt) {
     const q = Math.min(1, temps / 1.6);
     ui.cBarre.scale.x = Math.max(0.001, q); ui.cBaril.rotation.y += dt * 3;
     if (q >= 1 && fontsOk) { redessiner(); montrer("menu"); }
-  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4; }); // face au joueur
+  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = c.userData.membres ? Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4 : 0; }); // face au joueur
   else if (etat === "jeu") {
     ui.iconeBaril.rotation.y += dt * 3; ui.globe.rotation.y += dt;
     ui.coeurs.forEach((c, i) => { c.rotation.y = Math.sin(temps * 2 + i) * 0.5; });
