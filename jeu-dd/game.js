@@ -62,7 +62,7 @@ function compter(c, n) { // fait avancer les missions actives
       sauv.pieces += m.r; sauv.coffres++; delete sauv.prog[idx];
       let ni = sauv.mNext % MISSIONS.length; while (sauv.miss.includes(ni)) ni = (ni + 1) % MISSIONS.length;
       sauv.miss[slot] = ni; sauv.mNext = ni + 1;
-      annoncer("MISSION +" + m.r + " 🪙", "#8cf56a"); son("coffre"); sauver();
+      annoncer("MISSION +" + m.r + " ●", "#8cf56a"); son("coffre"); sauver();
     }
   });
 }
@@ -322,7 +322,7 @@ function creerPerso(p) {
   } else if (n === "Max") {                                                        // bonnet + casque audio + mèches noires
     coiffe(0.43, 2.2, 1.15); add(cyl(0.435, 0.435, 0.12, 0x2e1065), 0, 2.24, 0.04);
     for (const s of [-1, 1]) {
-      add(cyl(0.14, 0.14, 0.1, p.accent), s * 0.42, 1.98, 0).rotation.z = Math.PI / 2;
+      add(cyl(0.11, 0.11, 0.08, p.accent), s * 0.41, 1.98, 0.1).rotation.z = Math.PI / 2;
       for (let i = 0; i < 2; i++) pic(s * (0.08 + i * 0.14), 2.13, -0.31, Math.PI + 0.35, 0, 0.07, 0.26, p.cheveux);
     }
   } else {                                                                         // casquette + frange en pointes
@@ -748,7 +748,7 @@ function fin(titre, gagne) {
   const nouveaux = Object.values(PERSOS).filter(q => q.seuil > avant && q.seuil <= score).map(q => q.nom);
   ecrire(ui.fin, [[record ? "RECORD BATTU !" : titre, 0.3, gagne || record ? "#8cf56a" : "#ff7b7b"], [score + " pts · " + barils + " barils ramassés", 0.15], [
     nouveaux.length ? "🔓 Personnage débloqué : " + nouveaux.join(", ") : (cfg.infini ? "Record : " + Math.max(rec, score) + " pts" : (gagne ? "Moins de pollution, plus de vie !" : "La planète a encore besoin de toi.")), 0.13, "#cfe9ff"],
-    ["+" + gain + " 🪙" + (coffres ? "  ·  📦 +" + coffres : ""), 0.13, "#ffe066"]]);
+    ["+" + gain + " ●" + (coffres ? "  ·  📦 +" + coffres : ""), 0.13, "#ffe066"]]);
   majPersos(); montrer("fin");
 }
 
@@ -833,7 +833,7 @@ function choisir(k) {
 }
 
 function majMenu() {
-  ecrire(ui.pieces, [["🪙 " + sauv.pieces, 0.4, "#ffe066"]]);
+  ecrire(ui.pieces, [["● " + sauv.pieces, 0.4, "#ffe066"]]);
   for (const k in ui.niveaux) ecrire(ui.niveaux[k], ui.niveaux[k].userData.lignes, k === niv ? "#d79a00" : "#14407a");
 }
 
@@ -904,20 +904,20 @@ function construireBoutique() {
 }
 
 function majBoutique() {
-  ecrire(ui.bHead, [["BOUTIQUE · 🪙 " + sauv.pieces, 0.55, "#ffe066"]]);
+  ecrire(ui.bHead, [["BOUTIQUE · ● " + sauv.pieces, 0.55, "#ffe066"]]);
   for (const it of ui.bItems) {
     let nom, etat, fond = "#14407a", col = "#ffffff";
     if (it.t === "skin") {
       const poss = sauv.skins.includes(it.s.id); nom = it.s.nom;
       if (it.s.haut) col = "#" + it.s.haut.toString(16).padStart(6, "0");
-      etat = sauv.skin === it.s.id ? "ÉQUIPÉ" : poss ? "ÉQUIPER" : "🪙 " + it.s.prix;
+      etat = sauv.skin === it.s.id ? "ÉQUIPÉ" : poss ? "ÉQUIPER" : "● " + it.s.prix;
       fond = sauv.skin === it.s.id ? "#1fa83a" : poss ? "#2563eb" : sauv.pieces < it.s.prix ? "#3b4a66" : "#14407a";
     } else if (it.t === "up") {
       const l = sauv.up[it.a.k]; nom = it.a.nom;
-      etat = l >= 3 ? "NIVEAU MAX" : "NIV " + l + " · 🪙 " + prixUp(it.a.k);
+      etat = l >= 3 ? "NIVEAU MAX" : "NIV " + l + " · ● " + prixUp(it.a.k);
       fond = l >= 3 ? "#1fa83a" : sauv.pieces < prixUp(it.a.k) ? "#3b4a66" : "#14407a";
     } else {
-      nom = "+1 VIE"; etat = sauv.vieBonus ? "ACHETÉ" : "🪙 1500";
+      nom = "+1 VIE"; etat = sauv.vieBonus ? "ACHETÉ" : "● 1500";
       fond = sauv.vieBonus ? "#1fa83a" : sauv.pieces < 1500 ? "#3b4a66" : "#14407a";
     }
     ecrire(it.m, [[nom, 0.3, col], [etat, 0.24, "#cfe9ff"]], fond);
@@ -925,7 +925,7 @@ function majBoutique() {
 }
 
 function acheter(it) {
-  const manque = prix => info(["Pas assez de pièces", "", "Il te faut " + prix + " 🪙", "Ramasse des barils !"]);
+  const manque = prix => info(["Pas assez de pièces", "", "Il te faut " + prix + " ●", "Ramasse des barils !"]);
   if (it.t === "skin") {
     if (!sauv.skins.includes(it.s.id)) { if (sauv.pieces < it.s.prix) return manque(it.s.prix); sauv.pieces -= it.s.prix; sauv.skins.push(it.s.id); }
     sauv.skin = it.s.id; appliquerPerso(); majPersos();
@@ -949,7 +949,7 @@ function construireMissions() {
 function majMissions() {
   sauv.miss.forEach((idx, i) => {
     const m = MISSIONS[idx], pr = Math.min(m.n, sauv.prog[idx] || 0);
-    ecrire(ui.mis[i], [[m.t, 0.4], [pr + " / " + m.n + "  ·  🪙 " + m.r + " + 📦", 0.26, "#cfe9ff"]], "#14407a");
+    ecrire(ui.mis[i], [[m.t, 0.4], [pr + " / " + m.n + "  ·  ● " + m.r + " + 📦", 0.26, "#cfe9ff"]], "#14407a");
   });
   ecrire(ui.coffreBtn, [["📦 OUVRIR UN COFFRE (" + sauv.coffres + ")", 0.4]], sauv.coffres > 0 ? "#1fa83a" : "#3b4a66");
 }
@@ -961,12 +961,12 @@ function ouvrirCoffre() {
   let t;
   if (r < 0.15 && libres.length) { const s = libres[Math.floor(Math.random() * libres.length)]; sauv.skins.push(s.id); t = "Tenue " + s.nom + " débloquée !"; }
   else if (r < 0.35 && ups.length) { const a = ups[Math.floor(Math.random() * ups.length)]; sauv.up[a.k]++; t = a.nom + " niveau " + sauv.up[a.k] + " !"; }
-  else { const g = 10 * Math.round(rnd(10, 40)); sauv.pieces += g; t = "+ " + g + " 🪙"; }
+  else { const g = 10 * Math.round(rnd(10, 40)); sauv.pieces += g; t = "+ " + g + " ●"; }
   sauver(); son("coffre"); majMissions(); info(["📦 COFFRE OUVERT !", "", t]);
 }
 
 function placerUI() { // adapte la position des éléments 3D à la taille de la fenêtre
-  const a = camera.aspect, k = Math.tan(Math.PI / 6), s = Math.min(1, a / 1.8), t = Math.min(1, a / 1.5) * 0.85;
+  const a = camera.aspect, k = Math.tan(Math.PI / 6), s = Math.min(1, a / 2.05), t = Math.min(1, a / 1.5) * 0.85;
   menuG.position.z = -4; menuG.scale.setScalar(s); finG.position.z = -4; finG.scale.setScalar(s); chargG.position.z = -4;
   boutiqueG.position.z = -4; boutiqueG.scale.setScalar(s); missionsG.position.z = -4; missionsG.scale.setScalar(s); popG.position.z = -3.2; popG.scale.setScalar(Math.min(1, a * 0.7));
   ui.g.position.x = -k * 4 * a / s + 2.1; ui.d.position.x = k * 4 * a / s - 2.2;
@@ -981,7 +981,7 @@ function majUI(dt) {
     const q = Math.min(1, temps / 1.6);
     ui.cBarre.scale.x = Math.max(0.001, q); ui.cBaril.rotation.y += dt * 3;
     if (q >= 1 && fontsOk) { redessiner(); montrer("menu"); }
-  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4; }); // face au joueur
+  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.22; }); // face au joueur
   else if (etat === "jeu") {
     ui.iconeBaril.rotation.y += dt * 3; ui.globe.rotation.y += dt;
     ui.coeurs.forEach((c, i) => { c.rotation.y = Math.sin(temps * 2 + i) * 0.5; });
