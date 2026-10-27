@@ -6,8 +6,12 @@ const NIVEAUX = {
   facile:    { multi: 5,  but: 1000, temps: 180, vies: 5, spawn: 1.1,  v: 9,  blocs: [1, 1] },
   moyen:     { multi: 10, but: 2000, temps: 120, vies: 3, spawn: 0.85, v: 12, blocs: [1, 2] },
   difficile: { multi: 20, but: 3000, temps: 90,  vies: 2, spawn: 0.65, v: 15, blocs: [2, 2] },
+  expert:    { multi: 30, but: 3600, temps: 80,  vies: 2, spawn: 0.55, v: 17, blocs: [2, 2] },
+  extreme:   { multi: 50, but: 5000, temps: 70,  vies: 1, spawn: 0.5,  v: 20, blocs: [2, 2] },
   infini:    { multi: 10, but: Infinity, temps: Infinity, vies: 3, spawn: 0.85, v: 12, blocs: [1, 2], infini: true }
 };
+
+const NOMS_NIVEAU = { facile: "Niveau 1", moyen: "Niveau 2", difficile: "Niveau 3", expert: "Niveau 4", extreme: "Niveau 5", infini: "Mode infini" };
 
 // aimant = zone de ramassage des barils | solide = zone de collision des obstacles (en voies)
 const PERSOS = {
@@ -16,6 +20,9 @@ const PERSOS = {
   momie:  { nom: "Momo", seuil: 3000, bonus: "Bandages",       aimant: 0.75, solide: 0.4,  style: "momie", peau: 0xc9d6c0, cheveux: 0x6b21a8, haut: 0xe7dcc3, bas: 0xd9cdb0, chaus: 0xb8a88a, casq: 0x7e22ce, sac: 0x92400e, accent: 0xfacc15 },
   jet:    { nom: "Jet",  seuil: 4500, bonus: "Super aimant",    aimant: 1.15, solide: 0.45, style: "jet",   peau: 0xe8b48f, cheveux: 0x5b3a1f, haut: 0xea580c, bas: 0x0e7490, chaus: 0x1f2937, casq: 0x0ea5e9, sac: 0x9ca3af, accent: 0x22d3ee },
   zip:    { nom: "Zip",  seuil: 6000, bonus: "Agile",           aimant: 0.6,  solide: 0.3,  style: "zip",   peau: 0xf2c09a, cheveux: 0x14b8a6, haut: 0xf8fafc, bas: 0xb45309, chaus: 0xfacc15, casq: 0xf59e0b, sac: 0x1f2937, accent: 0xfacc15 },
+  ranger:   { nom: "Lina", seuil: 7500,  bonus: "Garde forestière", aimant: 0.95, solide: 0.42, style: "ranger",   peau: 0xe9b78e, cheveux: 0x7c2d12, haut: 0x15803d, bas: 0x78350f, chaus: 0x78350f, casq: 0xd6b370, sac: 0x365314, accent: 0xffffff },
+  chantier: { nom: "Sam",  seuil: 9000,  bonus: "Casque solide",   aimant: 0.5,  solide: 0.25, style: "chantier", peau: 0xc68642, cheveux: 0x1f2937, haut: 0xf97316, bas: 0x1e3a8a, chaus: 0x78350f, casq: 0xfacc15, sac: 0x374151, accent: 0xe5e7eb },
+  cycliste: { nom: "Noa",  seuil: 10500, bonus: "Cycliste",        aimant: 0.8,  solide: 0.35, style: "cycliste", peau: 0xf5c9a8, cheveux: 0x111827, haut: 0xef4444, bas: 0x111827, chaus: 0xffffff, casq: 0xf8fafc, sac: 0x1f2937, accent: 0xfacc15 },
   expert: { nom: "Max",  seuil: 2000, bonus: "Résistant",       aimant: 0.5,  solide: 0.3,  peau: 0x6b4226, cheveux: 0x111827, haut: 0x7c3aed, bas: 0x1e1b3a, chaus: 0xe9d5ff, casq: 0x4c1d95, sac: 0x312e81, accent: 0x22d3ee }
 };
 
@@ -122,20 +129,20 @@ function musique() { // boucle musicale planifiée à l'avance (128 bpm)
 // Modèles 3D optionnels (VRoid / Sketchfab / Mixamo) : modeles/leo.glb, maya.glb, max.glb
 // Si tu vois le VISAGE au lieu du DOS pendant la course, change ROTATION_MODELE (0 <-> Math.PI)
 const ROTATION_MODELE = 0, HAUTEUR_MODELE = 2.4;
-const FICHIERS = { simple: "leo", moyen: "maya", expert: "max", momie: "momo", jet: "jet", zip: "zip" }, modeles = {};
+const FICHIERS = { simple: "leo", moyen: "maya", expert: "max", momie: "momo", jet: "jet", zip: "zip", ranger: "lina", chantier: "sam", cycliste: "noa" }, modeles = {};
 
 // ---------- Modèles 3D optionnels pour les objets et le décor (dossier modeles/) ----------
 // Fichiers reconnus : baril, poubelle, sac, branche, barriere, bus, rampe, batiment (+ batiment2, batiment3), arbre, lampadaire  (.glb)
 // Chaque modèle est redimensionné automatiquement : h = hauteur voulue ; w / h / l + exact = dimensions imposées (largeur, hauteur, longueur).
 const TAILLES = {
   baril: { h: 1.0 }, poubelle: { h: 1.1 }, sac: { h: 1.0 }, branche: { h: 0.8 }, barriere: { h: 1.7 },
-  bus: { w: 1.7, h: 1.4, l: 3.2, exact: true }, rampe: { w: 1.5, h: 1.4, l: 3.2, exact: true },
+  bus: { w: 1.7, h: 1.4, l: 3.2, exact: true }, camion: { w: 1.7, h: 2.2, l: 3.4, exact: true }, rampe: { w: 1.5, h: 1.4, l: 3.2, exact: true },
   batiment: { w: 7, h: 10, l: 8, exact: true }, arbre: { h: 4.5 }, lampadaire: { h: 3.5 }
 };
 // Si un modèle regarde du mauvais côté, tourne-le ici (en radians), par ex. ROT.bus = Math.PI ; ROT.rampe = Math.PI
 const ROT = {};
 const assets = {};
-const NOMS_ASSETS = ["baril", "poubelle", "sac", "branche", "barriere", "bus", "rampe", "batiment", "batiment2", "batiment3", "arbre", "lampadaire"];
+const NOMS_ASSETS = ["baril", "poubelle", "sac", "branche", "barriere", "bus", "camion", "rampe", "batiment", "batiment2", "batiment3", "arbre", "lampadaire"];
 
 function ajusterModele(src, t, rot) { // clone + redimensionne + pose le modèle (centré, posé sur le sol)
   const m = THREE.SkeletonUtils ? THREE.SkeletonUtils.clone(src) : src.clone(true), g = new THREE.Group();
@@ -238,7 +245,7 @@ function decor() {
     for (let i = 0; i < 12; i++) {
       const b = new THREE.Mesh(new THREE.BoxGeometry(7, 10, 8), new THREE.MeshStandardMaterial({ map: fen, emissiveMap: fenNuit, emissive: 0x000000 }));
       const toit = new THREE.Mesh(new THREE.BoxGeometry(7.6, 0.3, 8.6), M(0xfff7ed)); toit.position.y = 5.1; b.add(toit);
-      b.position.x = s * rnd(11, 13); placerBatiment(b, 10 - i * 14); scene.add(b); batiments.push(b);
+      b.position.x = s * (s < 0 ? rnd(14, 16) : rnd(11, 13)); placerBatiment(b, 10 - i * 14); scene.add(b); batiments.push(b);
     }
     for (let i = 0; i < 10; i++) {
       const t = new THREE.Group(), f = placer(new THREE.Mesh(new THREE.IcosahedronGeometry(1.3, 0), new THREE.MeshStandardMaterial({ color: 0x2fb344, flatShading: true, roughness: 0.8 })), 0, 2.7, 0); f.castShadow = true;
@@ -269,7 +276,7 @@ function creerPerso(p) {
   const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
   const bas = c => new THREE.MeshBasicMaterial({ color: c });
   const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
-  const iris = { "Léo": 0x3b82f6, "Maya": 0x16a34a, "Max": 0xd97706, "Momo": 0xa3e635, "Jet": 0x92400e, "Zip": 0x8b5cf6 }[n];
+  const iris = { "Léo": 0x3b82f6, "Maya": 0x16a34a, "Max": 0xd97706, "Momo": 0xa3e635, "Jet": 0x92400e, "Zip": 0x8b5cf6, "Lina": 0x92400e, "Sam": 0x374151, "Noa": 0x0ea5e9 }[n];
   const pic = (x, y, z, rx, rz, r, h, c) => { // mèche de cheveux en pointe
     const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 6), M(c)); m.position.set(x, y, z); m.rotation.set(rx, 0, rz); g.add(m); return m;
   };
@@ -280,7 +287,7 @@ function creerPerso(p) {
   add(cyl(0.07, 0.07, 0.14, p.peau), 0, 1.7, 0);                                  // cou
   const capuche = add(sph(0.2, p.haut), 0, 1.62, 0.2); capuche.scale.set(1.2, 0.7, 0.6);
   const logo = placer(cyl(0.06, 0.06, 0.04, p.accent), 0.1, 1.38, -0.27); logo.rotation.x = Math.PI / 2; g.add(logo);
-  add(box(0.44, 0.58, 0.22, p.sac), 0, 1.3, 0.3);                                 // sac à dos
+  add(box(0.44, 0.58, 0.22, p.sac), 0, 1.3, 0.3); add(cyl(0.16, 0.16, 0.03, 0xffffff), 0, 1.32, 0.415).rotation.x = Math.PI / 2; const feuilleSac = add(sph(0.1, 0x22c55e), 0, 1.32, 0.43); feuilleSac.scale.set(1, 1.7, 0.25); feuilleSac.rotation.z = 0.5; // logo feuille                                 // sac à dos
   add(sph(0.4, p.peau), 0, 2.0, 0);                                               // tête
   for (const s of [-1, 1]) {                                                       // yeux de manga
     add(sph(0.12, 0xffffff), s * 0.17, 1.94, -0.33).scale.set(1, 1.35, 0.35);
@@ -319,6 +326,20 @@ function creerPerso(p) {
     for (let i = -2; i <= 2; i++) pic(i * 0.1, 2.2, -0.31, Math.PI + 0.3, 0, 0.065, 0.24, p.cheveux);
     const arc = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.04, 8, 16, Math.PI), M(p.casq)); arc.position.set(0, 1.98, 0); g.add(arc);
     for (const s of [-1, 1]) add(cyl(0.14, 0.14, 0.12, p.casq), s * 0.46, 1.98, 0).rotation.z = Math.PI / 2;
+  } else if (p.style === "ranger") {                                               // garde forestière : chapeau à large bord + tresses
+    add(sph(0.42, p.cheveux), 0, 2.06, 0.1);
+    for (let i = -2; i <= 2; i++) pic(i * 0.1, 2.2, -0.31, Math.PI + 0.3, 0, 0.065, 0.24, p.cheveux);
+    add(cyl(0.7, 0.7, 0.05, p.casq), 0, 2.26, 0); add(cyl(0.34, 0.4, 0.28, p.casq), 0, 2.42, 0.02); add(cyl(0.41, 0.41, 0.07, 0x15803d), 0, 2.32, 0.02);
+    for (const s of [-1, 1]) add(cyl(0.07, 0.04, 0.8, p.cheveux), s * 0.36, 1.68, 0.08);
+  } else if (p.style === "chantier") {                                             // casque de chantier jaune + gilet réfléchissant
+    add(sph(0.42, p.cheveux), 0, 2.04, 0.1);
+    coiffe(0.46, 2.2, 1.05); add(box(0.5, 0.05, 0.38, p.casq), 0, 2.2, -0.4); add(box(0.1, 0.1, 0.9, p.casq), 0, 2.64, 0);
+    for (const y of [1.15, 1.45]) add(cyl(0.285, 0.285, 0.07, 0xe5e7eb), 0, y, 0);
+  } else if (p.style === "cycliste") {                                             // casque de vélo aérodynamique
+    add(sph(0.41, p.cheveux), 0, 2.04, 0.1);
+    const cq = add(sph(0.46, p.casq), 0, 2.2, 0.06); cq.scale.set(1, 0.7, 1.25);
+    for (const s of [-1, 1]) add(box(0.06, 0.05, 0.6, 0xef4444), s * 0.16, 2.46, 0.08);
+    add(box(0.55, 0.06, 0.3, 0x111827), 0, 2.28, -0.34);
   } else if (n === "Max") {                                                        // bonnet + casque audio + mèches noires
     coiffe(0.43, 2.2, 1.15); add(cyl(0.435, 0.435, 0.12, 0x2e1065), 0, 2.24, 0.04);
     for (const s of [-1, 1]) {
@@ -362,7 +383,9 @@ function creerObjet3d(type) {
   if (type === "baril") {
     const b = cyl(0.4, 0.4, 0.8, 0xffb020); b.material.emissive.setHex(0x6b3d00);
     g.add(placer(b, 0, 0.6, 0), placer(cyl(0.43, 0.43, 0.08, 0xb8860b), 0, 0.3, 0), placer(cyl(0.43, 0.43, 0.08, 0xb8860b), 0, 0.9, 0), placer(cyl(0.42, 0.42, 0.05, 0xb8860b), 0, 0.6, 0), placer(cyl(0.3, 0.3, 0.04, 0xfde68a), 0, 1.0, 0));
-    const em = placer(cyl(0.2, 0.2, 0.06, 0x1f2937), 0, 0.6, 0.4); em.rotation.x = Math.PI / 2; g.add(em);
+    const em = new THREE.Group(); em.position.set(0, 0.6, 0.4); em.rotation.x = Math.PI / 2; em.add(cyl(0.2, 0.2, 0.05, 0xfde047));
+    for (let i = 0; i < 3; i++) em.add(new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.07, 10, 1, false, i * 2.094 + 0.3, 1.05), M(0x111827)));
+    em.add(cyl(0.04, 0.04, 0.08, 0x111827)); g.add(em); // symbole de radiation
   } else if (type === "poubelle") {
     g.add(placer(box(0.9, 1.0, 0.8, 0x1f9d55), 0, 0.5, 0), placer(box(1, 0.12, 0.9, 0x167a42), 0, 1.06, 0));
     const em = placer(cyl(0.22, 0.22, 0.06, 0xffffff), 0, 0.55, 0.4); em.rotation.x = Math.PI / 2; g.add(em);
@@ -387,6 +410,10 @@ function creerObjet3d(type) {
       const h = new THREE.Mesh(coeurGeo(), M(0xff3b4e, 0x55000a)); h.scale.setScalar(0.45); ic.add(h);
     }
     ic.position.y = 0.9; g.add(ic);
+  } else if (type === "camion") { // camion-poubelle : trop haut pour monter dessus, il faut l'éviter (ou super-saut)
+    g.add(placer(box(1.7, 1.9, 2.4, 0x1f7a3a), 0, 1.25, -0.35), placer(box(1.7, 1.3, 1.1, 0x15803d), 0, 0.95, 1.35), placer(box(1.5, 0.45, 0.06, 0x93c5fd), 0, 1.45, 1.92), placer(box(1.76, 0.18, 3.6, 0x14532d), 0, 0.35, 0.3));
+    g.add(placer(box(1.5, 0.25, 0.06, 0xfacc15), 0, 0.6, -1.58));
+    for (const x of [-0.85, 0.85]) for (const z of [-1.0, 1.4]) { const r = placer(cyl(0.32, 0.32, 0.22, 0x111827), x, 0.32, z); r.rotation.z = Math.PI / 2; g.add(r); }
   } else if (type === "rampe") { // rampe qui mène au toit d'un bus (3,2 de long)
     const sh = new THREE.Shape(); sh.moveTo(-1.6, 0); sh.lineTo(1.6, 0); sh.lineTo(1.6, BUS_H); sh.lineTo(-1.6, 0);
     const geo = new THREE.ExtrudeGeometry(sh, { depth: 1.5, bevelEnabled: false }); geo.translate(0, 0, -0.75);
@@ -436,6 +463,49 @@ function decorPlus() {
   }
 }
 
+// ---------- Décor « ville écolo » : ville au loin, éolienne, tramway, bancs, bacs de tri, panneaux ----------
+const matVille = new THREE.MeshBasicMaterial({ color: 0xa8cbe6, fog: false });
+let tram = null, tTram = 3, eolienne = null; const scenic = [], panneaux = [];
+function decorPlus2() {
+  for (let i = 0; i < 18; i++) { const h = rnd(20, 60), m = new THREE.Mesh(new THREE.BoxGeometry(rnd(8, 14), h, 8), matVille); m.position.set(-100 + i * 11.5 + rnd(-3, 3), h / 2, -200); scene.add(m); }
+  eolienne = new THREE.Group(); // éolienne au loin
+  eolienne.add(placer(cyl(0.5, 0.9, 28, 0xf1f5f9), 0, 14, 0), placer(box(1.2, 1.2, 2.4, 0xe5e7eb), 0, 28.5, 0.5));
+  const rotor = new THREE.Group(); rotor.position.set(0, 28.5, 1.8);
+  for (let i = 0; i < 3; i++) { const p = new THREE.Group(); p.rotation.z = i * 2.094; p.add(placer(box(0.6, 12, 0.15, 0xf8fafc), 0, 6, 0)); rotor.add(p); }
+  eolienne.add(rotor); eolienne.userData.rotor = rotor; eolienne.position.set(34, 0, -150); eolienne.traverse(o => { o.castShadow = false; }); scene.add(eolienne);
+  const voie = placer(box(2.6, 0.06, 320, 0x57534e), -8.4, 0.03, -100); voie.castShadow = false; scene.add(voie); // voie du tramway
+  for (const dx of [-0.7, 0.7]) { const r = placer(box(0.1, 0.1, 320, 0xcbd5e1), -8.4 + dx, 0.09, -100); r.castShadow = false; scene.add(r); }
+  tram = new THREE.Group();
+  for (let i = 0; i < 3; i++) {
+    const c = new THREE.Group();
+    c.add(placer(box(2.6, 2.4, 9, 0x3b82f6), 0, 1.7, 0), placer(box(2.62, 0.9, 8.6, 0x1e293b), 0, 2.0, 0), placer(box(2.7, 0.25, 9, 0xe5e7eb), 0, 2.95, 0), placer(box(2.64, 0.5, 9.02, 0xe5e7eb), 0, 0.85, 0));
+    const fe = placer(sph(0.4, 0x22c55e), 1.32, 1.1, 0); fe.scale.set(0.12, 1.2, 1.5); c.add(fe); // logo feuille
+    if (i === 0) for (const x of [-0.8, 0.8]) c.add(placer(new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.25, 0.06), new THREE.MeshBasicMaterial({ color: 0xfff7b0 })), x, 1.0, -4.52));
+    c.position.z = i * 9.4; tram.add(c);
+  }
+  tram.traverse(o => { o.castShadow = false; }); tram.position.set(-8.4, 0, 60); tram.visible = false; scene.add(tram);
+  for (const s of [-1, 1]) for (let i = 0; i < 7; i++) { // bancs et bacs de tri sur les trottoirs
+    const g = new THREE.Group();
+    if (i % 2 === 0) g.add(placer(box(0.5, 0.12, 1.6, 0x92400e), 0, 0.5, 0), placer(box(0.08, 0.5, 1.6, 0x92400e), s * 0.22, 0.85, 0), placer(box(0.5, 0.5, 0.1, 0x374151), 0, 0.25, 0.65), placer(box(0.5, 0.5, 0.1, 0x374151), 0, 0.25, -0.65));
+    else g.add(placer(box(0.6, 0.95, 0.6, 0x15803d), 0, 0.48, 0), placer(box(0.66, 0.1, 0.66, 0x166534), 0, 1.0, 0), placer(box(0.04, 0.3, 0.3, 0xffffff), -s * 0.31, 0.55, 0));
+    g.position.set(s * 4.9, 0, 6 - i * 28 - (s > 0 ? 0 : 14)); g.traverse(o => { o.castShadow = false; }); scene.add(g); scenic.push(g);
+  }
+  for (let i = 0; i < 3; i++) { // panneaux « Ensemble pour une planète plus propre »
+    const g = new THREE.Group(), pl = plaque(3.4, 1.9, 0x14532d);
+    pl.userData.bord = "#d9f99d"; ecrire(pl, [["ENSEMBLE POUR", 0.17, "#ecfccb"], ["UNE PLANÈTE", 0.2], ["PLUS PROPRE", 0.2, "#86efac"]], "#14532d");
+    pl.position.y = 3.4; g.add(pl, placer(box(0.2, 3.4, 0.2, 0x334155), -1.2, 1.7, -0.1), placer(box(0.2, 3.4, 0.2, 0x334155), 1.2, 1.7, -0.1));
+    g.userData.pl = pl; g.rotation.y = -Math.PI / 2 + 0.55; g.position.set(7.4, 0, -20 - i * 70); g.traverse(o => { o.castShadow = false; }); scene.add(g); panneaux.push(g);
+  }
+}
+function majDecor2(v, dt) {
+  scenic.forEach(g => { g.position.z += v * dt; if (g.position.z > 12) g.position.z -= 196; });
+  panneaux.forEach(g => { g.position.z += v * dt; if (g.position.z > 12) g.position.z -= 210; });
+  eolienne.userData.rotor.rotation.z += dt * 0.9;
+  tTram -= dt;
+  if (!tram.visible && tTram <= 0) { tram.position.z = 60; tram.visible = true; }
+  if (tram.visible) { tram.position.z += (v - 24) * dt; if (tram.position.z < -230) { tram.visible = false; tTram = rnd(20, 40); } } // le tram dépasse le joueur
+}
+
 function creerStruct(n, esp, construire) { // pool de segments (tunnel, pont)
   const S = { n, esp, liste: [] };
   for (let i = 0; i < n; i++) { const g = new THREE.Group(); construire(g, i); g.traverse(o => { o.castShadow = false; }); g.visible = false; g.position.z = 200; scene.add(g); S.liste.push(g); }
@@ -479,7 +549,7 @@ function majAmbiance(dt) {
   hemi.intensity += (C.hemi - hemi.intensity) * k; soleil.intensity += (C.soleil - soleil.intensity) * k;
   herbes.forEach(h => h.material.color.lerp(tmpC.setHex(C.herbe), k));
   batiments.forEach(b => b.material.emissive.lerp(tmpC.setHex(C.lueur), k));
-  matLampe.emissive.lerp(tmpC.setHex(C.lueur), k); matNuage.color.lerp(tmpC.setHex(C.nuage), k);
+  matVille.color.lerp(tmpC.setHex(C.brume), k); matLampe.emissive.lerp(tmpC.setHex(C.lueur), k); matNuage.color.lerp(tmpC.setHex(C.nuage), k);
 }
 
 // ---------- Particules (étincelles) ----------
@@ -531,7 +601,7 @@ function creerPoursuivant() {
 function ajouter(type, voie, dz, y) {
   const g = creerObjet3d(type), x = (voie - 1) * LW, z = -100 - (dz || 0);
   g.position.set(x, y || 0, z); scene.add(g);
-  objets.push({ g, type, x, z, y: y || 0, bas: type === "sac" || type === "branche", haut: type === "barriere", prof: type === "bus" ? 1.65 : type === "rampe" ? 1.6 : 0.8 });
+  objets.push({ g, type, x, z, y: y || 0, bas: type === "sac" || type === "branche", haut: type === "barriere", prof: type === "bus" ? 1.65 : type === "camion" ? 1.8 : type === "rampe" ? 1.6 : 0.8, grand: type === "camion" });
 }
 
 function retirer(o) {
@@ -557,7 +627,7 @@ function faireApparaitre() {
     for (let i = 0; i < 6; i++) ajouter("baril", l, i * 2.2);
     return;
   }
-  const [a, b] = (enCours ? cfg : NIVEAUX.facile).blocs, T = ["poubelle", "sac", "branche", "barriere", "bus"];
+  const [a, b] = (enCours ? cfg : NIVEAUX.facile).blocs, T = ["poubelle", "sac", "branche", "barriere", "bus", "camion"];
   const n = a + Math.floor(Math.random() * (b - a + 1)), voies = [0, 1, 2].sort(() => Math.random() - 0.5);
   for (let i = 0; i < n; i++) {
     const t = T[Math.floor(Math.random() * T.length)]; ajouter(t, voies[i]);
@@ -615,6 +685,7 @@ function maj(dt) {
   lampes.forEach(l => { l.position.z += v * dt; if (l.position.z > 12) l.position.z -= 168; });
   nuages.forEach(c => { c.position.z += v * dt * 0.25; if (c.position.z > 30) c.position.z -= 230; });
   for (const k in structs) defiler(structs[k], v * dt);
+  majDecor2(v, dt);
   majParts(dt, v); majAmbiance(dt);
   if (tMsg > 0) { tMsg -= dt; if (tMsg <= 0) ui.msg.visible = false; }
 
@@ -690,7 +761,7 @@ function maj(dt) {
     const touche = enCours && !mort && o.type !== "rampe" && o.z > -o.prof && o.z < o.prof &&
       Math.abs(o.x - joueur.position.x) < (ram ? P.aimant : P.solide) * LW &&
       !(o.bas && hauteur > 0.8) && !(o.haut && glisse >= 0) &&
-      !(o.type === "bus" && hauteur >= BUS_H - 0.5) &&
+      !(o.type === "bus" && hauteur >= BUS_H - 0.5) && !(o.grand && hauteur >= 2.3) &&
       !(o.y && hauteur < o.y - 0.7) && (ram || invul <= 0);
     if (touche) {
       retirer(o); objets.splice(i, 1);
@@ -769,7 +840,7 @@ function ecrire(m, lignes, fond) { // lignes : [texte, taille (part de la hauteu
   const u = m.userData, c = u.c, g = c.getContext("2d"), W = c.width, Hc = c.height;
   u.lignes = lignes; if (fond) u.fond = fond;
   g.clearRect(0, 0, W, Hc); g.fillStyle = u.fond; g.fillRect(0, 0, W, Hc);
-  g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 6; g.strokeRect(3, 3, W - 6, Hc - 6);
+  g.strokeStyle = u.bord || "rgba(255,255,255,.85)"; g.lineWidth = 6; g.strokeRect(3, 3, W - 6, Hc - 6);
   const tot = lignes.reduce((a, l) => a + l[1], 0); let y = (1 - tot) / 2;
   g.textAlign = "center"; g.textBaseline = "middle";
   for (const [t, s, col] of lignes) {
@@ -792,7 +863,7 @@ function coeurGeo() {
 }
 
 function construireHud() {
-  const mk = (w, h) => { const m = plaque(w, h, 0x14407a); hud.add(m); return m; };
+  const mk = (w, h) => { const m = plaque(w, h, 0x0b2a5e); m.userData.bord = "#38bdf8"; hud.add(m); return m; };
   ui.score = mk(1.9, 0.75); ui.temps = mk(1.5, 0.75); ui.vies = mk(2.6, 0.8); ui.planete = mk(2.6, 0.95); ui.barils = mk(2.1, 0.85); ui.bonus = mk(3.2, 0.55); ui.msg = mk(4.4, 0.8); ui.msg.visible = false;
   const gc = coeurGeo(); ui.mCoeur = new THREE.MeshStandardMaterial({ color: 0xff3b4e, emissive: 0x55000a }); ui.mVide = M(0x555b66);
   ui.coeurs = [];
@@ -808,7 +879,7 @@ function construireHud() {
 function majHud() {
   const sec = cfg.infini ? Math.floor(tEcoule) : Math.max(0, Math.ceil(cfg.temps - tEcoule)), q = avancement() * 100;
   ecrire(ui.score, [["SCORE", 0.2, "#9fd3ff"], [String(score), 0.42], [cfg.infini ? "RECORD " + Math.max(score, +localStorage.getItem("barilRecordInfini") || 0) : "/ " + cfg.but + " pts", 0.2, "#9fd3ff"]]);
-  ecrire(ui.temps, [[Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"), 0.5], [niv.toUpperCase() + " ×" + cfg.multi, 0.2, "#9fd3ff"]]);
+  ecrire(ui.temps, [[Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"), 0.5], [(NOMS_NIVEAU[niv] || niv).toUpperCase() + " ×" + cfg.multi, 0.2, "#9fd3ff"]]);
   ecrire(ui.vies, [["VIES", 0.24, "#9fd3ff"], ["", 0.5]]);
   ui.coeurs.forEach((c, i) => { c.visible = i < viesMax; c.position.x = (i - (viesMax - 1) / 2) * Math.min(0.46, 2.2 / Math.max(1, viesMax)); c.material = i < vies ? ui.mCoeur : ui.mVide; });
   ecrire(ui.planete, [["HÉROS · " + PERSOS[perso].nom.toUpperCase(), 0.2, "#7dfbd2"], ["PLANÈTE SAUVÉE  " + Math.round(q) + "%", 0.24], ["", 0.3]]);
@@ -837,10 +908,10 @@ function majMenu() {
   for (const k in ui.niveaux) ecrire(ui.niveaux[k], ui.niveaux[k].userData.lignes, k === niv ? "#d79a00" : "#14407a");
 }
 
-const ORDRE = ["simple", "moyen", "expert", "momie", "jet", "zip"]; let pagePerso = 0;
+const ORDRE = ["simple", "moyen", "expert", "momie", "jet", "zip", "ranger", "chantier", "cycliste"]; let pagePerso = 0;
 function majPersos() { // les personnages en 3D sur leurs socles (3 par page)
   ui.d.clear();
-  bouton(ui.d, 1.6, 0.4, 0, -2.08, 0x14407a, [["◀ ▶ PERSOS", 0.4]], () => { pagePerso = 1 - pagePerso; majPersos(); });
+  bouton(ui.d, 1.9, 0.4, 0, -2.08, 0x14407a, [["◀ ▶ PERSOS " + (pagePerso + 1) + "/3", 0.36]], () => { pagePerso = (pagePerso + 1) % 3; majPersos(); });
   ORDRE.slice(pagePerso * 3, pagePerso * 3 + 3).forEach((k, i) => {
     const p = PERSOS[k], ouvert = meilleur() >= p.seuil, x = (i - 1) * 1.45, actif = k === perso;
     const m = creerPerso(p); m.position.set(x, -1.0, 0); m.scale.setScalar(0.85);
@@ -854,20 +925,20 @@ function majPersos() { // les personnages en 3D sur leurs socles (3 par page)
 
 function construireMenu() {
   ui.g = new THREE.Group(); ui.d = new THREE.Group(); menuG.add(ui.g, ui.d);
-  ui.jouer = bouton(ui.g, 3.6, 0.9, 0, 0.15, 0x1fa83a, [["JOUER", 0.6]], lancer);
+  ui.jouer = bouton(ui.g, 3.6, 0.8, 0, 0.3, 0x1fa83a, [["JOUER", 0.6]], lancer);
   ui.niveaux = {};
-  ["facile", "moyen", "difficile", "infini"].forEach((k, i) => {
-    ui.niveaux[k] = bouton(ui.g, 0.96, 0.85, (i - 1.5) * 1.0, -0.95, 0x14407a, [[k.toUpperCase(), 0.21], [NIVEAUX[k].infini ? "∞ SANS FIN" : "×" + NIVEAUX[k].multi + " · " + NIVEAUX[k].but, 0.17, "#cfe9ff"]], () => { niv = k; majMenu(); });
+  ["facile", "moyen", "difficile", "expert", "extreme", "infini"].forEach((k, i) => {
+    ui.niveaux[k] = bouton(ui.g, 1.3, 0.65, (i % 3 - 1) * 1.4, -0.45 - Math.floor(i / 3) * 0.75, 0x14407a, [[k === "extreme" ? "EXTRÊME" : k.toUpperCase(), 0.27], [NIVEAUX[k].infini ? "∞ SANS FIN" : "×" + NIVEAUX[k].multi + " · " + NIVEAUX[k].but, 0.22, "#cfe9ff"]], () => { niv = k; majMenu(); });
   });
-  bouton(ui.g, 0.96, 0.62, -1.5, -1.85, 0x14407a, [["CARRIÈRE", 0.27]], () => {
+  bouton(ui.g, 0.96, 0.62, -1.5, -1.95, 0x14407a, [["CARRIÈRE", 0.27]], () => {
     const h = historique();
     info(["SCORES DES PARTIES", ""].concat(h.length ? h.map((q, i) => (i + 1) + ". " + q.score + " pts · " + q.niveau + " · " + q.date) : ["Aucune partie jouée"]));
   });
-  bouton(ui.g, 0.96, 0.62, 1.5, -1.85, 0x14407a, [["COMMANDES", 0.24]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Prends les rampes : barils sur les bus !", "Évite poubelles, sacs, branches", "Un poursuivant te rattrape si tu te cognes", "M : couper le son", "Glisse un fichier .glb sur le jeu !"]));
-  bouton(ui.g, 0.96, 0.62, -0.5, -1.85, 0x14407a, [["MISSIONS", 0.27]], () => montrer("missions"));
-  bouton(ui.g, 0.96, 0.62, 0.5, -1.85, 0x14407a, [["BOUTIQUE", 0.27]], () => montrer("boutique"));
-  ui.pieces = bouton(ui.g, 0.96, 0.5, -1.5, 0.9, 0x14407a, [["", 0.4]], () => {});
-  ui.son = bouton(ui.g, 0.62, 0.5, 1.5, 0.9, 0x14407a, [["🔊", 0.6]], basculerSon);
+  bouton(ui.g, 0.96, 0.62, 1.5, -1.95, 0x14407a, [["COMMANDES", 0.24]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Prends les rampes : barils sur les bus !", "Évite poubelles, sacs, branches", "Un poursuivant te rattrape si tu te cognes", "M : couper le son", "Glisse un fichier .glb sur le jeu !"]));
+  bouton(ui.g, 0.96, 0.62, -0.5, -1.95, 0x14407a, [["MISSIONS", 0.27]], () => montrer("missions"));
+  bouton(ui.g, 0.96, 0.62, 0.5, -1.95, 0x14407a, [["BOUTIQUE", 0.27]], () => montrer("boutique"));
+  ui.pieces = bouton(ui.g, 0.96, 0.5, -1.5, 1.0, 0x14407a, [["", 0.4]], () => {});
+  ui.son = bouton(ui.g, 0.62, 0.5, 1.5, 1.0, 0x14407a, [["🔊", 0.6]], basculerSon);
   ui.info = bouton(popG, 5, 3, 0, 0, 0x0b2a5e, [], () => { ui.info.visible = false; });
   ui.info.position.z = 0.8; ui.info.visible = false;
   if (THREE.FontLoader && THREE.TextGeometry) { // titre en lettres 3D
@@ -995,6 +1066,7 @@ function majUI(dt) {
 
 function redessiner() { // redessine tous les textes une fois la police chargée
   [hud, menuG, finG, chargG, boutiqueG, missionsG, popG].forEach(g => g.traverse(o => { if (o.userData.lignes) ecrire(o, o.userData.lignes); }));
+  panneaux.forEach(g => ecrire(g.userData.pl, g.userData.pl.userData.lignes));
   majPersos(); majMenu(); majHud();
 }
 
@@ -1068,7 +1140,7 @@ function chargerModeles() { // charge les .glb s'ils existent, sinon on garde le
 }
 
 // ---------- Démarrage ----------
-sol(); decor(); decorPlus(); creerStructs(); poursuivant = creerPoursuivant(); poursuivant.visible = false; scene.add(poursuivant); appliquerPerso();
+sol(); decor(); decorPlus(); decorPlus2(); creerStructs(); poursuivant = creerPoursuivant(); poursuivant.visible = false; scene.add(poursuivant); appliquerPerso();
 scene.add(camera); camera.add(hud, menuG, finG, chargG, boutiqueG, missionsG, popG);
 construireHud(); construireMenu(); construireFin(); construireCharg(); construireBoutique(); construireMissions();
 majPersos(); majMenu(); majHud(); placerUI(); uiPret = true;
