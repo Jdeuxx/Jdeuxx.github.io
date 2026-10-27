@@ -123,29 +123,41 @@ function musique() { // boucle musicale planifiée à l'avance (128 bpm)
 // Si tu vois le VISAGE au lieu du DOS pendant la course, change ROTATION_MODELE (0 <-> Math.PI)
 const ROTATION_MODELE = 0, HAUTEUR_MODELE = 2.4;
 const FICHIERS = { simple: "leo", moyen: "maya", expert: "max", momie: "momo", jet: "jet", zip: "zip" }, modeles = {};
-const texPersos = {};
-function chargerImages() {
-  const tl = new THREE.TextureLoader();
-  for (const k in FICHIERS) tl.load(FICHIERS[k] + ".png", t => {
-    texPersos[k] = t; if (uiPret) { appliquerPerso(); majPersos(); }
-  }, undefined, () => {});
-}
-function creerDepuisImage(tex) {
-  const g = new THREE.Group(), corps = new THREE.Group(), h = HAUTEUR_MODELE, w = h * tex.image.width / tex.image.height;
-  const S = 0.45; // part du bas de l'image qui bouge = les jambes (0.45 = 45 %)
-  const partie = (u0, u1, v0, v1) => { // un morceau de l'image
-    const t = tex.clone(); t.needsUpdate = true; t.repeat.set(u1 - u0, v1 - v0); t.offset.set(u0, v0);
-    return new THREE.Mesh(new THREE.PlaneGeometry(w * (u1 - u0), h * (v1 - v0)),
-      new THREE.MeshBasicMaterial({ map: t, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide }));
-  };
-  const haut = partie(0, 1, S, 1); haut.position.set(0, h * (S + (1 - S) / 2), 0);
-  const jg = new THREE.Group(), jd = new THREE.Group();
-  const mg = partie(0, 0.5, 0, S), md = partie(0.5, 1, 0, S);
-  mg.position.y = md.position.y = -h * S / 2;
-  jg.position.set(-w / 4, h * S, 0.01); jd.position.set(w / 4, h * S, 0.01);
-  jg.add(mg); jd.add(md); corps.add(haut, jg, jd); g.add(corps);
-  g.userData.corps = corps; g.userData.jambes = [jg, jd]; g.userData.hanche = h * S;
+
+// ---------- Modèles 3D optionnels pour les objets et le décor (dossier modeles/) ----------
+// Fichiers reconnus : baril, poubelle, sac, branche, barriere, bus, rampe, batiment (+ batiment2, batiment3), arbre, lampadaire  (.glb)
+// Chaque modèle est redimensionné automatiquement : h = hauteur voulue ; w / h / l + exact = dimensions imposées (largeur, hauteur, longueur).
+const TAILLES = {
+  baril: { h: 1.0 }, poubelle: { h: 1.1 }, sac: { h: 1.0 }, branche: { h: 0.8 }, barriere: { h: 1.7 },
+  bus: { w: 1.7, h: 1.4, l: 3.2, exact: true }, rampe: { w: 1.5, h: 1.4, l: 3.2, exact: true },
+  batiment: { w: 7, h: 10, l: 8, exact: true }, arbre: { h: 4.5 }, lampadaire: { h: 3.5 }
+};
+// Si un modèle regarde du mauvais côté, tourne-le ici (en radians), par ex. ROT.bus = Math.PI ; ROT.rampe = Math.PI
+const ROT = {};
+const assets = {};
+const NOMS_ASSETS = ["baril", "poubelle", "sac", "branche", "barriere", "bus", "rampe", "batiment", "batiment2", "batiment3", "arbre", "lampadaire"];
+
+function ajusterModele(src, t, rot) { // clone + redimensionne + pose le modèle (centré, posé sur le sol)
+  const m = THREE.SkeletonUtils ? THREE.SkeletonUtils.clone(src) : src.clone(true), g = new THREE.Group();
+  m.traverse(o => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+  m.rotation.y = rot || 0;
+  const b = new THREE.Box3().setFromObject(m), c = b.getCenter(new THREE.Vector3());
+  const dx = b.max.x - b.min.x || 1, dy = b.max.y - b.min.y || 1, dz = b.max.z - b.min.z || 1;
+  const sx = t.exact ? t.w / dx : t.h / dy, sy = t.h / dy, sz = t.exact ? t.l / dz : t.h / dy;
+  m.scale.set(sx, sy, sz); m.position.set(-c.x * sx, -b.min.y * sy, -c.z * sz);
+  g.add(m); g.userData.asset = true;
   return g;
+}
+
+function modeleBatiment() { const l = ["batiment", "batiment2", "batiment3"].filter(k => assets[k]); return l.length ? assets[l[Math.floor(Math.random() * l.length)]] : null; }
+
+function appliquerAssetsDecor() { // remplace arbres, lampadaires et immeubles par les modèles chargés
+  if (assets.arbre) arbres.forEach(t => { if (t.userData.modele) return; t.userData.modele = true; t.children.forEach(c => { c.visible = false; }); t.add(ajusterModele(assets.arbre, TAILLES.arbre, ROT.arbre)); });
+  if (assets.lampadaire) lampes.forEach(l => { if (l.userData.modele) return; l.userData.modele = true; l.children.forEach(c => { c.visible = false; }); l.add(ajusterModele(assets.lampadaire, TAILLES.lampadaire, ROT.lampadaire)); });
+  if (modeleBatiment()) batiments.forEach(b => {
+    if (b.userData.modele) return; b.userData.modele = true; b.material.visible = false; b.children.forEach(c => { c.visible = false; });
+    const g = ajusterModele(modeleBatiment(), TAILLES.batiment, ROT.batiment); g.position.y = -5; b.add(g);
+  });
 }
 let enCours = false, niv = "moyen", perso = "simple", cfg = NIVEAUX.moyen;
 let score = 0, vies = 0, viesMax = 0, barils = 0, tEcoule = 0, tSpawn = 0, dernier = -1, temps = 0, secousse = 0;
@@ -237,7 +249,7 @@ function decor() {
 }
 
 // ---------- Personnages (vus de dos) ----------
-function creerDepuisModele(src) { // utilise un vrai modèle 3D .glb
+function creerDepuisModele(src, rot) { // utilise un vrai modèle 3D .glb
   const m = THREE.SkeletonUtils.clone(src), g = new THREE.Group();
   m.traverse(o => {
     if (!o.isMesh) return;
@@ -245,7 +257,7 @@ function creerDepuisModele(src) { // utilise un vrai modèle 3D .glb
     o.material = Array.isArray(o.material) ? o.material.map(x => x.clone()) : o.material.clone();
   });
   const b = new THREE.Box3().setFromObject(m), sc = HAUTEUR_MODELE / (b.max.y - b.min.y);
-  m.scale.setScalar(sc); m.position.y = -b.min.y * sc; m.rotation.y = ROTATION_MODELE;
+  m.scale.setScalar(sc); m.position.y = -b.min.y * sc; m.rotation.y = rot != null ? rot : ROTATION_MODELE;
   g.add(m); g.userData.estPerso = true; g.userData.corps = m;
   return g;
 }
@@ -253,8 +265,7 @@ function creerDepuisModele(src) { // utilise un vrai modèle 3D .glb
 function creerPerso(p) {
   const sk = SKINS.find(q => q.id === sauv.skin); if (sk && sk.haut) p = Object.assign({}, p, { haut: sk.haut, casq: sk.casq, bas: sk.bas });
   const cle = Object.keys(PERSOS).find(q => PERSOS[q].nom === p.nom);
-  if (texPersos[cle]) return creerDepuisImage(texPersos[cle]);
-  if (modeles[cle]) return creerDepuisModele(modeles[cle]); // style manga : grands yeux brillants, cheveux en pointes, contours noirs
+  if (modeles[cle]) return creerDepuisModele(modeles[cle], ROT[FICHIERS[cle]]); // style manga : grands yeux brillants, cheveux en pointes, contours noirs
   const g = new THREE.Group(), n = p.nom, add = (m, x, y, z) => { g.add(placer(m, x, y, z)); return m; };
   const bas = c => new THREE.MeshBasicMaterial({ color: c });
   const pivot = (x, y) => { const q = new THREE.Group(); q.position.set(x, y, 0); g.add(q); return q; };
@@ -346,6 +357,7 @@ function appliquerPerso() {
 
 // ---------- Objets ----------
 function creerObjet3d(type) {
+  if (assets[type] && TAILLES[type]) return ajusterModele(assets[type], TAILLES[type], ROT[type]);
   const g = new THREE.Group();
   if (type === "baril") {
     const b = cyl(0.4, 0.4, 0.8, 0xffb020); b.material.emissive.setHex(0x6b3d00);
@@ -524,6 +536,7 @@ function ajouter(type, voie, dz, y) {
 
 function retirer(o) {
   scene.remove(o.g);
+  if (o.g.userData.asset) return; // modèle partagé : on ne libère pas ses matériaux
   o.g.traverse(m => { if (m.geometry && !m.isSprite) m.geometry.dispose(); if (m.material) m.material.dispose(); });
 }
 
@@ -645,13 +658,6 @@ function maj(dt) {
   joueur.visible = enCours && (invul <= 0 || Math.floor(temps * 14) % 2 === 0);
   const a = Math.sin(temps * 13) * 0.9, mb = joueur.userData.membres;
   if (mb) { mb[0].rotation.x = a; mb[1].rotation.x = -a; mb[2].rotation.x = -a; mb[3].rotation.x = a; }
-    else if (joueur.userData.jambes) { // image découpée : les jambes montent et descendent
-    const J = joueur.userData.jambes, y0 = joueur.userData.hanche, ph = temps * 14, s = Math.sin(ph);
-    J[0].position.y = y0 + Math.max(0, s) * 0.22;  J[0].rotation.x = s * 0.35;
-    J[1].position.y = y0 + Math.max(0, -s) * 0.22; J[1].rotation.x = -s * 0.35;
-    joueur.userData.corps.position.y = Math.abs(s) * 0.08;
-    joueur.userData.corps.rotation.z = s * 0.04;
-  }
   else if (joueur.userData.corps) { // modèle .glb : petit rebond de course
     joueur.userData.corps.position.y = Math.abs(Math.sin(temps * 13)) * 0.08; joueur.userData.corps.rotation.z = Math.sin(temps * 6.5) * 0.05;
   }
@@ -857,7 +863,7 @@ function construireMenu() {
     const h = historique();
     info(["SCORES DES PARTIES", ""].concat(h.length ? h.map((q, i) => (i + 1) + ". " + q.score + " pts · " + q.niveau + " · " + q.date) : ["Aucune partie jouée"]));
   });
-  bouton(ui.g, 0.96, 0.62, 1.5, -1.85, 0x14407a, [["COMMANDES", 0.24]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Prends les rampes : barils sur les bus !", "Évite poubelles, sacs, branches", "Un poursuivant te rattrape si tu te cognes", "M : couper le son"]));
+  bouton(ui.g, 0.96, 0.62, 1.5, -1.85, 0x14407a, [["COMMANDES", 0.24]], () => info(["COMMANDES", "", "← → ou Q D : changer de voie", "↑ ou Z ou ESPACE : sauter", "↓ ou S : glisser sous les barrières", "Téléphone : glisse le doigt", "Prends les rampes : barils sur les bus !", "Évite poubelles, sacs, branches", "Un poursuivant te rattrape si tu te cognes", "M : couper le son", "Glisse un fichier .glb sur le jeu !"]));
   bouton(ui.g, 0.96, 0.62, -0.5, -1.85, 0x14407a, [["MISSIONS", 0.27]], () => montrer("missions"));
   bouton(ui.g, 0.96, 0.62, 0.5, -1.85, 0x14407a, [["BOUTIQUE", 0.27]], () => montrer("boutique"));
   ui.pieces = bouton(ui.g, 0.96, 0.5, -1.5, 0.9, 0x14407a, [["", 0.4]], () => {});
@@ -975,7 +981,7 @@ function majUI(dt) {
     const q = Math.min(1, temps / 1.6);
     ui.cBarre.scale.x = Math.max(0.001, q); ui.cBaril.rotation.y += dt * 3;
     if (q >= 1 && fontsOk) { redessiner(); montrer("menu"); }
-  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = c.userData.membres ? Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4 : 0; }); // face au joueur
+  } else if (etat === "menu") ui.d.children.forEach(c => { if (c.userData.estPerso) c.rotation.y = Math.PI + Math.sin(temps * 1.2 + c.position.x) * 0.4; }); // face au joueur
   else if (etat === "jeu") {
     ui.iconeBaril.rotation.y += dt * 3; ui.globe.rotation.y += dt;
     ui.coeurs.forEach((c, i) => { c.rotation.y = Math.sin(temps * 2 + i) * 0.5; });
@@ -1021,12 +1027,44 @@ addEventListener("pointerup", e => {
   d0 = null;
 });
 
+// ---------- Glisser-déposer : dépose un .glb sur le jeu pour remplacer un élément (sauvegardé dans le navigateur) ----------
+function poserModele(nom, scn) {
+  const cle = Object.keys(FICHIERS).find(k => FICHIERS[k] === nom);
+  if (cle) { modeles[cle] = scn; if (uiPret) { appliquerPerso(); majPersos(); } }
+  else if (NOMS_ASSETS.includes(nom)) { assets[nom] = scn; appliquerAssetsDecor(); }
+}
+function lireGlb(nom, buf, deg) {
+  if (!THREE.GLTFLoader) return;
+  if (deg) ROT[nom] = deg * Math.PI / 180;
+  try { new THREE.GLTFLoader().parse(buf, "", g => poserModele(nom, g.scene), () => {}); } catch (e) {}
+}
+function bd(fn) { try { const r = indexedDB.open("barilModeles", 1); r.onupgradeneeded = () => r.result.createObjectStore("m"); r.onsuccess = () => fn(r.result); } catch (e) {} }
+function chargerSauves() { bd(db => { const rq = db.transaction("m").objectStore("m").openCursor(); rq.onsuccess = () => { const c = rq.result; if (!c) return; lireGlb(c.key, c.value.buf, c.value.deg); c.continue(); }; }); }
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => {
+  e.preventDefault();
+  const noms = [...Object.values(FICHIERS), ...NOMS_ASSETS];
+  for (const f of e.dataTransfer.files) {
+    if (!/\.glb$/i.test(f.name)) { alert("Dépose un fichier .glb"); continue; }
+    const devine = noms.slice().sort((a, b) => b.length - a.length).find(n => f.name.toLowerCase().includes(n)) || "";
+    const rep = prompt("Quel élément remplacer par « " + f.name + " » ?\n\nPersonnages : " + Object.values(FICHIERS).join(", ") + "\nObjets et décor : " + NOMS_ASSETS.join(", ") +
+      "\n\nSi le modèle regarde du mauvais côté, ajoute une rotation en degrés, par ex. : bus 180\nÉcris « effacer » pour supprimer tous tes modèles.", devine);
+    if (!rep) continue;
+    const [nom, deg] = rep.trim().toLowerCase().split(/\s+/);
+    if (nom === "effacer") { bd(db => { db.transaction("m", "readwrite").objectStore("m").clear(); }); alert("Modèles effacés. Recharge la page."); continue; }
+    if (!noms.includes(nom)) { alert("Nom inconnu : " + nom); continue; }
+    f.arrayBuffer().then(buf => { bd(db => { db.transaction("m", "readwrite").objectStore("m").put({ buf, deg: +deg || 0 }, nom); }); lireGlb(nom, buf, +deg || 0); });
+  }
+});
+
 function chargerModeles() { // charge les .glb s'ils existent, sinon on garde les personnages du jeu
   if (!THREE.GLTFLoader || !THREE.SkeletonUtils) return;
   const gl = new THREE.GLTFLoader();
   for (const k in FICHIERS) gl.load("modeles/" + FICHIERS[k] + ".glb", r => {
     modeles[k] = r.scene; if (uiPret) { appliquerPerso(); majPersos(); }
   }, undefined, () => {});
+  for (const k of NOMS_ASSETS) gl.load("modeles/" + k + ".glb", r => { assets[k] = r.scene; appliquerAssetsDecor(); }, undefined, () => {});
+  chargerSauves();
 }
 
 // ---------- Démarrage ----------
@@ -1035,7 +1073,6 @@ scene.add(camera); camera.add(hud, menuG, finG, chargG, boutiqueG, missionsG, po
 construireHud(); construireMenu(); construireFin(); construireCharg(); construireBoutique(); construireMissions();
 majPersos(); majMenu(); majHud(); placerUI(); uiPret = true;
 montrer("chargement");
-chargerImages();
 chargerModeles();
 document.fonts.load("800 40px 'Baloo 2'").then(() => { fontsOk = true; }, () => { fontsOk = true; });
 requestAnimationFrame(boucle);
