@@ -1,4 +1,4 @@
-//BARIL-RUNNER 3D : runner à 3 voies (Three.js)
+//BARIL-RUNNER : runner à 3 voies (Three.js)
 // ☢ Barils jaunes = à ramasser | Poubelles, sacs, branches, barrières, bus = à éviter
 const LW = 2; // largeur d'une voie (unités 3D)
 
