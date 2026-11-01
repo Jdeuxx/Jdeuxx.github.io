@@ -1,37 +1,59 @@
 # BARIL RUNNER 3D
 
-Runner 3D à 3 voies (Three.js) : ramasse les barils jaunes, évite les obstacles, monte sur les bus, échappe à l'inspecteur et à son chien.
+## JEAN-DANIEL AZOWA TSTI2D
 
-## Lancer
-Ouvre `index.html` (ou active GitHub Pages : Settings > Pages > branche `main`, dossier `/root`).
+## Thème de développement durable
+Dans le jeu, on ramasse des barils jaunes pour protéger la planète.
+Le joueur nettoie la ville en les récoltant.
+La ville contient aussi des éléments écologiques : tramway, bus, éolienne, bacs de tri et bancs.
 
-## Modes
-- **Niveaux 1 à 5 (Facile, Moyen, Difficile, Expert, Extrême)** : atteins le score avant la fin du temps. Plus le niveau monte, plus il y a d'obstacles, de vitesse et moins de vies.
-- **Infini** : course sans fin, la vitesse augmente, bats ton record.
+## Principe du jeu
+Le joueur est un personnage qui court sans s'arrêter sur 3 voies (gauche, milieu, droite).
+- Il ramasse les barils jaunes pour gagner des points et des pièces.
+- Il évite les obstacles : il change de voie, saute ou glisse.
+- Les véhicules verts, écologiques, sont des obstacles : on ne peut pas monter dessus, il faut les éviter.
+- Il peut monter sur les bus pour ramasser plus de barils.
+- Après un choc, un inspecteur et son chien lui foncent dessus.
+
+Il y a 5 niveaux (Facile, Moyen, Difficile, Expert, Extrême) et un mode Infini sans fin.
+Avec les pièces, on peut acheter des tenues et des améliorations dans la boutique.
+Il y a aussi des missions, des bonus et 9 personnages à débloquer.
+
+## Moteur choisi et justification
+Le moteur choisi est Three.js. C'est une bibliothèque JavaScript qui permet de faire de la 3D directement dans le navigateur.
+Le jeu fonctionne avec un simple lien, sans rien installer.
 
 ## Commandes
-- ← → ou Q D : changer de voie
-- ↑ / Z / Espace : sauter
-- ↓ / S : glisser sous les barrières
-- M : couper / remettre le son
-- Mobile : glisser le doigt
+- Flèches gauche / droite (ou Q / D) : changer de voie
+- Flèche haut (ou Z ou Espace) : sauter
+- Flèche bas (ou S) : glisser sous les barrières
+- M : couper ou remettre le son
+- Sur téléphone : glisser le doigt
 
-## Gameplay
-- **Rampes et rames de bus** : prends la rampe pour courir sur le toit et ramasser les barils.
-- **Poursuivant** : après un choc, l'inspecteur et son chien arrivent derrière toi. Un 2e choc rapproché = attrapé (-2 vies).
-- **Bonus** : 🧲 aimant, ×2 points, ⬆ super-saut, ❤ vie.
-- **Décor écolo** : tramway qui dépasse, camion-poubelle (obstacle), bancs, bacs de tri, panneaux, éolienne et ville au loin.
-- **Décors** : jour, coucher de soleil, nuit, tunnels et ponts.
-- **Sons et musique** générés par le navigateur (aucun fichier audio).
+## Victoire / Défaite
+- Victoire : atteindre le score demandé avant la fin du temps (niveaux 1 à 5).
+- Défaite : n'avoir plus de vies, être attrapé par l'inspecteur ou manquer de temps.
+- Mode Infini : il n'y a pas de victoire, le but est de battre son record.
 
-## Progression (sauvegardée dans le navigateur)
-- Les barils ramassés deviennent des 🪙 pièces.
-- **Boutique** : tenues (Doré, Forêt, Néon, Feu), améliorations de bonus (niveau 3 max), +1 vie permanente.
-- **Missions** : 3 missions actives, récompense en pièces + 📦 coffre.
-- **Coffres** : pièces, tenues ou améliorations. Un coffre offert tous les 2000 points dans une partie.
+## Répartition du travail
+Projet réalisé seul(e) : idée, tests et choix du jeu.
+L'IA Claude m'a aidé à écrire et à améliorer le code.
 
-## Personnages
-9 personnages : Léo, Maya, Max, Momo (momie), Jet (jetpack), Zip (casque audio), Lina (garde forestière), Sam (chantier) et Noa (cycliste). Ils se débloquent avec ton meilleur score (1000, 2000, 3000, 4500, 6000, 7500, 9000, 10500). Le bouton ◀ ▶ PERSOS du menu change de page.
+## Bug ou difficulté principale
+Le jeu ne ressemblait pas à un vrai jeu de course comme Bus Rush.
+Il était simple et peu vivant, et il fallait trouver comment le rendre aussi plaisant à jouer.
 
-## Modèles 3D optionnels
-Tous les personnages, obstacles, bus, rampes, barils, immeubles, arbres et lampadaires peuvent être remplacés par des fichiers `.glb` placés dans `modeles/`. Voir `modeles/LISEZMOI.md` pour les noms de fichiers, les tailles et les sources gratuites.
+## Solution trouvée
+Bus Rush a servi d'exemple. Des éléments ont été ajoutés pour se rapprocher d'un vrai jeu de course : des bus sur lesquels on peut monter, des bonus, un inspecteur avec son chien, une boutique, des missions et plusieurs personnages.
+Ces améliorations ont été faites avec l'aide de Claude.
+
+## Amélioration après le test croisé
+Des camarades ont testé le jeu. Ils m'ont conseillé de ramasser et stocker les barils jaunes, pour que la planète soit sauvée.
+Au départ, le jeu avait été fait avec des barils verts.
+Le jeu a donc été modifié : on ramasse maintenant des barils jaunes pour sauver la planète.
+
+## Sources des médias et ressources
+- Idée de départ : le jeu Bus Rush
+- Code écrit avec l'aide de Claude (IA)
+- Three.js : https://threejs.org
+- Sons et musique : créés par le navigateur, aucun fichier audio
