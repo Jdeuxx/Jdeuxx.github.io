@@ -1,11 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon classeur numérique</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon classeur numérique STI2D SIN</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: Arial, sans-serif;
+      background: #0a1a2a;
+      color: white;
+      text-align: center;
+    }
+
+    h1 { color: #00aaff; }
+
+    .rubriques {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+    }
+
+    .carte {
+      display: block;
+      padding: 25px;
+      background: #142b42;
+      border: 1px solid #008cff;
+      border-radius: 12px;
+      color: white;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .carte:hover {
+      background: #07518a;
+      transform: translateY(-5px);
+    }
+
+    .carte h2 { color: #00aaff; }
+  </style>
 </head>
+
 <body>
+
   <h1>Mon classeur numérique STI2D SIN</h1>
   <p>Bienvenue dans mon classeur numérique !</p>
+  <p>Retrouve ici toutes mes ressources de SIN.</p>
+
+  <div class="rubriques">
+
+    <a href="https://jean-daniel.alwaysdata.net/cours/" class="carte">
+      <h2>📚 Cours</h2>
+      <p>Mes cours et séquences.</p>
+    </a>
+
+    <a href="https://jean-daniel.alwaysdata.net/tp/" class="carte">
+      <h2>🔧 TP</h2>
+      <p>Mes travaux pratiques.</p>
+    </a>
+
+    <a href="https://jean-daniel.alwaysdata.net/revisions/" class="carte">
+      <h2>📝 Révisions</h2>
+      <p>Mes fiches et méthodes.</p>
+    </a>
+
+    <a href="https://jean-daniel.alwaysdata.net/projets/" class="carte">
+      <h2>💡 Projets</h2>
+      <p>Mes projets de l'année.</p>
+    </a>
+
+    <a href="https://jean-daniel.alwaysdata.net/evaluations/" class="carte">
+      <h2>📋 Évaluations</h2>
+      <p>Mes évaluations.</p>
+    </a>
+
+    <a href="https://jean-daniel.alwaysdata.net/jeux/" class="carte">
+      <h2>🎮 Jeux</h2>
+      <p>Mes jeux vidéo.</p>
+    </a>
+
+  </div>
+
 </body>
 </html>
