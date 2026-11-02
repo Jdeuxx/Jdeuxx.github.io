@@ -2,52 +2,352 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mon classeur numérique STI2D SIN</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Classeur numérique de Terminale STI2D, spécialité SIN.">
+    <title>Mon classeur numérique | STI2D SIN</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <header>
-    <h1>Mon classeur numérique STI2D SIN</h1>
-    <p>Bienvenue dans mon classeur numérique !</p>
-    <p>Retrouve ici toutes mes ressources de SIN.</p>
-  </header>
+<header class="header" id="accueil">
+    <a href="#accueil" class="logo">⚡ Mon classeur numérique</a>
+    <div class="subtitle">Terminale STI2D • SIN</div>
 
-  <main class="rubriques">
+    <nav>
+        <a href="#accueil">Accueil</a>
+        <a href="#cours">Cours</a>
+        <a href="#tp">TP</a>
+        <a href="#projets">Projets</a>
+        <a href="#revisions">Révisions</a>
+    </nav>
+</header>
 
-    <a href="cours/" class="carte">
-      <h2>📚 Cours</h2>
-      <p>Mes cours et séquences.</p>
-    </a>
+<main>
 
-    <a href="tp/" class="carte">
-      <h2>🔧 TP</h2>
-      <p>Mes travaux pratiques.</p>
-    </a>
+    <!-- ACCUEIL -->
+    <section class="hero">
+        <p class="year">ANNÉE 2026–2027</p>
 
-    <a href="revisions/" class="carte">
-      <h2>📝 Révisions</h2>
-      <p>Mes fiches et méthodes.</p>
-    </a>
+        <h1>Mon espace de travail</h1>
+        <h2>STI2D • SIN</h2>
 
-    <a href="projets/" class="carte">
-      <h2>💡 Projets</h2>
-      <p>Mes projets de l'année.</p>
-    </a>
+        <p class="description">
+            Je retrouve ici mes cours, mes travaux pratiques,
+            mes projets et mes fiches de révision.
+            Ce site constitue la partie visible de mon classeur numérique.
+        </p>
 
-    <a href="evaluations/" class="carte">
-      <h2>📋 Évaluations</h2>
-      <p>Mes évaluations.</p>
-    </a>
+        <div class="hero-buttons">
+            <a href="#cours" class="btn">Voir mes cours</a>
+            <a href="#projets" class="btn btn-secondary">Mes projets</a>
+        </div>
 
-    <a href="jeux/" class="carte">
-      <h2>🎮 Jeux</h2>
-      <p>Mes jeux vidéo.</p>
-    </a>
+        <div class="profile">
+            <div class="profile-icon">SIN</div>
+            <div>
+                <span class="small-label">ÉLÈVE</span>
+                <h3>Jean-Daniel AZOWA</h3>
+                <p>Terminale STI2D</p>
+            </div>
+        </div>
 
-  </main>
+        <div class="profile-details">
+            <div>
+                <span>SPÉCIALITÉ</span>
+                <strong>Systèmes d’Information et Numérique</strong>
+            </div>
+            <div>
+                <span>ÉTABLISSEMENT</span>
+                <strong>Lycée à compléter</strong>
+            </div>
+            <div>
+                <span>DERNIÈRE MISE À JOUR</span>
+                <strong>2 novembre 2026</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACCES RAPIDE -->
+    <section class="quick-access">
+        <a href="#cours">
+            <span>01</span>
+            <strong>Cours</strong>
+            <small>Notions et synthèses</small>
+        </a>
+
+        <a href="#tp">
+            <span>02</span>
+            <strong>Travaux pratiques</strong>
+            <small>Manipulations et comptes rendus</small>
+        </a>
+
+        <a href="#projets">
+            <span>03</span>
+            <strong>Projets</strong>
+            <small>Dossiers et productions</small>
+        </a>
+
+        <a href="#revisions">
+            <span>04</span>
+            <strong>Révisions</strong>
+            <small>Fiches et méthodes</small>
+        </a>
+    </section>
+
+    <!-- COURS -->
+    <section class="section" id="cours">
+        <p class="section-label">COURS</p>
+        <h2>Mes séquences</h2>
+        <p class="section-description">
+            Les documents de cours sont classés par séquence.
+        </p>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="number">S01</span>
+                <span class="status available">Disponible</span>
+            </div>
+
+            <h3>De la grandeur physique à la donnée numérique</h3>
+
+            <p>
+                Capteurs, acquisition, valeurs analogiques et numériques,
+                conversion et validation.
+            </p>
+
+            <div class="tags">
+                <span>Capteurs</span>
+                <span>Arduino</span>
+                <span>Acquisition</span>
+            </div>
+
+            <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/cours/sequence-01.html">
+                Ouvrir le cours →
+            </a>
+        </div>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="number">S02</span>
+                <span class="status pending">À venir</span>
+            </div>
+
+            <h3>Communication et échange de données</h3>
+
+            <p>
+                Cette séquence apparaîtra ici lorsqu’elle aura été commencée.
+            </p>
+
+            <div class="tags">
+                <span>Réseau</span>
+                <span>Protocoles</span>
+            </div>
+
+            <span class="disabled-link">Pas encore disponible</span>
+        </div>
+    </section>
+
+    <!-- TP -->
+    <section class="section" id="tp">
+        <p class="section-label">TRAVAUX PRATIQUES</p>
+        <h2>Mes expérimentations</h2>
+        <p class="section-description">
+            Je conserve ici mes sujets, résultats et comptes rendus.
+        </p>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="status available">Terminé</span>
+                <span class="date">Septembre 2026</span>
+            </div>
+
+            <h3>TP 01 — Diagnostic d’une chaîne d’acquisition</h3>
+
+            <p>
+                Analyse d’un système, mesures, comparaison aux résultats
+                attendus et conclusion.
+            </p>
+
+            <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/tp/tp-01.html">
+                Voir le TP et le compte rendu →
+            </a>
+        </div>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="status progress">En cours</span>
+                <span class="date">À compléter</span>
+            </div>
+
+            <h3>TP 02 — Mesurer avec un capteur</h3>
+
+            <p>
+                Acquisition d’une grandeur physique et interprétation
+                de la valeur numérique.
+            </p>
+
+            <span class="disabled-link">Compte rendu en préparation</span>
+        </div>
+    </section>
+
+    <!-- PROJETS -->
+    <section class="section" id="projets">
+        <p class="section-label">PROJETS</p>
+        <h2>Mes réalisations</h2>
+        <p class="section-description">
+            Un espace pour suivre l’évolution des projets de l’année.
+        </p>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="status available">Projet annuel</span>
+                <span class="date">STI2D • SIN / ITEC</span>
+            </div>
+
+            <h3>Robot Sumo</h3>
+
+            <p>
+                Concevoir, réaliser, programmer et valider un robot
+                capable d’évoluer de manière autonome dans un dohyō.
+            </p>
+
+            <div class="progress-info">
+                <span>Avancement</span>
+                <strong>25 %</strong>
+            </div>
+
+            <div class="progress-bar">
+                <div style="width: 25%"></div>
+            </div>
+
+            <ul class="steps">
+                <li class="done">Analyse du besoin</li>
+                <li class="current">Architecture du système</li>
+                <li>Prototype</li>
+                <li>Programmation</li>
+                <li>Validation</li>
+            </ul>
+
+            <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/projets/robot-sumo.html">
+                Ouvrir le dossier projet →
+            </a>
+        </div>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="status progress">En cours</span>
+            </div>
+
+            <h3>Parking PMR</h3>
+
+            <p>
+                Étude d’un système de contrôle d’accès à une place
+                de stationnement réservée aux personnes à mobilité réduite.
+            </p>
+
+            <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/projets/parking-pmr.html">
+                Voir le projet →
+            </a>
+        </div>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="status progress">En développement</span>
+            </div>
+
+            <h3>EcoCleaner</h3>
+
+            <p>
+                Création d’un jeu vidéo d’arcade sur le thème
+                du développement durable avec Phaser.
+            </p>
+
+            <a class="card-link" href="https://jdeuxx.github.io/jeu-dd/index.html">
+                Découvrir le jeu →
+            </a>
+        </div>
+    </section>
+
+    <!-- REVISIONS -->
+    <section class="section" id="revisions">
+        <p class="section-label">RÉVISIONS</p>
+        <h2>Préparer les évaluations</h2>
+        <p class="section-description">
+            Les documents essentiels à revoir rapidement.
+        </p>
+
+        <div class="content-card revision-card">
+            <div class="revision-icon">✓</div>
+
+            <div class="revision-content">
+                <span class="status available">Disponible</span>
+
+                <h3>Fiche de révision — Séquence 1</h3>
+
+                <p>
+                    Grandeur physique, capteur, conversion analogique-numérique,
+                    mesure et validation.
+                </p>
+
+                <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/revisions/fiche-sequence-01.html">
+                    Consulter la fiche →
+                </a>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-top">
+                <span class="status pending">À ajouter plus tard</span>
+            </div>
+
+            <h3>Auto-évaluation</h3>
+            <p>
+                Des questions pour vérifier la compréhension des notions étudiées.
+            </p>
+        </div>
+    </section>
+
+    <!-- FONCTIONNEMENT -->
+    <section class="section">
+        <p class="section-label">À COMPRENDRE</p>
+        <h2>Comment fonctionne ce classeur ?</h2>
+
+        <div class="steps-grid">
+            <div class="step-box">
+                <strong>01</strong>
+                <h3>Le navigateur demande</h3>
+                <p>La page HTML.</p>
+            </div>
+
+            <div class="step-box">
+                <strong>02</strong>
+                <h3>Le serveur envoie</h3>
+                <p>HTML et CSS.</p>
+            </div>
+
+            <div class="step-box">
+                <strong>03</strong>
+                <h3>Un lien demande</h3>
+                <p>Un document.</p>
+            </div>
+
+            <div class="step-box">
+                <strong>04</strong>
+                <h3>Le serveur contrôle</h3>
+                <p>L'accès au document.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <strong>Classeur numérique SIN</strong>
+    <p>Site réalisé en HTML et CSS.</p>
+    <p>Année scolaire 2026–2027</p>
+</footer>
 
 </body>
 </html>
