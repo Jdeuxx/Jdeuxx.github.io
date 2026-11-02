@@ -1,384 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Classeur numérique de Terminale STI2D, spécialité SIN.">
-    <title>Mon classeur numérique | STI2D SIN</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon classeur numérique STI2D SIN</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header class="header" id="accueil">
-    <a href="#accueil" class="logo">
-        <span class="logo-icon">⚡</span>
-        <span class="logo-text">Mon classeur <span class="highlight">numérique</span></span>
-    </a>
-    <div class="subtitle">Terminale STI2D • SIN</div>
+<header class="header">
+  <h1>
+    <a href="index.html">Mon classeur numérique</a>
+  </h1>
 
-    <nav>
-        <a href="#accueil" class="active">Accueil</a>
-        <a href="#cours">Cours</a>
-        <a href="#tp">TP</a>
-        <a href="#projets">Projets</a>
-        <a href="#revisions">Révisions</a>
-    </nav>
+  <nav>
+    <a href="cours.html">Cours</a>
+    <a href="tp.html">TP</a>
+    <a href="projets.html">Projets</a>
+    <a href="revisions.html">Révisions</a>
+    <a href="evaluations.html">Évaluations</a>
+  </nav>
 </header>
 
-<main>
+<main class="section">
 
-    <!-- ACCUEIL / HERO -->
-    <section class="hero">
-        <div class="hero-badge">
-            <span class="badge-dot"></span>
-            ANNÉE 2026–2027
-        </div>
+  <section>
+    <h2>Bienvenue</h2>
+    <h2>STI2D SIN</h2>
+  </section>
 
-        <h1>Mon espace de travail <span class="gradient-text">STI2D SIN</span></h1>
-
-        <p class="description">
-            Je retrouve ici mes cours, mes travaux pratiques, mes projets et mes fiches de révision.
-            Ce site constitue la partie visible de mon classeur numérique.
-        </p>
-
-        <div class="hero-buttons">
-            <a href="#cours" class="btn btn-primary">
-                <span>Voir mes cours</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </a>
-            <a href="#projets" class="btn btn-secondary">Mes projets</a>
-        </div>
-
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="profile-icon">SIN</div>
-                <div class="profile-identity">
-                    <span class="small-label">ÉLÈVE</span>
-                    <h3>Jean-Daniel AZOWA</h3>
-                    <p>Terminale STI2D</p>
-                </div>
-            </div>
-
-            <div class="profile-details">
-                <div class="detail-item">
-                    <span class="detail-label">SPÉCIALITÉ</span>
-                    <strong class="detail-value">Systèmes d’Information et Numérique</strong>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">ÉTABLISSEMENT</span>
-                    <strong class="detail-value">Lycée EMILE ZOLA</strong>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">DERNIÈRE MISE À JOUR</span>
-                    <strong class="detail-value">2 novembre 2026</strong>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ACCÈS RAPIDE -->
-    <section class="quick-access">
-        <a href="#cours" class="qa-card">
-            <div class="qa-number">01</div>
-            <strong class="qa-title">Cours</strong>
-            <small class="qa-desc">Notions et synthèses</small>
-        </a>
-
-        <a href="#tp" class="qa-card">
-            <div class="qa-number">02</div>
-            <strong class="qa-title">Travaux pratiques</strong>
-            <small class="qa-desc">Manipulations et comptes rendus</small>
-        </a>
-
-        <a href="#projets" class="qa-card">
-            <div class="qa-number">03</div>
-            <strong class="qa-title">Projets</strong>
-            <small class="qa-desc">Dossiers et productions</small>
-        </a>
-
-        <a href="#revisions" class="qa-card">
-            <div class="qa-number">04</div>
-            <strong class="qa-title">Révisions</strong>
-            <small class="qa-desc">Fiches et méthodes</small>
-        </a>
-    </section>
-
-    <!-- COURS -->
-    <section class="section" id="cours">
-        <div class="section-header">
-            <p class="section-label">COURS</p>
-            <h2>Mes séquences</h2>
-            <p class="section-description">
-                Les documents de cours sont classés par séquence.
-            </p>
-        </div>
-
-        <div class="grid-cards">
-            <div class="content-card">
-                <div class="card-top">
-                    <span class="number-tag">S01</span>
-                    <span class="status available">Disponible</span>
-                </div>
-
-                <h3>De la grandeur physique à la donnée numérique</h3>
-
-                <p>
-                    Capteurs, acquisition, valeurs analogiques et numériques, conversion et validation.
-                </p>
-
-                <div class="tags">
-                    <span class="tag">Capteurs</span>
-                    <span class="tag">Arduino</span>
-                    <span class="tag">Acquisition</span>
-                </div>
-
-                <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/cours/sequence-01.html">
-                    <span>Ouvrir le cours</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-
-            <div class="content-card pending-card">
-                <div class="card-top">
-                    <span class="number-tag">S02</span>
-                    <span class="status pending">À venir</span>
-                </div>
-
-                <h3>Communication et échange de données</h3>
-
-                <p>
-                    Cette séquence apparaîtra ici lorsqu’elle aura été commencée.
-                </p>
-
-                <div class="tags">
-                    <span class="tag">Réseau</span>
-                    <span class="tag">Protocoles</span>
-                </div>
-
-                <span class="disabled-link">Pas encore disponible</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- TP -->
-    <section class="section" id="tp">
-        <div class="section-header">
-            <p class="section-label">TRAVAUX PRATIQUES</p>
-            <h2>Mes expérimentations</h2>
-            <p class="section-description">
-                Je conserve ici mes sujets, résultats et comptes rendus.
-            </p>
-        </div>
-
-        <div class="grid-cards">
-            <div class="content-card">
-                <div class="card-top">
-                    <span class="status available">Terminé</span>
-                    <span class="date">Septembre 2026</span>
-                </div>
-
-                <h3>TP 01 — Diagnostic d’une chaîne d’acquisition</h3>
-
-                <p>
-                    Analyse d’un système, mesures, comparaison aux résultats attendus et conclusion.
-                </p>
-
-                <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/tp/tp-01.html">
-                    <span>Voir le TP et le compte rendu</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-
-            <div class="content-card">
-                <div class="card-top">
-                    <span class="status progress">En cours</span>
-                    <span class="date">À compléter</span>
-                </div>
-
-                <h3>TP 02 — Mesurer avec un capteur</h3>
-
-                <p>
-                    Acquisition d’une grandeur physique et interprétation de la valeur numérique.
-                </p>
-
-                <span class="disabled-link">Compte rendu en préparation</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- PROJETS -->
-    <section class="section" id="projets">
-        <div class="section-header">
-            <p class="section-label">PROJETS</p>
-            <h2>Mes réalisations</h2>
-            <p class="section-description">
-                Un espace pour suivre l’évolution des projets de l’année.
-            </p>
-        </div>
-
-        <div class="grid-cards">
-            <div class="content-card featured-card">
-                <div class="card-top">
-                    <span class="status available">Projet annuel</span>
-                    <span class="date">STI2D • SIN / ITEC</span>
-                </div>
-
-                <h3>Robot Sumo</h3>
-
-                <p>
-                    Concevoir, réaliser, programmer et valider un robot capable d’évoluer de manière autonome dans un dohyō.
-                </p>
-
-                <div class="progress-info">
-                    <span>Avancement global</span>
-                    <strong>25 %</strong>
-                </div>
-
-                <div class="progress-bar">
-                    <div style="width: 25%"></div>
-                </div>
-
-                <ul class="steps">
-                    <li class="done">Analyse du besoin</li>
-                    <li class="current">Architecture du système</li>
-                    <li>Prototype</li>
-                    <li>Programmation</li>
-                    <li>Validation</li>
-                </ul>
-
-                <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/projets/robot-sumo.html">
-                    <span>Ouvrir le dossier projet</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-
-            <div class="content-card">
-                <div class="card-top">
-                    <span class="status progress">En cours</span>
-                </div>
-
-                <h3>Parking PMR</h3>
-
-                <p>
-                    Étude d’un système de contrôle d’accès à une place de stationnement réservée aux personnes à mobilité réduite.
-                </p>
-
-                <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/projets/parking-pmr.html">
-                    <span>Voir le projet</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-
-            <div class="content-card">
-                <div class="card-top">
-                    <span class="status progress">En développement</span>
-                </div>
-
-                <h3>EcoCleaner</h3>
-
-                <p>
-                    Création d’un jeu vidéo d’arcade sur le thème du développement durable avec Phaser.
-                </p>
-
-                <a class="card-link" href="https://jdeuxx.github.io/jeu-dd/index.html">
-                    <span>Découvrir le jeu</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- REVISIONS -->
-    <section class="section" id="revisions">
-        <div class="section-header">
-            <p class="section-label">RÉVISIONS</p>
-            <h2>Préparer les évaluations</h2>
-            <p class="section-description">
-                Les documents essentiels à revoir rapidement.
-            </p>
-        </div>
-
-        <div class="grid-cards">
-            <div class="content-card revision-card">
-                <div class="revision-icon">✓</div>
-
-                <div class="revision-content">
-                    <div class="card-top">
-                        <span class="status available">Disponible</span>
-                    </div>
-
-                    <h3>Fiche de révision — Séquence 1</h3>
-
-                    <p>
-                        Grandeur physique, capteur, conversion analogique-numérique, mesure et validation.
-                    </p>
-
-                    <a class="card-link" href="https://jean-daniel.alwaysdata.net/documents/revisions/fiche-sequence-01.html">
-                        <span>Consulter la fiche</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="content-card">
-                <div class="card-top">
-                    <span class="status pending">À ajouter plus tard</span>
-                </div>
-
-                <h3>Auto-évaluation</h3>
-                <p>
-                    Des questions pour vérifier la compréhension des notions étudiées.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FONCTIONNEMENT -->
-    <section class="section">
-        <div class="section-header">
-            <p class="section-label">À COMPRENDRE</p>
-            <h2>Comment fonctionne ce classeur ?</h2>
-        </div>
-
-        <div class="steps-grid">
-            <div class="step-box">
-                <span class="step-num">01</span>
-                <h3>Le navigateur demande</h3>
-                <p>La page HTML initiale au serveur Web.</p>
-            </div>
-
-            <div class="step-box">
-                <span class="step-num">02</span>
-                <h3>Le serveur envoie</h3>
-                <p>Les fichiers HTML et les feuilles de style CSS.</p>
-            </div>
-
-            <div class="step-box">
-                <span class="step-num">03</span>
-                <h3>Un lien demande</h3>
-                <p>Le document ciblé dans le dossier classeur/.</p>
-            </div>
-
-            <div class="step-box">
-                <span class="step-num">04</span>
-                <h3>Le serveur contrôle</h3>
-                <p>L'accès et la restitution du document.</p>
-            </div>
-        </div>
-    </section>
+  <section class="content-card">
+    <h2>À propos</h2>
+    <p>
+      Ce site regroupe mes ressources de STI2D
+      (Sciences et Technologies de l'Industrie et du Développement Durable),
+      spécialité SIN (Systèmes d'Information et Numérique).
+    </p>
+    <p>
+      Il me permet d'organiser mes cours, mes TP,
+      mes projets et mes évaluations.
+    </p>
+  </section>
 
 </main>
 
 <footer class="footer">
-    <div class="footer-content">
-        <strong>Classeur numérique STI2D SIN</strong>
-        <p>Site web conçu & développé en HTML5 & CSS3 pour AlwaysData.</p>
-        <p class="copyright">Année scolaire 2026–2027 • Lycée EMILE ZOLA</p>
-    </div>
+  <p>Mon classeur numérique - STI2D SIN</p>
+  <a href="https://github.com/Jdeuxx">GitHub</a>
 </footer>
 
 </body>
