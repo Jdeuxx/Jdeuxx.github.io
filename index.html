@@ -1,37 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BARIL-RUNNER</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&display=swap" rel="stylesheet">
-
-  <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      background: #7ccfff;
-      overflow: hidden;
-      font-family: 'Baloo 2', sans-serif;
-      touch-action: none;
-    }
-    #jeu { position: fixed; inset: 0; }
-    #jeu canvas { display: block; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon classeur numérique STI2D SIN</title>
+  <link rel="stylesheet" href="classeur/style.css">
 </head>
 
 <body>
-  <div id="jeu"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-  <!-- Optionnel : pour utiliser des modèles .glb dans le dossier modeles/ -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<header class="header">
+  <h1>
+    <a href="index.html">Mon classeur numérique</a>
+  </h1>
 
-  <script src="game.js"></script>
+  <nav>
+    <a href="classeur/cours.html">Cours</a>
+    <a href="classeur/tp.html">TP</a>
+    <a href="classeur/projets.html">Projets</a>
+    <a href="classeur/revisions.html">Révisions</a>
+    <a href="classeur/evaluations.html">Évaluations</a>
+  </nav>
+</header>
+
+<main class="section">
+
+  <h2>Bienvenue</h2>
+  <h2>STI2D SIN</h2>
+
+  <section class="content-card">
+    <h2>À propos</h2>
+
+    <p>
+      Ce site regroupe mes ressources de STI2D,
+      spécialité SIN (Systèmes d'Information et Numérique).
+    </p>
+
+    <p>
+      Il me permet d'organiser mes cours,
+      mes TP, mes projets et mes évaluations.
+    </p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Mon classeur numérique - STI2D SIN</p>
+  <a href="jeu-dd.html">Accéder à mon jeu</a>
+</footer>
+
 </body>
 </html>
